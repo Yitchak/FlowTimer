@@ -11,8 +11,16 @@ import './App.css';
 
 function App() {
   const [timers, setTimers] = useState<Timer[]>(() => {
-    const saved = localStorage.getItem('timrflow_timers');
-    return saved ? JSON.parse(saved) : initialMockTimers;
+    try {
+      const saved = localStorage.getItem('timrflow_timers');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.error("Failed to load timers from storage", e);
+    }
+    return initialMockTimers || []; // Fallback safegaurd
   });
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -42,6 +50,36 @@ function App() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showGlobalMenu]);
+  // Active Tab Persistence
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    return localStorage.getItem('timrflow_active_tab') || 'custom';
+  });
+
+  // Recent Timers Logic
+  const [recentTimerIds, setRecentTimerIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('timrflow_recents');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('timrflow_active_tab', activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
+    localStorage.setItem('timrflow_recents', JSON.stringify(recentTimerIds));
+  }, [recentTimerIds]);
+
+  const addToRecents = (id: string) => {
+    setRecentTimerIds(prev => {
+      const filtered = prev.filter(tid => tid !== id);
+      return [id, ...filtered].slice(0, 10); // Keep last 10
+    });
+  };
+
   const [listKey, setListKey] = useState(0);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -111,6 +149,7 @@ function App() {
 
   const handleStart = (id: string) => {
     setActiveTimerId(id);
+    addToRecents(id);
   };
 
   const handlePause = (id: string) => {
@@ -347,45 +386,243 @@ function App() {
             </header>
 
             {/* Main Content */}
-            <main className="main-content">
-              <Reorder.Group
-                key={listKey}
-                values={timers}
-                onReorder={(newOrder) => {
-                  const filtered = newOrder.filter(Boolean);
-                  if (filtered.length === timers.length) {
-                    setTimers(filtered);
-                  }
-                }}
-                className="timer-grid-list"
-                dir="ltr"
-              >
-                {timers.map((timer) => (
-                  <Reorder.Item
-                    key={timer.id}
-                    value={timer}
-                    layoutId={timer.id}
-                    className="timer-reorder-item"
-                    dragListener={!activeTimerId}
-                    drag // Explicitly enable free dragging (2D)
-                    whileDrag={{ scale: 1.05, zIndex: 100 }}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    layout
+            {/* Filter Chips / Tabs (Color Coded & Larger) */}
+            <div
+              className="pr-8 pt-12 pb-0 overflow-x-auto no-scrollbar flex items-center gap-3 mb-0 sticky top-0 z-20 bg-[#0a0a0a]/95 backdrop-blur-md w-full border-b border-white/5"
+              style={{
+                paddingLeft: '64px',
+                paddingTop: '72px', // Much larger top gap
+                paddingBottom: '0px',
+                marginBottom: '-12px' // Pull timers closer
+              }}
+            >
+              {[
+                { id: 'recent', label: 'Recent', color: '#22d3ee' },
+                { id: 'custom', label: 'My Timers', color: 'var(--primary)' },
+                { id: 'breathwork', label: 'Breathwork', color: '#4ade80' },
+                { id: 'yoga', label: 'Yoga', color: '#fbbf24' },
+                { id: 'workout', label: 'Workout', color: '#f87171' }
+              ].map((tab) => {
+                const isActive = activeTab === tab.id;
+                // Calculate text color for active state:
+                // Primary (Purple) is dark -> Needs White text.
+                // Others (Green, Yellow, Red) are light -> Need Black text.
+                const isDarkBg = tab.id === 'custom';
+                const activeTextColor = isDarkBg ? '#ffffff' : '#000000';
+
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as any)}
+                    className={`
+                        relative whitespace-nowrap transition-all duration-300 border-2 flex-shrink-0
+                        ${isActive
+                        ? 'shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] scale-105 border-transparent'
+                        : 'bg-transparent border-transparent text-white hover:text-gray-200'
+                      }
+                      `}
+                    style={{
+                      backgroundColor: isActive ? tab.color : 'transparent',
+                      // No explicit border color for inactive to ensure it looks like text only
+                      borderColor: 'transparent',
+                      color: isActive ? activeTextColor : 'var(--text)',
+                      boxShadow: isActive ? `0 4px 20px ${tab.color}60` : 'none',
+                      // Styling matches
+                      fontSize: '20px',
+                      padding: '12px 32px',
+                      fontWeight: 800,
+                      borderRadius: '999px',
+                      letterSpacing: '0.01em',
+                      // Ensure text alignment helps the visual
+                      textAlign: 'center'
+                    }}
                   >
-                    <TimerCard
-                      timer={timer}
-                      isActive={activeTimerId === timer.id}
-                      onStart={handleStart}
-                      onPause={handlePause}
-                      onEdit={handleEditTimer}
-                      onDuplicate={handleDuplicateTimer}
-                      onDelete={handleDeleteTimer}
-                    />
-                  </Reorder.Item>
-                ))}
-              </Reorder.Group>
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Main Content */}
+            <main className="main-content pt-0">
+
+              {/* --- RECENT TAB --- */}
+              {activeTab === 'recent' && (
+                <section className="timer-section mb-6">
+                  {recentTimerIds.length === 0 ? (
+                    <div className="py-8 text-center text-text-dim bg-white/5 rounded-xl border border-dashed border-white/10">
+                      <p>Start a timer to see it here</p>
+                    </div>
+                  ) : (
+                    <div className="timer-grid-list" dir="ltr">
+                      {recentTimerIds.map(id => {
+                        const timer = timers.find(t => t.id === id);
+                        if (!timer) return null;
+                        return (
+                          <div key={id} className="timer-reorder-item">
+                            <TimerCard
+                              timer={timer}
+                              isActive={activeTimerId === timer.id}
+                              onStart={handleStart}
+                              onPause={handlePause}
+                              onEdit={handleEditTimer}
+                              onDuplicate={handleDuplicateTimer}
+                              onDelete={handleDeleteTimer}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </section>
+              )}
+
+              {/* --- MY TIMERS (Draggable) --- */}
+              {(activeTab === 'all' || activeTab === 'custom') && (
+                <section className="timer-section mb-6">
+                  {/* Show header only in 'All' view to distinguish, or always? Keep it clean. */}
+                  {activeTab === 'all' && (
+                    <div className="flex items-center gap-3 mb-4 px-1">
+                      <h2 className="text-xs font-bold text-text-dim uppercase tracking-widest">My Timers</h2>
+                      <span className="text-xs font-medium text-text-dim bg-white/5 px-2 py-0.5 rounded-full border border-white/5">
+                        {timers.filter(t => !t.isPreset).length}
+                      </span>
+                    </div>
+                  )}
+
+                  {timers.filter(t => !t.isPreset).length === 0 ? (
+                    <div className="py-8 px-4 border border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center text-center text-text-dim bg-white/5">
+                      <p className="mb-2 text-sm">No custom timers yet</p>
+                      <button onClick={handleAddTimer} className="text-primary hover:text-primary-hover hover:underline text-xs font-bold uppercase tracking-wide transition-colors">Create your first timer</button>
+                    </div>
+                  ) : (
+                    <Reorder.Group
+                      key={listKey}
+                      values={timers.filter(t => !t.isPreset)}
+                      onReorder={(newCustomOrder) => {
+                        const presets = timers.filter(t => t.isPreset);
+                        setTimers([...newCustomOrder, ...presets]);
+                      }}
+                      className="timer-grid-list"
+                      dir="ltr"
+                    >
+                      {timers.filter(t => !t.isPreset).map((timer) => (
+                        <Reorder.Item
+                          key={timer.id}
+                          value={timer}
+                          layoutId={timer.id}
+                          className="timer-reorder-item"
+                          dragListener={!activeTimerId}
+                          drag
+                          whileDrag={{ scale: 1.05, zIndex: 100 }}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          layout
+                        >
+                          <TimerCard
+                            timer={timer}
+                            isActive={activeTimerId === timer.id}
+                            onStart={handleStart}
+                            onPause={handlePause}
+                            onEdit={handleEditTimer}
+                            onDuplicate={handleDuplicateTimer}
+                            onDelete={handleDeleteTimer}
+                          />
+                        </Reorder.Item>
+                      ))}
+                    </Reorder.Group>
+                  )}
+                </section>
+              )}
+
+              {/* Divider - Only show if in 'All' mode and followed by more sections */}
+              {activeTab === 'all' && <div className="w-full h-px bg-white/5 mb-6"></div>}
+
+              {/* --- BREATHWORK (Static) --- */}
+              {(activeTab === 'all' || activeTab === 'breathwork') && (
+                <section className="timer-section mb-6">
+                  {activeTab === 'all' && (
+                    <h2 className="text-xs font-bold text-text-dim uppercase tracking-widest mb-4 px-1">
+                      Breathwork
+                    </h2>
+                  )}
+                  <div className="timer-grid-list">
+                    {timers.filter(t => t.isPreset && t.tags.includes('breathwork')).map((timer) => (
+                      <div key={timer.id} className="timer-reorder-item">
+                        <TimerCard
+                          timer={timer}
+                          isActive={activeTimerId === timer.id}
+                          onStart={handleStart}
+                          onPause={handlePause}
+                          onEdit={handleEditTimer}
+                          onDuplicate={handleDuplicateTimer}
+                          onDelete={handleDeleteTimer}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Divider */}
+              {activeTab === 'all' && <div className="w-full h-px bg-white/5 mb-6"></div>}
+
+              {/* --- YOGA (Static) --- */}
+              {(activeTab === 'all' || activeTab === 'yoga') && (
+                <section className="timer-section mb-6">
+                  {activeTab === 'all' && (
+                    <h2 className="text-xs font-bold text-text-dim uppercase tracking-widest mb-4 px-1">
+                      Yoga
+                    </h2>
+                  )}
+                  <div className="timer-grid-list">
+                    {timers.filter(t => t.isPreset && t.tags.includes('yoga')).map((timer) => (
+                      <div key={timer.id} className="timer-reorder-item">
+                        <TimerCard
+                          timer={timer}
+                          isActive={activeTimerId === timer.id}
+                          onStart={handleStart}
+                          onPause={handlePause}
+                          onEdit={handleEditTimer}
+                          onDuplicate={handleDuplicateTimer}
+                          onDelete={handleDeleteTimer}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Divider */}
+              {activeTab === 'all' && <div className="w-full h-px bg-white/5 mb-6"></div>}
+
+              {/* --- WORKOUT (Static) --- */}
+              {(activeTab === 'all' || activeTab === 'workout') && (
+                <section className="timer-section mb-12">
+                  {activeTab === 'all' && (
+                    <h2 className="text-xs font-bold text-text-dim uppercase tracking-widest mb-4 px-1">
+                      Workout & Focus
+                    </h2>
+                  )}
+                  <div className="timer-grid-list">
+                    {timers.filter(t => t.isPreset && (t.tags.includes('workout') || t.tags.includes('focus'))).map((timer) => (
+                      <div key={timer.id} className="timer-reorder-item">
+                        <TimerCard
+                          timer={timer}
+                          isActive={activeTimerId === timer.id}
+                          onStart={handleStart}
+                          onPause={handlePause}
+                          onEdit={handleEditTimer}
+                          onDuplicate={handleDuplicateTimer}
+                          onDelete={handleDeleteTimer}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
             </main>
           </motion.div>
         )}

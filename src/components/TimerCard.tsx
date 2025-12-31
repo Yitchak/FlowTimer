@@ -145,12 +145,15 @@ const TimerCard: React.FC<TimerCardProps> = ({
                 borderColor: timer.color ? `${timer.color}30` : undefined
             }}
         >
-            {/* Info Area */}
-            <div className="timer-info">
-                <div className="timer-header">
-                    <div className="flex flex-col gap-1 w-full pr-8">
-                        <div className="flex items-center gap-2">
-                            <h3 className="timer-title" style={{ color: titleColor }}>
+            {/* Top Section: Info (Left) + Image (Right) */}
+            {/* Info Area - Grid Layout (Force) */}
+            <div className="timer-info relative mb-4">
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '16px', alignItems: 'start' }}>
+
+                    {/* Left Side: Text Content */}
+                    <div style={{ minWidth: 0, paddingRight: '0.5rem' }}>
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                            <h3 className="timer-title text-xl font-bold leading-tight" style={{ color: titleColor }}>
                                 {timer.name}
                             </h3>
                             {timer.isPreset && (
@@ -167,82 +170,103 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                 </span>
                             )}
                         </div>
-                        <div className="timer-tags">
+
+                        <div className="timer-tags mb-3">
                             {timer.tags.map(tag => (
                                 <span key={tag} className="tag">
                                     {tag}
                                 </span>
                             ))}
                         </div>
-                    </div>
 
-                    {/* 3-Dot Menu - Absolute Positioned */}
-                    <div style={{ position: 'absolute', top: '16px', right: '16px', zIndex: 20 }}>
-                        <div className="relative" ref={menuRef}>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-                                className="p-1.5 rounded-full hover:bg-white/10 text-text-dim hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-                            >
-                                <MoreVertical size={20} />
-                            </button>
-
-                            {showMenu && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    className="dropdown-menu"
-                                    style={{ width: '160px' }} // Slightly smaller than global
-                                >
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); onDuplicate(timer); setShowMenu(false); }}
-                                        className="dropdown-item"
-                                    >
-                                        <Copy size={16} />
-                                        <span>Duplicate</span>
-                                    </button>
-
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setShowMenu(false);
-                                            onEdit(timer);
-                                        }}
-                                        className="dropdown-item"
-                                    >
-                                        <Edit2 size={16} />
-                                        <span>Edit</span>
-                                    </button>
-
-                                    <div className="dropdown-divider"></div>
-
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setShowMenu(false);
-                                            if (timer.isPreset) {
-                                                toast.info("Cannot delete built-in presets.");
-                                            } else {
-                                                onDelete(timer.id);
-                                            }
-                                        }}
-                                        className={`dropdown-item ${timer.isPreset ? 'opacity-50 cursor-not-allowed hover:bg-transparent hover:text-text-dim' : ''}`}
-                                        style={{ color: timer.isPreset ? 'inherit' : '#ef4444' }} // Only red if deletable
-                                    >
-                                        <Trash2 size={16} />
-                                        <span>Delete</span>
-                                    </button>
-
-
-                                </motion.div>
-                            )}
+                        <div className="text-xs font-bold text-text-dim uppercase tracking-widest flex flex-col gap-0.5">
+                            <span className="opacity-80">{currentStep.name}</span>
+                            <span className="text-[10px] opacity-60">Step {currentStepIndex + 1}/{timer.steps.length}
+                                {timer.repetitions !== 1 && ` • Rep ${currentRepetition}${timer.repetitions === -1 ? '/∞' : '/' + timer.repetitions}`}</span>
                         </div>
                     </div>
-                </div>
 
-                <div className="text-xs font-bold text-text-dim uppercase tracking-widest pt-4 flex items-center justify-between">
-                    <span>{currentStep.name}</span>
-                    <span>Step {currentStepIndex + 1}/{timer.steps.length}
-                        {timer.repetitions !== 1 && ` • Rep ${currentRepetition}${timer.repetitions === -1 ? '/∞' : '/' + timer.repetitions}`}</span>
+                    {/* Right Side: Big Circular Image */}
+                    <div style={{ position: 'relative' }}>
+                        <div style={{
+                            width: '80px',
+                            height: '80px',
+                            borderRadius: '50%',
+                            overflow: 'hidden',
+                            border: '3px solid rgba(255,255,255,0.08)',
+                            background: 'rgba(255,255,255,0.05)',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
+                        }}>
+                            <img
+                                src={timer.imageUrl || 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=250&q=80'}
+                                alt={timer.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }}
+                                onError={(e) => {
+                                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=250&q=80';
+                                }}
+                            />
+                        </div>
+
+                        {/* Menu Button - Absolute top right of the Image area */}
+                        <div style={{ position: 'absolute', top: '-6px', right: '-10px', zIndex: 20 }}>
+                            <div className="relative" ref={menuRef}>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
+                                    className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10"
+                                >
+                                    <MoreVertical size={14} />
+                                </button>
+
+                                {showMenu && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        className="dropdown-menu"
+                                        style={{ width: '160px', right: 0 }}
+                                    >
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); onDuplicate(timer); setShowMenu(false); }}
+                                            className="dropdown-item"
+                                        >
+                                            <Copy size={16} />
+                                            <span>Duplicate</span>
+                                        </button>
+
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setShowMenu(false);
+                                                onEdit(timer);
+                                            }}
+                                            className="dropdown-item"
+                                        >
+                                            <Edit2 size={16} />
+                                            <span>Edit</span>
+                                        </button>
+
+                                        <div className="dropdown-divider"></div>
+
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setShowMenu(false);
+                                                if (timer.isPreset) {
+                                                    toast.info("Cannot delete built-in presets.");
+                                                } else {
+                                                    onDelete(timer.id);
+                                                }
+                                            }}
+                                            className={`dropdown-item ${timer.isPreset ? 'opacity-50 cursor-not-allowed hover:bg-transparent hover:text-text-dim' : ''}`}
+                                            style={{ color: timer.isPreset ? 'inherit' : '#ef4444' }}
+                                        >
+                                            <Trash2 size={16} />
+                                            <span>Delete</span>
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
