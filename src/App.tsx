@@ -192,6 +192,11 @@ function App() {
     }
   };
 
+  const handleRemoveFromRecents = (id: string) => {
+    setRecentTimerIds(prev => prev.filter(tid => tid !== id));
+    toast.success("Removed from list");
+  };
+
   const handleSaveTimer = (timer: Timer) => {
     // If we have an editingTimer in state that matches an existing timer ID, it's an update.
     // If editingTimer was a fresh copy (new ID), find won't succeed, so it goes to 'else' (Create New).
@@ -467,7 +472,7 @@ function App() {
                               onPause={handlePause}
                               onEdit={handleEditTimer}
                               onDuplicate={handleDuplicateTimer}
-                              onDelete={handleDeleteTimer}
+                              onDelete={handleRemoveFromRecents}
                             />
                           </div>
                         );

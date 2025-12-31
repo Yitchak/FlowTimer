@@ -156,6 +156,13 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             <h3 className="timer-title text-xl font-bold leading-tight" style={{ color: titleColor }}>
                                 {timer.name}
                             </h3>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onEdit(timer); }}
+                                className="p-1 rounded-full hover:bg-white/10 text-text-dim hover:text-primary transition-colors ml-1"
+                                title="Edit Timer"
+                            >
+                                <Edit2 size={14} />
+                            </button>
                             {timer.isPreset && (
                                 <span
                                     className="px-1.5 py-0.5 rounded text-[9px] uppercase font-black tracking-tighter"

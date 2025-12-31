@@ -303,16 +303,58 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                             />
                                         </div>
 
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', minWidth: '80px' }}>
-                                            <label className="form-label" style={{ fontSize: '0.65rem' }}>Duration</label>
-                                            <div className="step-duration">
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: '180px' }}>
+                                            <label className="form-label" style={{ fontSize: '0.65rem', marginBottom: '4px' }}>Duration (H:M:S)</label>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                {/* Hours */}
                                                 <input
-                                                    type="number"
-                                                    value={step.duration}
-                                                    onChange={(e) => updateStep(step.id, { duration: parseInt(e.target.value) || 0 })}
-                                                    className="duration-input"
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    placeholder="0h"
+                                                    value={Math.floor(step.duration / 3600).toString()}
+                                                    onChange={(e) => {
+                                                        const val = parseInt(e.target.value) || 0;
+                                                        const currentM = Math.floor((step.duration % 3600) / 60);
+                                                        const currentS = step.duration % 60;
+                                                        updateStep(step.id, { duration: val * 3600 + currentM * 60 + currentS });
+                                                    }}
+                                                    className="duration-input-compact"
+                                                    style={{ width: '48px', textAlign: 'center', padding: '6px 4px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)', fontSize: '14px' }}
                                                 />
-                                                <span className="duration-label">sec</span>
+                                                <span style={{ opacity: 0.5 }}>:</span>
+                                                {/* Minutes */}
+                                                <input
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    placeholder="0m"
+                                                    value={Math.floor((step.duration % 3600) / 60).toString()}
+                                                    onChange={(e) => {
+                                                        let val = parseInt(e.target.value) || 0;
+                                                        if (val > 59) val = 59;
+                                                        const currentH = Math.floor(step.duration / 3600);
+                                                        const currentS = step.duration % 60;
+                                                        updateStep(step.id, { duration: currentH * 3600 + val * 60 + currentS });
+                                                    }}
+                                                    className="duration-input-compact"
+                                                    style={{ width: '48px', textAlign: 'center', padding: '6px 4px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)', fontSize: '14px' }}
+                                                />
+                                                <span style={{ opacity: 0.5 }}>:</span>
+                                                {/* Seconds */}
+                                                <input
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    placeholder="0s"
+                                                    value={(step.duration % 60).toString()}
+                                                    onChange={(e) => {
+                                                        let val = parseInt(e.target.value) || 0;
+                                                        if (val > 59) val = 59;
+                                                        const currentH = Math.floor(step.duration / 3600);
+                                                        const currentM = Math.floor((step.duration % 3600) / 60);
+                                                        updateStep(step.id, { duration: currentH * 3600 + currentM * 60 + val });
+                                                    }}
+                                                    className="duration-input-compact"
+                                                    style={{ width: '48px', textAlign: 'center', padding: '6px 4px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)', fontSize: '14px' }}
+                                                />
                                             </div>
                                         </div>
 
