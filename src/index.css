@@ -474,12 +474,18 @@ input {
 /* Timer Card & Grid - Modified for Equal Height */
 .timer-grid-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
   gap: 2rem;
   padding: 2rem;
   width: 100%;
   direction: ltr !important;
-  /* align-items: stretch; Not needed in grid defaults */
+}
+
+@media (max-width: 640px) {
+  .timer-grid-list {
+    padding: 1rem;
+    gap: 1rem;
+  }
 }
 
 .timer-reorder-item {

@@ -39,4 +39,4 @@ export default defineConfig({
     strictPort: true,
   },
 })
-// Reload trigger 17:30
+// Reload trigger 18:25

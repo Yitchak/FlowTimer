@@ -393,12 +393,14 @@ function App() {
             {/* Main Content */}
             {/* Filter Chips / Tabs (Color Coded & Larger) */}
             <div
-              className="pr-8 pt-12 pb-0 overflow-x-auto no-scrollbar flex items-center gap-3 mb-0 sticky top-0 z-20 bg-[#0a0a0a]/95 backdrop-blur-md w-full border-b border-white/5"
+              className="pr-8 overflow-x-auto no-scrollbar flex items-center gap-3 mb-0 sticky top-0 z-50 w-full border-b border-white/5 pl-4 md:pl-16"
               style={{
-                paddingLeft: '64px',
-                paddingTop: '72px', // Much larger top gap
-                paddingBottom: '0px',
-                marginBottom: '-12px' // Pull timers closer
+                backgroundColor: 'color-mix(in srgb, var(--surface), transparent 5%)',
+                backdropFilter: 'blur(12px)',
+                minHeight: '140px', // Enforce physical space
+                paddingTop: '60px', // Center vertically within the height
+                paddingBottom: '24px',
+                marginBottom: '-40px' // Pull content up
               }}
             >
               {[

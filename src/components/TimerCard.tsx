@@ -153,7 +153,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     {/* Left Side: Text Content */}
                     <div style={{ minWidth: 0, paddingRight: '0.5rem' }}>
                         <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <h3 className="timer-title text-xl font-bold leading-tight" style={{ color: titleColor }}>
+                            <h3 className="timer-title text-lg md:text-xl font-bold leading-tight line-clamp-2" style={{ color: titleColor }}>
                                 {timer.name}
                             </h3>
                             <button
