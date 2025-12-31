@@ -6,6 +6,7 @@ interface UseTimerProps {
     repetitions: number; // -1 for continuous
     isActive: boolean;
     onComplete?: () => void;
+    onCycleComplete?: () => void;
     onStepChange?: (index: number, repetition: number) => void;
 }
 
@@ -14,6 +15,7 @@ export const useTimer = ({
     repetitions,
     isActive,
     onComplete,
+    onCycleComplete,
     onStepChange
 }: UseTimerProps) => {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -64,6 +66,7 @@ export const useTimer = ({
                     setCurrentRepetition(nextRep);
                     setCurrentStepIndex(0);
                     setTimeLeft(steps[0].duration);
+                    onCycleComplete?.(); // Trigger cycle complete
                     onStepChange?.(0, nextRep);
                 } else {
                     // Timer finished
@@ -79,5 +82,46 @@ export const useTimer = ({
         setTimeLeft(steps[0]?.duration || 0);
     };
 
-    return { timeLeft, currentStepIndex, currentRepetition, reset, setTimeLeft };
+    const nextStep = () => {
+        if (currentStepIndex < steps.length - 1) {
+            const nextIndex = currentStepIndex + 1;
+            setCurrentStepIndex(nextIndex);
+            setTimeLeft(steps[nextIndex].duration);
+            onStepChange?.(nextIndex, currentRepetition);
+        } else {
+            // Last step
+            if (repetitions === -1 || currentRepetition < repetitions) {
+                const nextRep = currentRepetition + 1;
+                setCurrentRepetition(nextRep);
+                setCurrentStepIndex(0);
+                setTimeLeft(steps[0].duration);
+                onCycleComplete?.();
+                onStepChange?.(0, nextRep);
+            } else {
+                onComplete?.();
+            }
+        }
+    };
+
+    const prevStep = () => {
+        if (currentStepIndex > 0) {
+            const prevIndex = currentStepIndex - 1;
+            setCurrentStepIndex(prevIndex);
+            setTimeLeft(steps[prevIndex].duration);
+            onStepChange?.(prevIndex, currentRepetition);
+        } else if (currentRepetition > 1) {
+            // Go to end of previous repetition
+            const prevRep = currentRepetition - 1;
+            const lastIndex = steps.length - 1;
+            setCurrentRepetition(prevRep);
+            setCurrentStepIndex(lastIndex);
+            setTimeLeft(steps[lastIndex].duration);
+            onStepChange?.(lastIndex, prevRep);
+        } else {
+            // First step of first rep - just reset
+            reset();
+        }
+    };
+
+    return { timeLeft, currentStepIndex, currentRepetition, reset, setTimeLeft, nextStep, prevStep };
 };

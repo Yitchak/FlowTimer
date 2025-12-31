@@ -1,9 +1,10 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical } from 'lucide-react';
+import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Timer } from '../types/timer';
 import { useTimer } from '../hooks/useTimer';
 import { toast } from 'sonner';
+import { playTimerSound } from '../utils/sound';
 
 interface TimerCardProps {
     timer: Timer;
@@ -33,6 +34,29 @@ const TimerCard: React.FC<TimerCardProps> = ({
         return (yiq >= 128) ? '#000000' : '#ffffff';
     };
 
+    // Helper to darken color for better visibility (for Title)
+    const darkenColor = (hex: string | undefined, percent: number) => {
+        if (!hex) return 'var(--text)';
+        let r = parseInt(hex.substring(1, 3), 16);
+        let g = parseInt(hex.substring(3, 5), 16);
+        let b = parseInt(hex.substring(5, 7), 16);
+
+        r = Math.floor(r * (100 - percent) / 100);
+        g = Math.floor(g * (100 - percent) / 100);
+        b = Math.floor(b * (100 - percent) / 100);
+
+        r = (r < 255) ? r : 255;
+        g = (g < 255) ? g : 255;
+        b = (b < 255) ? b : 255;
+
+        // Ensure we handle single digit hex
+        const rr = ((r.toString(16).length === 1) ? "0" + r.toString(16) : r.toString(16));
+        const gg = ((g.toString(16).length === 1) ? "0" + g.toString(16) : g.toString(16));
+        const bb = ((b.toString(16).length === 1) ? "0" + b.toString(16) : b.toString(16));
+
+        return "#" + rr + gg + bb;
+    };
+
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -51,22 +75,34 @@ const TimerCard: React.FC<TimerCardProps> = ({
         };
     }, [showMenu]);
 
+
+
     const {
         timeLeft,
         currentStepIndex,
         currentRepetition,
-        reset
+        reset,
+        nextStep,
+        prevStep
     } = useTimer({
         steps: timer.steps,
-        repetitions: timer.repetitions,
+        repetitions: timer.repetitions ?? 1,
         isActive,
-        onComplete: () => onPause(timer.id)
+        onComplete: () => {
+            playTimerSound('complete');
+            if (isActive) onPause(timer.id);
+        },
+        onCycleComplete: () => {
+            playTimerSound('complete');
+        },
+        onStepChange: () => {
+            playTimerSound('step');
+        }
     });
 
-    // ... (keep useMemos same, just shorthand here for clarity in tool call if needed, but I'll replace the full component start to be safe)
     const totalDuration = useMemo(() => {
         const cycleTime = timer.steps.reduce((acc, step) => acc + step.duration, 0);
-        return timer.repetitions === -1 ? cycleTime : cycleTime * timer.repetitions;
+        return timer.repetitions === -1 ? cycleTime : cycleTime * (timer.repetitions || 1);
     }, [timer]);
 
     const currentStep = timer.steps[currentStepIndex];
@@ -81,7 +117,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
         const totalElapsed = completedCycles + completedStepsInCurrentCycle + elapsedInCurrentStep;
         return timer.repetitions === -1 ? (totalElapsed % cycleTime) / cycleTime : totalElapsed / totalDuration;
-    }, [currentStepIndex, currentRepetition, timeLeft, timer, totalDuration]);
+    }, [currentStepIndex, currentRepetition, timeLeft, timer, totalDuration, currentStep]);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
@@ -93,6 +129,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
         reset();
         onStart(timer.id);
     };
+
+    // Calculate readable title color
+    const titleColor = timer.color ? darkenColor(timer.color, 15) : 'var(--text)';
 
     return (
         <motion.div
@@ -111,7 +150,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                 <div className="timer-header">
                     <div className="flex flex-col gap-1 w-full pr-8">
                         <div className="flex items-center gap-2">
-                            <h3 className="timer-title" style={{ color: timer.color || 'var(--text)' }}>
+                            <h3 className="timer-title" style={{ color: titleColor }}>
                                 {timer.name}
                             </h3>
                             {timer.isPreset && (
@@ -225,7 +264,18 @@ const TimerCard: React.FC<TimerCardProps> = ({
             </div>
 
             {/* Controls */}
-            <div className="timer-controls">
+            <div className="timer-controls" style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+
+                <button
+                    onClick={prevStep}
+                    className="stop-btn icon-btn-large"
+                    aria-label="Previous Step"
+                    title="Previous"
+                    style={{ color: 'var(--text-dim)' }}
+                >
+                    <SkipBack size={20} />
+                </button>
+
                 {!isActive ? (
                     <button
                         onClick={() => onStart(timer.id)}
@@ -234,7 +284,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         style={{
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
-                            border: 'none'
+                            border: 'none',
+                            flex: 1, // Make it main
+                            maxWidth: '120px'
                         }}
                     >
                         <Play size={20} fill="currentColor" />
@@ -248,13 +300,26 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         style={{
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
-                            border: 'none'
+                            border: 'none',
+                            flex: 1,
+                            maxWidth: '120px'
                         }}
                     >
                         <Pause size={20} fill="currentColor" />
                         <span>Pause</span>
                     </button>
                 )}
+
+                <button
+                    onClick={nextStep}
+                    className="stop-btn icon-btn-large"
+                    aria-label="Next Step"
+                    title="Next"
+                >
+                    <SkipForward size={20} />
+                </button>
+
+                <div style={{ width: '1px', height: '20px', background: 'var(--text-dim)', opacity: 0.2, margin: '0 4px' }}></div>
 
                 <button
                     onClick={() => {
