@@ -1107,3 +1107,22 @@ input[type=number] {
 .type-selector {
   background: var(--input-bg) !important;
 }
+
+/* --- MOBILE EDITOR WIDTH FIX --- */
+@media (max-width: 640px) {
+  .editor-content {
+    padding: 0.5rem !important;
+    /* Maximize width */
+  }
+
+  .editor-wrapper {
+    gap: 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .editor-section {
+    padding: 1rem !important;
+    border-radius: 16px !important;
+  }
+}
