@@ -859,6 +859,9 @@ input[type=number] {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
+    height: auto !important;
+    /* Allow height to expand */
+    padding: 1rem !important;
   }
 
   .header-left {
