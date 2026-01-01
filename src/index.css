@@ -223,9 +223,8 @@ input {
 
 .styled-input {
   width: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  /* Darker background for input */
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   padding: 1rem 1.25rem;
   font-size: 1rem;
@@ -926,14 +925,21 @@ input[type=number] {
   .duration-inputs-row {
     width: 100%;
     justify-content: space-between;
-    gap: 8px;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   .duration-input-compact {
     flex: 1;
     width: auto !important;
-    /* Let it grow */
-    min-width: 0;
+    min-width: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 8px;
+    text-align: center;
+    font-size: 1rem;
   }
 }
 
