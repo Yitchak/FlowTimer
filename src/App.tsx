@@ -416,8 +416,8 @@ function App() {
                 flexWrap: 'nowrap', // Force single line
                 overflowX: 'auto',
                 justifyContent: 'flex-start',
-                backgroundColor: 'color-mix(in srgb, var(--surface), transparent 5%)',
-                backdropFilter: 'blur(12px)',
+                background: 'var(--glass)', // Match header
+                backdropFilter: 'var(--glass-blur)', // Match header blur
                 minHeight: '100px',
                 marginBottom: '-20px'
               }}
