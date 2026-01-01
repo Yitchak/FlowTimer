@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Plus, Globe, Shield, RotateCcw, MoreVertical, Download, Upload, RefreshCw } from 'lucide-react';
+import { Sun, Moon, Plus, Globe, Shield, RotateCcw, MoreVertical, Download, Upload, RefreshCw, Info } from 'lucide-react';
 import { AnimatePresence, Reorder, motion } from 'framer-motion';
 import TimerCard from './components/TimerCard';
 import TimerEditor from './components/TimerEditor';
@@ -375,6 +375,23 @@ function App() {
                           <RotateCcw size={16} />
                           <span>Reset Order</span>
                         </button>
+
+                        <div className="dropdown-divider"></div>
+
+                        <button
+                          onClick={() => {
+                            toast.info(`FlowTimer v1.0.0\nReady for your next session!`);
+                            setShowGlobalMenu(false);
+                          }}
+                          className="dropdown-item"
+                        >
+                          <Info size={16} />
+                          <span>About</span>
+                        </button>
+
+                        <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
+                          v1.0.0
+                        </div>
 
 
 
