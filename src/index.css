@@ -662,10 +662,11 @@ input {
   align-items: center;
   gap: 1rem;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--step-row-bg);
+  /* Match styled-step row */
   padding: 2rem;
   border-radius: var(--radius-md);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border-dim);
 }
 
 .time-field {
@@ -678,8 +679,9 @@ input {
 .time-value-input {
   width: 80px;
   height: 80px;
-  background: transparent;
-  border: 2px solid var(--glass-border);
+  background: var(--input-bg) !important;
+  /* Match styled-input */
+  border: 1px solid var(--border-dim);
   border-radius: var(--radius-md);
   font-size: 2.5rem;
   font-weight: 700;
