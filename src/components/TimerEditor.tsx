@@ -289,23 +289,32 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                             <div className="steps-list">
                                 {steps.map((step, index) => (
                                     <div key={step.id} className="step-row">
-                                        <div className="step-number">
-                                            {index + 1}
+                                        <div className="step-header-mobile">
+                                            <div className="step-number">
+                                                {index + 1}
+                                            </div>
+                                            <button
+                                                onClick={() => removeStep(step.id)}
+                                                className="remove-step-btn mobile-only"
+                                                disabled={steps.length === 1}
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
                                         </div>
 
-                                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                            <label className="form-label" style={{ fontSize: '0.65rem' }}>Step Name</label>
+                                        <div className="step-main-content">
+                                            <label className="form-label text-xs">Step Name</label>
                                             <input
                                                 value={step.name}
                                                 onChange={(e) => updateStep(step.id, { name: e.target.value })}
                                                 className="step-name-input"
-                                                placeholder="e.g. Work, Rest"
+                                                placeholder="e.g. Work"
                                             />
                                         </div>
 
-                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: '180px' }}>
-                                            <label className="form-label" style={{ fontSize: '0.65rem', marginBottom: '4px' }}>Duration (H:M:S)</label>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <div className="step-duration-group">
+                                            <label className="form-label text-xs">Duration (H:M:S)</label>
+                                            <div className="duration-inputs-row">
                                                 {/* Hours */}
                                                 <input
                                                     type="text"
@@ -319,9 +328,8 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                                         updateStep(step.id, { duration: val * 3600 + currentM * 60 + currentS });
                                                     }}
                                                     className="duration-input-compact"
-                                                    style={{ width: '48px', textAlign: 'center', padding: '6px 4px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)', fontSize: '14px' }}
                                                 />
-                                                <span style={{ opacity: 0.5 }}>:</span>
+                                                <span className="time-sep">:</span>
                                                 {/* Minutes */}
                                                 <input
                                                     type="text"
@@ -336,9 +344,8 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                                         updateStep(step.id, { duration: currentH * 3600 + val * 60 + currentS });
                                                     }}
                                                     className="duration-input-compact"
-                                                    style={{ width: '48px', textAlign: 'center', padding: '6px 4px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)', fontSize: '14px' }}
                                                 />
-                                                <span style={{ opacity: 0.5 }}>:</span>
+                                                <span className="time-sep">:</span>
                                                 {/* Seconds */}
                                                 <input
                                                     type="text"
@@ -353,16 +360,13 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                                         updateStep(step.id, { duration: currentH * 3600 + currentM * 60 + val });
                                                     }}
                                                     className="duration-input-compact"
-                                                    style={{ width: '48px', textAlign: 'center', padding: '6px 4px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)', fontSize: '14px' }}
                                                 />
                                             </div>
                                         </div>
 
-                                        <div className="vertical-divider" style={{ height: '30px', margin: '0 8px' }}></div>
-
                                         <button
                                             onClick={() => removeStep(step.id)}
-                                            className="remove-step-btn"
+                                            className="remove-step-btn desktop-only"
                                             disabled={steps.length === 1}
                                             title="Remove Step"
                                         >
