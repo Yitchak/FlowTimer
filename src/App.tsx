@@ -380,7 +380,7 @@ function App() {
 
                         <button
                           onClick={() => {
-                            toast.info(`FlowTimer v1.0.2\nReady for your next session!`);
+                            toast.info(`FlowTimer v1.0.3\nReady for your next session!`);
                             setShowGlobalMenu(false);
                           }}
                           className="dropdown-item"
@@ -390,7 +390,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.0.2
+                          v1.0.3
                         </div>
 
 

@@ -485,7 +485,10 @@ input {
 
 @media (max-width: 640px) {
   .timer-grid-list {
-    padding: 0.5rem;
+    grid-template-columns: 1fr !important;
+    /* Force full width */
+    padding: 0.25rem !important;
+    /* Extremely small padding (4px) */
     gap: 0.75rem;
   }
 }
