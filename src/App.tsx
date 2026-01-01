@@ -380,7 +380,7 @@ function App() {
 
                         <button
                           onClick={() => {
-                            toast.info(`FlowTimer v1.0.3\nReady for your next session!`);
+                            toast.info(`FlowTimer v1.0.4\nReady for your next session!`);
                             setShowGlobalMenu(false);
                           }}
                           className="dropdown-item"
@@ -390,7 +390,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.0.3
+                          v1.0.4
                         </div>
 
 
@@ -410,7 +410,7 @@ function App() {
             {/* Main Content */}
             {/* Filter Chips / Tabs (Color Coded & Larger) */}
             <div
-              className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-3 mb-0 sticky top-0 z-50 w-full border-b border-white/5 pl-4 md:pl-16 pt-8 pb-4 md:pt-[60px] md:pb-6"
+              className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-3 mb-0 sticky top-0 z-50 w-full border-b border-white/5 pl-4 md:pl-16 pt-4 pb-4 md:pt-[60px] md:pb-6"
               style={{
                 display: 'flex',
                 flexWrap: 'nowrap', // Force single line
@@ -418,8 +418,7 @@ function App() {
                 justifyContent: 'flex-start',
                 background: 'var(--glass)', // Match header
                 backdropFilter: 'var(--glass-blur)', // Match header blur
-                minHeight: '100px',
-                marginBottom: '-20px'
+                marginBottom: '-1px'
               }}
             >
               {[

@@ -846,4 +846,11 @@ input[type=number] {
     font-size: 0.9rem !important;
     max-width: 100px !important;
   }
+
+  .main-content {
+    padding: 0 !important;
+    /* Remove main container padding on mobile */
+    padding-bottom: 120px !important;
+    /* Keep some bottom padding for scroll */
+  }
 }
