@@ -424,7 +424,7 @@ function App() {
             >
               {[
                 { id: 'recent', label: 'Recent', color: '#22d3ee' },
-                { id: 'custom', label: 'My Timers', color: 'var(--primary)' },
+                { id: 'custom', label: 'My\u00A0Timers', color: 'var(--primary)' },
                 { id: 'breathwork', label: 'Breathwork', color: '#4ade80' },
                 { id: 'yoga', label: 'Yoga', color: '#fbbf24' },
                 { id: 'workout', label: 'Workout', color: '#f87171' }
