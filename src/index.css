@@ -1051,7 +1051,30 @@ input[type=number] {
     font-size: 0.8rem !important;
   }
 
+}
+
+/* --- GLOBAL OVERRIDES FOR BRIGHTNESS --- */
+.styled-input {
+  /* Lighter grey background for better visibility */
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.type-selector {
+  /* Switch from black alpha to white alpha */
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Mobile specific bright overrides */
+@media (max-width: 640px) {
+  .step-row {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--glass-border);
+    padding: 1rem;
+  }
+
   .duration-input-compact {
+    background: rgba(255, 255, 255, 0.12) !important;
     min-width: 40px !important;
   }
 }
