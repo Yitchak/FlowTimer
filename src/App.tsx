@@ -410,14 +410,12 @@ function App() {
             {/* Main Content */}
             {/* Filter Chips / Tabs (Color Coded & Larger) */}
             <div
-              className="pr-8 overflow-x-auto no-scrollbar flex items-center gap-3 mb-0 sticky top-0 z-50 w-full border-b border-white/5 pl-4 md:pl-16"
+              className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-3 mb-0 sticky top-0 z-50 w-full border-b border-white/5 pl-4 md:pl-16 pt-8 pb-4 md:pt-[60px] md:pb-6"
               style={{
                 backgroundColor: 'color-mix(in srgb, var(--surface), transparent 5%)',
                 backdropFilter: 'blur(12px)',
-                minHeight: '140px', // Enforce physical space
-                paddingTop: '60px', // Center vertically within the height
-                paddingBottom: '24px',
-                marginBottom: '-40px' // Pull content up
+                minHeight: '100px', // Compromise for mobile and desktop
+                marginBottom: '-20px'
               }}
             >
               {[

@@ -295,7 +295,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
             </div>
 
             {/* Controls */}
-            <div className="timer-controls" style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+            <div className="timer-controls flex items-center justify-center gap-1 md:gap-2">
 
                 <button
                     onClick={prevStep}
@@ -350,7 +350,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     <SkipForward size={20} />
                 </button>
 
-                <div style={{ width: '1px', height: '20px', background: 'var(--text-dim)', opacity: 0.2, margin: '0 4px' }}></div>
+
 
                 <button
                     onClick={() => {
