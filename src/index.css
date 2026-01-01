@@ -819,3 +819,26 @@ input[type=number] {
   margin: 0.5rem 0;
   width: 100%;
 }
+
+/* Mobile Responsiveness Improvements */
+@media (max-width: 640px) {
+  .timer-card {
+    padding: 1rem !important;
+  }
+
+  .icon-btn-large {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+  }
+
+  /* Make main control buttons smaller on mobile */
+  .control-btn-main,
+  .pause-btn,
+  .timer-controls .primary-btn {
+    height: 40px !important;
+    padding: 0 12px !important;
+    font-size: 0.9rem !important;
+    max-width: 100px !important;
+  }
+}

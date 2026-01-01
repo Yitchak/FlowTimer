@@ -412,9 +412,13 @@ function App() {
             <div
               className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-3 mb-0 sticky top-0 z-50 w-full border-b border-white/5 pl-4 md:pl-16 pt-8 pb-4 md:pt-[60px] md:pb-6"
               style={{
+                display: 'flex',
+                flexWrap: 'nowrap', // Force single line
+                overflowX: 'auto',
+                justifyContent: 'flex-start',
                 backgroundColor: 'color-mix(in srgb, var(--surface), transparent 5%)',
                 backdropFilter: 'blur(12px)',
-                minHeight: '100px', // Compromise for mobile and desktop
+                minHeight: '100px',
                 marginBottom: '-20px'
               }}
             >
