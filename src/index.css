@@ -179,16 +179,16 @@ input {
 }
 
 .editor-section {
-  background: rgba(30, 30, 35, 0.4);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface);
+  /* Revert to solid/high contrast */
+  border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  /* Darker shadow */
 }
 
 .section-header h3 {
@@ -223,7 +223,8 @@ input {
 
 .styled-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.3);
+  /* Darker background for input */
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1rem 1.25rem;
@@ -235,7 +236,7 @@ input {
 
 .styled-input:focus {
   border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 0 2px var(--primary-alpha);
 }
 
@@ -255,10 +256,12 @@ input {
 /* Custom Controls */
 .type-selector {
   display: flex;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
   padding: 0.35rem;
   border-radius: 14px;
   border: 1px solid var(--glass-border);
+  gap: 0.5rem;
+  /* Ensure gap between buttons */
 }
 
 .type-btn {
@@ -1029,5 +1032,20 @@ input[type=number] {
   .time-separator {
     font-size: 1.5rem !important;
     margin-top: -20px !important;
+  }
+
+  /* Compact controls on mobile */
+  .type-selector {
+    gap: 0.25rem !important;
+  }
+
+  .type-btn {
+    white-space: nowrap;
+    padding: 0.5rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .duration-input-compact {
+    min-width: 40px !important;
   }
 }

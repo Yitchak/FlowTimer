@@ -131,7 +131,7 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                             }}
                                             className={`type-btn ${type === 'complex' ? 'active' : ''}`}
                                         >
-                                            Complex Flow
+                                            Complex
                                         </button>
                                     </div>
                                 </div>
@@ -383,7 +383,7 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                 <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Plus size={18} />
                                 </div>
-                                <span style={{ fontWeight: 700 }}>Add Interval / Step</span>
+                                <span style={{ fontWeight: 700 }}>Add Step</span>
                             </button>
                         </section>
                     )}
