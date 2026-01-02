@@ -187,9 +187,10 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         </div>
 
                         <div className="text-xs font-bold text-text-dim uppercase tracking-widest flex flex-col gap-0.5">
-                            <span className="opacity-80">{currentStep.name}</span>
-                            <span className="text-[10px] opacity-60">Step {currentStepIndex + 1}/{timer.steps.length}
-                                {timer.repetitions !== 1 && ` • Rep ${currentRepetition}${timer.repetitions === -1 ? '/∞' : '/' + timer.repetitions}`}</span>
+                            <span className="text-[10px] opacity-60">
+                                Step {currentStepIndex + 1}/{timer.steps.length}
+                                {timer.repetitions !== 1 && ` • Rep ${currentRepetition}${timer.repetitions === -1 ? '/∞' : '/' + timer.repetitions}`}
+                            </span>
                         </div>
                         {/* Step Tags Visualization */}
                         {timer.steps.length > 0 && (
