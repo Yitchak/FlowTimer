@@ -41,9 +41,8 @@ export const playTimerSound = (type: 'step' | 'complete') => {
             playTone(440, 'square', 0.8, now + timeOffset, 0.15); // A4 - Body/Buzz
         };
 
-        // Repeat 3 times
+        // Repeat 2 times
         playBell(0);
         playBell(0.6);
-        playBell(1.2);
     }
 };
