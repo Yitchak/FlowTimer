@@ -79,6 +79,63 @@ export const presets: Timer[] = [
         isPreset: true,
         imageUrl: 'https://images.unsplash.com/photo-1552196563-55cd4e45efb3?auto=format&fit=crop&w=300&q=80' // Girl doing yoga
     },
+    {
+        id: 'preset-evening-stretch',
+        name: 'Evening Wind Down',
+        type: 'complex',
+        tags: ['yoga', 'sleep', 'relax'],
+        color: '#8b5cf6', // Violet
+        repetitions: 1,
+        steps: [
+            { id: '1', name: 'Child\'s Pose', duration: 120 },
+            { id: '2', name: 'Thread the Needle (R)', duration: 60 },
+            { id: '3', name: 'Thread the Needle (L)', duration: 60 },
+            { id: '4', name: 'Happy Baby', duration: 90 },
+            { id: '5', name: 'Savasana', duration: 180 },
+        ],
+        order: 3, // Same order group
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=300&q=80'
+    },
+    {
+        id: 'preset-power-yoga',
+        name: 'Power Yoga Core',
+        type: 'complex',
+        tags: ['yoga', 'workout', 'core'],
+        color: '#ea580c', // Orange
+        repetitions: 3,
+        steps: [
+            { id: '1', name: 'Boat Pose', duration: 30 },
+            { id: '2', name: 'Plank Hold', duration: 45 },
+            { id: '3', name: 'Side Plank (R)', duration: 30 },
+            { id: '4', name: 'Side Plank (L)', duration: 30 },
+            { id: '5', name: 'Rest', duration: 15 },
+        ],
+        order: 3,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=300&q=80'
+    },
+    {
+        id: 'preset-yin-yoga',
+        name: 'Yin Yoga Deep',
+        type: 'complex',
+        tags: ['yoga', 'stretch', 'flexibility'],
+        color: '#14b8a6', // Teal
+        repetitions: 1,
+        steps: [
+            { id: '1', name: 'Dragon Pose (R)', duration: 180 }, // 3 min
+            { id: '2', name: 'Dragon Pose (L)', duration: 180 },
+            { id: '3', name: 'Sleeping Swan (R)', duration: 180 },
+            { id: '4', name: 'Sleeping Swan (L)', duration: 180 },
+            { id: '5', name: 'Butterfly', duration: 240 }, // 4 min
+        ],
+        order: 3,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1552196563-55cd4e45efb3?auto=format&fit=crop&w=300&q=80'
+    },
 
     // --- WORKOUT ---
     {
