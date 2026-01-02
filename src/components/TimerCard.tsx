@@ -191,6 +191,39 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             <span className="text-[10px] opacity-60">Step {currentStepIndex + 1}/{timer.steps.length}
                                 {timer.repetitions !== 1 && ` • Rep ${currentRepetition}${timer.repetitions === -1 ? '/∞' : '/' + timer.repetitions}`}</span>
                         </div>
+                        {/* Step Tags Visualization */}
+                        {timer.steps.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                                {timer.steps.map((step, idx) => {
+                                    const highlight = idx === currentStepIndex;
+                                    return (
+                                        <span
+                                            key={idx}
+                                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold border transition-all ${highlight ? 'shadow-sm scale-105' : ''}`}
+                                            style={{
+                                                backgroundColor: highlight
+                                                    ? (timer.color || 'var(--primary)')
+                                                    : 'rgba(255,255,255,0.05)',
+                                                color: highlight
+                                                    ? '#ffffff'
+                                                    : 'var(--text-dim)',
+                                                borderColor: highlight
+                                                    ? 'transparent'
+                                                    : 'rgba(255,255,255,0.1)',
+                                                opacity: highlight ? 1 : 0.5,
+                                                maxWidth: '100px',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap'
+                                            }}
+                                            title={`${step.name} (${step.duration}s)`}
+                                        >
+                                            {step.name}
+                                        </span>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
 
                     {/* Right Side: Big Circular Image */}
