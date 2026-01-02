@@ -178,7 +178,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             )}
                         </div>
 
-                        <div className="timer-tags mb-3">
+                        <div className="timer-tags mb-3 flex flex-wrap gap-2">
                             {timer.tags.map(tag => (
                                 <span key={tag} className="tag">
                                     {tag}
@@ -196,6 +196,13 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             <div className="flex flex-wrap gap-2 mt-2">
                                 {timer.steps.map((step, idx) => {
                                     const highlight = idx === currentStepIndex;
+                                    /* Safety for color contrast */
+                                    const bgCol = timer.color || '#6366f1'; // Default primary hex if var fails provided logic
+                                    // But timer.color might be undefined.
+                                    // getTextColor requires HEX string format #RRGGBB
+                                    const isHex = (typeof bgCol === 'string' && bgCol.startsWith('#'));
+                                    const txtCol = (highlight && isHex) ? getTextColor(bgCol) : '#ffffff';
+
                                     return (
                                         <span
                                             key={idx}
@@ -205,11 +212,11 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                                     ? (timer.color || 'var(--primary)')
                                                     : 'rgba(255,255,255,0.05)',
                                                 color: highlight
-                                                    ? '#ffffff'
+                                                    ? txtCol
                                                     : 'var(--text-dim)',
                                                 borderColor: highlight
                                                     ? 'rgba(255,255,255,0.2)'
-                                                    : 'rgba(255,255,255,0.15)', // Stronger border
+                                                    : 'rgba(255,255,255,0.15)',
                                                 opacity: highlight ? 1 : 0.7,
                                                 maxWidth: '120px',
                                                 overflow: 'hidden',
