@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward } from 'lucide-react';
+import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat } from 'lucide-react';
+
 import { motion } from 'framer-motion';
 import type { Timer } from '../types/timer';
 import { useTimer } from '../hooks/useTimer';
@@ -176,6 +177,23 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                     Preset
                                 </span>
                             )}
+
+                            {/* Loop Icon */}
+                            {(timer.repetitions === -1 || (timer.repetitions && timer.repetitions > 1)) && (
+                                <div
+                                    className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-white/5 border border-white/10 text-text-dim"
+                                    title={timer.repetitions === -1 ? "Loops Infinitely" : `Repeats ${timer.repetitions} times`}
+                                >
+                                    {timer.repetitions === -1 ? (
+                                        <Infinity size={12} />
+                                    ) : (
+                                        <>
+                                            <Repeat size={10} />
+                                            <span>{timer.repetitions}</span>
+                                        </>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         <div className="timer-tags mb-3 flex flex-wrap gap-2">
@@ -186,12 +204,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             ))}
                         </div>
 
-                        <div className="text-xs font-bold text-text-dim uppercase tracking-widest flex flex-col gap-0.5">
-                            <span className="text-[10px] opacity-60">
-                                Step {currentStepIndex + 1}/{timer.steps.length}
-                                {timer.repetitions !== 1 && ` • Rep ${currentRepetition}${timer.repetitions === -1 ? '/∞' : '/' + timer.repetitions}`}
-                            </span>
-                        </div>
+                        {/* Stats Removed */}
                         {/* Step Tags Visualization */}
                         {timer.steps.length > 0 && (
                             <div className="flex flex-wrap gap-2 mt-2">
