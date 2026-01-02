@@ -216,6 +216,91 @@ export const presets: Timer[] = [
         userId: 'system',
         isPreset: true,
         imageUrl: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=300&q=80' // Desk/Computer
+    },
+    {
+        id: 'preset-sat-kriya',
+        name: 'SAT KRIYA',
+        type: 'complex',
+        tags: ['meditation', 'yoga', 'kundalini'],
+        color: '#ff7043', // Deep Orange
+        repetitions: 1,
+        steps: [
+            { id: 'p1', name: 'Preparation', duration: 15 },
+            { id: 'p2', name: 'Sat kriya', duration: 180 },
+            { id: 'p3', name: 'Breath in and out', duration: 5 },
+            { id: 'p4', name: 'Hold', duration: 20 },
+            { id: 'p5', name: 'Preparation', duration: 15 },
+            { id: 'p6', name: 'Relaxation', duration: 60 }
+        ],
+        order: 8,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80'
+    },
+    {
+        id: 'preset-alt-breath',
+        name: 'Alternate Breathing',
+        type: 'complex',
+        tags: ['breathwork', 'pranayama', 'calm'],
+        color: '#26c6da', // Cyan
+        repetitions: 4,
+        steps: [
+            { id: 'b1', name: 'Inhale', duration: 4 },
+            { id: 'b2', name: 'Hold', duration: 16 },
+            { id: 'b3', name: 'Exhale', duration: 8 }
+        ],
+        order: 9,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=300&q=80'
+    },
+    {
+        id: 'preset-1min',
+        name: '1 Minute Flow',
+        type: 'complex',
+        tags: ['quick', 'flow'],
+        color: '#66bb6a', // Green
+        repetitions: -1,
+        steps: [
+            { id: '1m1', name: 'Preparation', duration: 15 },
+            { id: '1m2', name: '1 minute', duration: 60 }
+        ],
+        order: 10,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=300&q=80' // Clock/time
+    },
+    {
+        id: 'preset-3min',
+        name: '3 Minutes Flow',
+        type: 'complex',
+        tags: ['focus', 'flow'],
+        color: '#42a5f5', // Blue
+        repetitions: -1,
+        steps: [
+            { id: '3m1', name: 'Preparation', duration: 15 },
+            { id: '3m2', name: '3 minutes', duration: 180 }
+        ],
+        order: 11,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1501139083538-0139583c61df?auto=format&fit=crop&w=300&q=80'
+    },
+    {
+        id: 'preset-11min',
+        name: '11 Minutes Flow',
+        type: 'complex',
+        tags: ['deep focus', 'flow'],
+        color: '#7e57c2', // Deep Purple
+        repetitions: -1,
+        steps: [
+            { id: '11m1', name: 'Preparation', duration: 15 },
+            { id: '11m2', name: '11 minutes', duration: 660 }
+        ],
+        order: 12,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=300&q=80'
     }
 ];
 
