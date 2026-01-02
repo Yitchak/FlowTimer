@@ -193,13 +193,13 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         </div>
                         {/* Step Tags Visualization */}
                         {timer.steps.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
+                            <div className="flex flex-wrap gap-2 mt-2">
                                 {timer.steps.map((step, idx) => {
                                     const highlight = idx === currentStepIndex;
                                     return (
                                         <span
                                             key={idx}
-                                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold border transition-all ${highlight ? 'shadow-sm scale-105' : ''}`}
+                                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all duration-300 ${highlight ? 'shadow-md scale-105 z-10' : ''}`}
                                             style={{
                                                 backgroundColor: highlight
                                                     ? (timer.color || 'var(--primary)')
@@ -208,10 +208,10 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                                     ? '#ffffff'
                                                     : 'var(--text-dim)',
                                                 borderColor: highlight
-                                                    ? 'transparent'
-                                                    : 'rgba(255,255,255,0.1)',
-                                                opacity: highlight ? 1 : 0.5,
-                                                maxWidth: '100px',
+                                                    ? 'rgba(255,255,255,0.2)'
+                                                    : 'rgba(255,255,255,0.15)', // Stronger border
+                                                opacity: highlight ? 1 : 0.7,
+                                                maxWidth: '120px',
                                                 overflow: 'hidden',
                                                 textOverflow: 'ellipsis',
                                                 whiteSpace: 'nowrap'
