@@ -1130,3 +1130,48 @@ input[type=number] {
     border-radius: 16px !important;
   }
 }
+
+/* --- TAGS & PILLS --- */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px !important;
+  /* Force rounded */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Explicit outline */
+  color: var(--text-dim) !important;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.step-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px !important;
+  /* Force rounded */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Default outline */
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step-pill.active {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: transparent;
+  /* Or custom */
+  z-index: 5;
+  transform: scale(1.05);
+}

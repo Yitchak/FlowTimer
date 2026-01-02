@@ -206,7 +206,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                     return (
                                         <span
                                             key={idx}
-                                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all duration-300 ${highlight ? 'shadow-md scale-105 z-10' : ''}`}
+                                            className={`step-pill ${highlight ? 'active' : ''}`}
                                             style={{
                                                 backgroundColor: highlight
                                                     ? (timer.color || 'var(--primary)')
@@ -215,13 +215,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                                     ? txtCol
                                                     : 'var(--text-dim)',
                                                 borderColor: highlight
-                                                    ? 'rgba(255,255,255,0.2)'
+                                                    ? 'transparent'
                                                     : 'rgba(255,255,255,0.15)',
-                                                opacity: highlight ? 1 : 0.7,
-                                                maxWidth: '120px',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis',
-                                                whiteSpace: 'nowrap'
+                                                opacity: highlight ? 1 : 0.7
                                             }}
                                             title={`${step.name} (${step.duration}s)`}
                                         >
