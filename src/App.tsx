@@ -7,6 +7,9 @@ import AccessibilityMenu from './components/AccessibilityMenu';
 import { mockTimers as initialMockTimers } from './data/mockTimers';
 import type { Timer } from './types/timer';
 import { toast, Toaster } from 'sonner';
+import { useAuth } from './contexts/AuthContext';
+import LoginModal from './components/LoginModal';
+import { User, LogIn, LogOut } from 'lucide-react';
 import './App.css';
 
 function App() {
@@ -35,6 +38,19 @@ function App() {
   const [isAccessMenuOpen, setIsAccessMenuOpen] = useState(false);
   const [showGlobalMenu, setShowGlobalMenu] = useState(false);
   const globalMenuRef = useRef<HTMLDivElement>(null);
+
+  const { user, signOut } = useAuth();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("Signed out successfully");
+    } catch (e) {
+      toast.error("Error signing out");
+    }
+    setShowGlobalMenu(false);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -342,8 +358,38 @@ function App() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.1 }}
+
                         className="dropdown-menu"
                       >
+                        {user ? (
+                          <div className="px-3 py-2 text-[10px] text-text-dim border-b border-white/5 mb-1 truncate">
+                            <div className="flex items-center gap-2">
+                              <User size={12} />
+                              <span className="truncate">{user.email}</span>
+                            </div>
+                          </div>
+                        ) : null}
+
+                        {user ? (
+                          <button
+                            onClick={handleSignOut}
+                            className="dropdown-item text-red-400 hover:text-red-300"
+                          >
+                            <LogOut size={16} />
+                            <span>Sign Out</span>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => { setIsLoginOpen(true); setShowGlobalMenu(false); }}
+                            className="dropdown-item text-primary"
+                          >
+                            <LogIn size={16} />
+                            <span>Sign In / Sync</span>
+                          </button>
+                        )}
+
+                        <div className="dropdown-divider"></div>
+
                         <button
                           onClick={() => { handleExportTimers(); setShowGlobalMenu(false); }}
                           className="dropdown-item"
@@ -380,7 +426,7 @@ function App() {
 
                         <button
                           onClick={() => {
-                            toast.info(`FlowTimer v1.1.14\nReady for your next session!`);
+                            toast.info(`FlowTimer v1.1.15\nReady for your next session!`);
                             setShowGlobalMenu(false);
                           }}
                           className="dropdown-item"
@@ -390,7 +436,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.14
+                          v1.1.15
                         </div>
 
 
@@ -663,8 +709,12 @@ function App() {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {isLoginOpen && <LoginModal onClose={() => setIsLoginOpen(false)} />}
+      </AnimatePresence>
+
       <div className="bg-glow"></div>
-    </div>
+    </div >
   );
 }
 
