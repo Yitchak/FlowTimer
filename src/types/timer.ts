@@ -4,6 +4,7 @@ export interface TimerStep {
   id: string;
   name: string;
   duration: number; // in seconds
+  color?: string;
 }
 
 export interface Timer {
@@ -13,11 +14,11 @@ export interface Timer {
   tags: string[];
   imageUrl?: string;
   color?: string;
-  
+
   // Settings
   repetitions: number; // -1 for continuous, 1+ for specific
   steps: TimerStep[];
-  
+
   // State (for Firestore/Sync)
   order: number;
   userId: string;

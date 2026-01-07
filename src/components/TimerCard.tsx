@@ -1,5 +1,7 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
 import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
+
 
 import { motion } from 'framer-motion';
 import type { Timer } from '../types/timer';
@@ -26,7 +28,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
     onDuplicate,
     onDelete
 }) => {
+    const { t } = useLanguage();
     // Helper for contrast text color
+
     const getTextColor = (hexColor: string) => {
         const r = parseInt(hexColor.substr(1, 2), 16);
         const g = parseInt(hexColor.substr(3, 2), 16);
@@ -60,6 +64,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
     const [showMenu, setShowMenu] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const stepsContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -84,7 +89,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
         currentRepetition,
         reset,
         nextStep,
-        prevStep
+        prevStep,
+        jumpToStep
     } = useTimer({
         steps: timer.steps,
         repetitions: timer.repetitions ?? 1,
@@ -100,6 +106,20 @@ const TimerCard: React.FC<TimerCardProps> = ({
             playTimerSound('step');
         }
     });
+
+    // Auto-scroll active step into view
+    useEffect(() => {
+        if (stepsContainerRef.current) {
+            const activeStep = stepsContainerRef.current.querySelector('.step-pill.active');
+            if (activeStep) {
+                activeStep.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            }
+        }
+    }, [currentStepIndex]);
 
     const totalDuration = useMemo(() => {
         const cycleTime = timer.steps.reduce((acc, step) => acc + step.duration, 0);
@@ -136,7 +156,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
     return (
         <motion.div
-            className="timer-card glass-card group"
+            className="timer-card glass-card group flex flex-col h-full"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             style={{
@@ -148,19 +168,20 @@ const TimerCard: React.FC<TimerCardProps> = ({
         >
             {/* Top Section: Info (Left) + Image (Right) */}
             {/* Info Area - Grid Layout (Force) */}
-            <div className="timer-info relative mb-4">
+            <div className="timer-info relative mb-4 flex-grow">
                 <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '16px', alignItems: 'start' }}>
 
                     {/* Left Side: Text Content */}
                     <div style={{ minWidth: 0, paddingRight: '0.5rem' }}>
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                             <h3 className="timer-title text-lg md:text-xl font-bold leading-tight line-clamp-2" style={{ color: titleColor }}>
-                                {timer.name}
+                                {t(timer.name)}
                             </h3>
+
                             <button
                                 onClick={(e) => { e.stopPropagation(); onEdit(timer); }}
                                 className="p-1 rounded-full hover:bg-white/10 text-text-dim hover:text-primary transition-colors ml-1"
-                                title="Edit Timer"
+                                title={t('actions.edit')}
                             >
                                 <Edit2 size={14} />
                             </button>
@@ -174,7 +195,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                         color: timer.color || 'var(--primary)'
                                     }}
                                 >
-                                    Preset
+                                    {t('timer.preset')}
                                 </span>
                             )}
 
@@ -182,9 +203,10 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             {(timer.repetitions === -1 || (timer.repetitions && timer.repetitions > 1)) && (
                                 <div
                                     className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-white/5 border border-white/10 text-text-dim"
-                                    title={timer.repetitions === -1 ? "Loops Infinitely" : `Repeats ${timer.repetitions} times`}
+                                    title={timer.repetitions === -1 ? t('timer.loops') : `${t('timer.repeats')} ${timer.repetitions} ${t('timer.times')}`}
                                 >
                                     {timer.repetitions === -1 ? (
+
                                         <Infinity size={12} />
                                     ) : (
                                         <>
@@ -205,40 +227,62 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         </div>
 
                         {/* Stats Removed */}
-                        {/* Step Tags Visualization */}
+                        {/* Step Tags Visualization - Horizontal Scroll with Mask */}
                         {timer.steps.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mt-2">
-                                {timer.steps.map((step, idx) => {
-                                    const highlight = idx === currentStepIndex;
-                                    /* Safety for color contrast */
-                                    const bgCol = timer.color || '#6366f1'; // Default primary hex if var fails provided logic
-                                    // But timer.color might be undefined.
-                                    // getTextColor requires HEX string format #RRGGBB
-                                    const isHex = (typeof bgCol === 'string' && bgCol.startsWith('#'));
-                                    const txtCol = (highlight && isHex) ? getTextColor(bgCol) : '#ffffff';
+                            <div className="relative mt-2">
+                                <div
+                                    ref={stepsContainerRef}
+                                    className="steps-scroll-container flex overflow-x-auto gap-2 pb-1 pr-8 scroll-smooth"
+                                    style={{
+                                        msOverflowStyle: 'none',
+                                        scrollbarWidth: 'none',
+                                        WebkitOverflowScrolling: 'touch'
+                                    }}
+                                >
+                                    <style>{`
+                                        .steps-scroll-container::-webkit-scrollbar { display: none; }
+                                    `}</style>
+                                    {timer.steps.map((step, idx) => {
+                                        const highlight = idx === currentStepIndex;
+                                        const bgCol = step.color || timer.color || '#6366f1';
+                                        const isHex = (typeof bgCol === 'string' && bgCol.startsWith('#'));
+                                        const txtCol = (highlight && isHex) ? getTextColor(bgCol) : '#ffffff';
 
-                                    return (
-                                        <span
-                                            key={idx}
-                                            className={`step-pill ${highlight ? 'active' : ''}`}
-                                            style={{
-                                                backgroundColor: highlight
-                                                    ? (timer.color || 'var(--primary)')
-                                                    : 'rgba(255,255,255,0.05)',
-                                                color: highlight
-                                                    ? txtCol
-                                                    : 'var(--text-dim)',
-                                                borderColor: highlight
-                                                    ? 'transparent'
-                                                    : 'rgba(255,255,255,0.15)',
-                                                opacity: highlight ? 1 : 0.7
-                                            }}
-                                            title={`${step.name} (${step.duration}s)`}
-                                        >
-                                            {step.name}
-                                        </span>
-                                    );
-                                })}
+                                        return (
+                                            <button
+                                                key={idx}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    jumpToStep(idx);
+                                                }}
+                                                className={`step-pill flex-shrink-0 ${highlight ? 'active' : ''} cursor-pointer hover:scale-105 transition-transform`}
+                                                style={{
+                                                    backgroundColor: highlight
+                                                        ? (timer.color || 'var(--primary)')
+                                                        : 'rgba(255,255,255,0.05)',
+                                                    color: highlight
+                                                        ? txtCol
+                                                        : 'var(--text-dim)',
+                                                    borderColor: highlight
+                                                        ? 'transparent'
+                                                        : 'rgba(255,255,255,0.15)',
+                                                    opacity: highlight ? 1 : 0.7,
+                                                    borderWidth: '1px',
+                                                    borderStyle: 'solid',
+                                                    borderRadius: '9999px',
+                                                    padding: '2px 10px',
+                                                    fontSize: '10px',
+                                                    fontWeight: highlight ? 'bold' : 'normal'
+                                                }}
+                                                title={`${t(step.name)} (${step.duration}s) - Click to jump`}
+                                            >
+                                                {t(step.name)}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                {/* Fade Mask Indicator */}
+                                <div className="absolute right-0 top-0 bottom-1 w-8 pointer-events-none bg-gradient-to-l from-black/10 to-transparent rounded-r-full" />
                             </div>
                         )}
                     </div>
@@ -286,8 +330,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                             className="dropdown-item"
                                         >
                                             <Copy size={16} />
-                                            <span>Duplicate</span>
+                                            <span>{t('actions.duplicate')}</span>
                                         </button>
+
 
                                         <button
                                             onClick={(e) => {
@@ -298,8 +343,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                             className="dropdown-item"
                                         >
                                             <Edit2 size={16} />
-                                            <span>Edit</span>
+                                            <span>{t('actions.edit')}</span>
                                         </button>
+
 
                                         <div className="dropdown-divider"></div>
 
@@ -308,17 +354,19 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                                 e.stopPropagation();
                                                 setShowMenu(false);
                                                 if (timer.isPreset) {
-                                                    toast.info("Cannot delete built-in presets.");
+                                                    toast.info(t('messages.presetDeleteError'));
                                                 } else {
                                                     onDelete(timer.id);
                                                 }
+
                                             }}
                                             className={`dropdown-item ${timer.isPreset ? 'opacity-50 cursor-not-allowed hover:bg-transparent hover:text-text-dim' : ''}`}
                                             style={{ color: timer.isPreset ? 'inherit' : '#ef4444' }}
                                         >
                                             <Trash2 size={16} />
-                                            <span>Delete</span>
+                                            <span>{t('actions.delete')}</span>
                                         </button>
+
                                     </motion.div>
                                 )}
                             </div>
@@ -332,8 +380,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
                 <span className="time-value">
                     {formatTime(timeLeft)}
                 </span>
-                <span className="time-label">Remaining</span>
+                <span className="time-label">{t('timer.remaining')}</span>
             </div>
+
 
             {/* Progress Bar */}
             <div className="progress-container">
@@ -351,8 +400,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     onClick={prevStep}
                     className="stop-btn icon-btn-large"
                     aria-label="Previous Step"
-                    title="Previous"
+                    title={t('actions.previous')}
                     style={{ color: 'var(--text-dim)' }}
+
                 >
                     <SkipBack size={20} />
                 </button>
@@ -361,8 +411,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     <button
                         onClick={() => onStart(timer.id)}
                         className="primary-btn control-btn-main"
-                        aria-label={`Start ${timer.name}`}
+                        aria-label={`${t('actions.start')} ${t(timer.name)}`}
                         style={{
+
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
                             border: 'none',
@@ -371,14 +422,16 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         }}
                     >
                         <Play size={20} fill="currentColor" />
-                        <span>Start</span>
+                        <span>{t('actions.start')}</span>
                     </button>
+
                 ) : (
                     <button
                         onClick={() => onPause(timer.id)}
                         className="pause-btn control-btn-main"
-                        aria-label={`Pause ${timer.name}`}
+                        aria-label={`${t('actions.pause')} ${t(timer.name)}`}
                         style={{
+
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
                             border: 'none',
@@ -387,16 +440,18 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         }}
                     >
                         <Pause size={20} fill="currentColor" />
-                        <span>Pause</span>
+                        <span>{t('actions.pause')}</span>
                     </button>
+
                 )}
 
                 <button
                     onClick={nextStep}
                     className="stop-btn icon-btn-large"
                     aria-label="Next Step"
-                    title="Next"
+                    title={t('actions.next')}
                 >
+
                     <SkipForward size={20} />
                 </button>
 
@@ -408,20 +463,24 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         reset();
                     }}
                     className="stop-btn icon-btn-large"
-                    aria-label={`Stop ${timer.name}`}
-                    title="Stop"
+                    aria-label={`${t('actions.stop')} ${t(timer.name)}`}
+                    title={t('actions.stop')}
                 >
+
                     <Square size={20} fill="currentColor" />
                 </button>
+
 
                 <button
                     onClick={handleReset}
                     className="reset-btn icon-btn-large"
-                    aria-label={`Reset ${timer.name}`}
-                    title="Restart"
+                    aria-label={`${t('actions.reset')} ${t(timer.name)}`}
+                    title={t('actions.reset')}
                 >
+
                     <RotateCcw size={20} />
                 </button>
+
             </div>
         </motion.div>
     );

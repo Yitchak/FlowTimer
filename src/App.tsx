@@ -8,23 +8,34 @@ import { mockTimers as initialMockTimers } from './data/mockTimers';
 import type { Timer } from './types/timer';
 import { toast, Toaster } from 'sonner';
 import { useAuth } from './contexts/AuthContext';
+import { useTimerStorage } from './hooks/useTimerStorage';
 import LoginModal from './components/LoginModal';
 import { User, LogIn, LogOut } from 'lucide-react';
 import './App.css';
+import { useLanguage } from './contexts/LanguageContext';
+
 
 function App() {
-  const [timers, setTimers] = useState<Timer[]>(() => {
-    try {
-      const saved = localStorage.getItem('timrflow_timers');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch (e) {
-      console.error("Failed to load timers from storage", e);
-    }
-    return initialMockTimers || []; // Fallback safegaurd
-  });
+  /* 
+    DATA PERSISTENCE:
+    We now use the custom hook 'useTimerStorage' which handles:
+    1. LocalStorage (offline/guest)
+    2. Supabase Cloud (logged-in user)
+    3. Merging/Syncing logic
+  */
+  const { user, signOut } = useAuth();
+  const {
+    timers,
+    addTimer,
+    updateTimer,
+    deleteTimer,
+    reorderTimers,
+    setTimers, // Exposed for special cases (Import/Restore)
+    loading: isLoadingTimers
+  } = useTimerStorage(user);
+
+  const { t, isRTL } = useLanguage();
+
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('timrflow_theme');
@@ -39,17 +50,18 @@ function App() {
   const [showGlobalMenu, setShowGlobalMenu] = useState(false);
   const globalMenuRef = useRef<HTMLDivElement>(null);
 
-  const { user, signOut } = useAuth();
+
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast.success("Signed out successfully");
+      toast.success(t('messages.signedOut'));
     } catch (e) {
       toast.error("Error signing out");
     }
     setShowGlobalMenu(false);
+
   };
 
   useEffect(() => {
@@ -101,9 +113,7 @@ function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Persistence & Theme Sync
-  useEffect(() => {
-    localStorage.setItem('timrflow_timers', JSON.stringify(timers));
-  }, [timers]);
+
 
   useEffect(() => {
     localStorage.setItem('timrflow_theme', theme);
@@ -121,21 +131,97 @@ function App() {
     if (missingPresets.length > 0) {
       console.log('Restoring missing presets...', missingPresets);
       setTimers(prev => [...prev, ...missingPresets]);
-      toast.success("Restored missing presets");
+      toast.success(t('messages.restoreSuccess'));
     }
+
   }, [timers.length]); // Check when length changes
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
+  // --- CLEANUP & MIGRATE PRESETS (AUTO) ---
+  useEffect(() => {
+    let hasChanges = false;
+    let newTimers = [...timers];
+
+    // 1. Remove Deprecated
+    const deprecatedIds = [
+      'preset-sun-salutation',
+      'preset-morning-flow',
+      'preset-evening-stretch',
+      'preset-power-yoga',
+      'preset-yin-yoga'
+    ];
+
+    if (newTimers.some(t => deprecatedIds.includes(t.id))) {
+      console.log("Cleaning up deprecated presets...");
+      newTimers = newTimers.filter(t => !deprecatedIds.includes(t.id));
+      hasChanges = true;
+    }
+
+    // 2. Patch Tags for Yoga List (ensure they have 'yoga' tag)
+    const timersToTagYoga = ['preset-alt-breath', 'preset-1min', 'preset-3min', 'preset-11min', 'preset-sat-kriya'];
+
+    newTimers = newTimers.map(t => {
+      if (timersToTagYoga.includes(t.id) && !t.tags.includes('yoga')) {
+        console.log(`Patching 'yoga' tag to ${t.name}`);
+        hasChanges = true;
+        return { ...t, tags: [...t.tags, 'yoga'] };
+      }
+      return t;
+    });
+
+    // 3. Patch Alternate Breathing Steps (ensure full cycle)
+    const altBreath = newTimers.find(t => t.id === 'preset-alt-breath');
+    if (altBreath && altBreath.steps.length === 3) {
+      console.log("Patching Alt Breath steps...");
+      hasChanges = true;
+      // Update to 6 steps
+      newTimers = newTimers.map(t => {
+        if (t.id === 'preset-alt-breath') {
+          return {
+            ...t,
+            steps: [
+              { id: 'b1', name: 'steps.inhale', duration: 4 },
+              { id: 'b2', name: 'steps.hold', duration: 16 },
+              { id: 'b3', name: 'steps.exhale', duration: 8 },
+              { id: 'b4', name: 'steps.inhale', duration: 4 },
+              { id: 'b5', name: 'steps.hold', duration: 16 },
+              { id: 'b6', name: 'steps.exhale', duration: 8 }
+            ]
+          };
+        }
+        return t;
+      });
+    }
+
+
+    // 4. Inject Missing 6 Plus 1
+    if (!newTimers.some(t => t.id === 'preset-6-plus-1')) {
+      const newPreset = initialMockTimers.find(t => t.id === 'preset-6-plus-1');
+      if (newPreset) {
+        console.log("Injecting 6 Plus 1 preset...");
+        newTimers.push(newPreset);
+        hasChanges = true;
+      }
+    }
+
+    if (hasChanges) {
+      setTimers(newTimers);
+      toast.success(t('messages.restoreSuccess')); // Notify update
+    }
+  }, [timers, setTimers, t]);
+
+
   const handleResetOrder = () => {
     if (window.confirm('Reset timers to original order?')) {
       // Just sort or re-arrange? For now, let's just assume it means reset to initial set.
       setTimers([...initialMockTimers]);
       setListKey(prev => prev + 1);
-      toast.success("Order reset to original");
+      toast.success(t('messages.orderReset'));
     }
+
   };
 
   const handleRestorePresets = () => {
@@ -148,8 +234,9 @@ function App() {
         // This forces an overwrite of any "broken" preset data in state
         return [...initialMockTimers, ...customTimers];
       });
-      toast.success("Presets restored successfully");
+      toast.success(t('messages.restoreSuccess'));
     }
+
   };
 
   const handleExportTimers = () => {
@@ -160,8 +247,9 @@ function App() {
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
-    toast.success("Timers exported successfully");
+    toast.success(t('messages.backupExported'));
   };
+
 
   const handleStart = (id: string) => {
     setActiveTimerId(id);
@@ -198,39 +286,37 @@ function App() {
   const handleDeleteTimer = (id: string) => {
     const timer = timers.find(t => t.id === id);
     if (timer?.isPreset) {
-      toast.error("Presets cannot be deleted.");
+      toast.error(t('messages.presetDeleteError'));
       return;
     }
-    if (window.confirm('Are you sure you want to delete this timer?')) {
-      setTimers(timers.filter(t => t.id !== id));
+    if (window.confirm(t('messages.confirmDelete'))) {
+      deleteTimer(id);
       if (activeTimerId === id) setActiveTimerId(null);
-      toast.success("Timer deleted");
+      toast.success(t('messages.timerDeleted'));
     }
+
   };
 
   const handleRemoveFromRecents = (id: string) => {
     setRecentTimerIds(prev => prev.filter(tid => tid !== id));
-    toast.success("Removed from list");
+    toast.success(t('messages.timerDeleted'));
   };
 
+
   const handleSaveTimer = (timer: Timer) => {
-    // If we have an editingTimer in state that matches an existing timer ID, it's an update.
-    // If editingTimer was a fresh copy (new ID), find won't succeed, so it goes to 'else' (Create New).
     const existingIndex = timers.findIndex(t => t.id === timer.id);
 
     if (existingIndex !== -1) {
       // Update existing
-      const newTimers = [...timers];
-      newTimers[existingIndex] = { ...timer, isPreset: false };
-      setTimers(newTimers);
-      toast.success("Timer updated");
+      updateTimer({ ...timer, isPreset: false });
+      toast.success(t('messages.timerUpdated'));
     } else {
       // Create New
-      // Ensure it appears at the end by giving it a high order
       const maxOrder = Math.max(...timers.map(t => t.order || 0), 0);
-      setTimers([...timers, { ...timer, isPreset: false, order: maxOrder + 1 }]);
-      toast.success("New timer created");
+      addTimer({ ...timer, isPreset: false, order: maxOrder + 1 });
+      toast.success(t('messages.timerCreated'));
     }
+
     setIsEditorOpen(false);
   };
 
@@ -256,8 +342,9 @@ function App() {
     linkElement.setAttribute('href', dataUri);
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
-    toast.success("Backup exported");
+    toast.success(t('messages.backupExported'));
   };
+
 
   const handleImport = () => {
     fileInputRef.current?.click();
@@ -279,17 +366,19 @@ function App() {
             }
           });
           setTimers(newTimers);
-          toast.success(`Imported ${imported.length} timers`);
+          toast.success(t('messages.importSuccess'));
         }
       } catch (err) {
-        toast.error("Invalid JSON file");
+        toast.error(t('messages.invalidJson'));
       }
+
     };
     reader.readAsText(file);
   };
 
   return (
-    <div className="app-container" dir="ltr">
+    <div className="app-container" dir={isRTL ? 'rtl' : 'ltr'}>
+
       <Toaster position="bottom-right" theme={theme === 'dark' ? 'dark' : 'light'} />
       <input
         type="file"
@@ -325,30 +414,35 @@ function App() {
                 <button
                   className="icon-btn-large"
                   onClick={toggleTheme}
-                  title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                  title={t('actions.switchTheme')}
                 >
+
                   {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
 
                 <button
                   className={`icon-btn-large ${isAccessMenuOpen ? 'bg-primary text-black' : ''}`}
                   onClick={() => setIsAccessMenuOpen(!isAccessMenuOpen)}
-                  title="Accessibility"
+                  title={t('actions.accessibility')}
                 >
+
                   <Shield size={20} />
                 </button>
-                <button className="icon-btn-large hide-mobile" title="Language">
+                <button className="icon-btn-large hide-mobile" title={t('actions.language')}>
                   <Globe size={20} />
                 </button>
+
 
                 {/* Global Menu */}
                 <div className="relative" ref={globalMenuRef}>
                   <button
-                    className={`icon-btn-large ${showGlobalMenu ? 'bg-white/10 text-white' : ''}`}
-                    title="More Actions"
+                    className={`icon-btn-large ${showGlobalMenu ? 'bg-white/10 text-white' : ''} ${user ? 'text-green-400' : ''}`}
+                    title={user ? `${t('actions.signedInAs')} ${user.email}` : t('actions.moreActions')}
                     onClick={() => setShowGlobalMenu(!showGlobalMenu)}
                   >
-                    <MoreVertical size={20} />
+
+
+                    {user ? <User size={20} /> : <MoreVertical size={20} />}
                   </button>
 
                   <AnimatePresence>
@@ -376,7 +470,8 @@ function App() {
                             className="dropdown-item text-red-400 hover:text-red-300"
                           >
                             <LogOut size={16} />
-                            <span>Sign Out</span>
+                            <span>{t('actions.signOut')}</span>
+
                           </button>
                         ) : (
                           <button
@@ -384,7 +479,8 @@ function App() {
                             className="dropdown-item text-primary"
                           >
                             <LogIn size={16} />
-                            <span>Sign In / Sync</span>
+                            <span>{t('actions.signIn')}</span>
+
                           </button>
                         )}
 
@@ -395,14 +491,16 @@ function App() {
                           className="dropdown-item"
                         >
                           <Download size={16} />
-                          <span>Export Data</span>
+                          <span>{t('actions.export')}</span>
+
                         </button>
                         <button
                           onClick={() => { handleImport(); setShowGlobalMenu(false); }}
                           className="dropdown-item"
                         >
                           <Upload size={16} />
-                          <span>Import Data</span>
+                          <span>{t('actions.import')}</span>
+
                         </button>
 
                         <div className="dropdown-divider"></div>
@@ -412,31 +510,34 @@ function App() {
                           className="dropdown-item"
                         >
                           <RefreshCw size={16} />
-                          <span>Restore Presets</span>
+                          <span>{t('actions.restorePresets')}</span>
+
                         </button>
                         <button
                           onClick={() => { handleResetOrder(); setShowGlobalMenu(false); }}
                           className="dropdown-item"
                         >
                           <RotateCcw size={16} />
-                          <span>Reset Order</span>
+                          <span>{t('actions.resetOrder')}</span>
+
                         </button>
 
                         <div className="dropdown-divider"></div>
 
                         <button
                           onClick={() => {
-                            toast.info(`FlowTimer v1.1.15\nReady for your next session!`);
+                            toast.info(`FlowTimer v1.1.16\nReady for your next session!`);
                             setShowGlobalMenu(false);
                           }}
                           className="dropdown-item"
                         >
                           <Info size={16} />
-                          <span>About</span>
+                          <span>{t('app.about')}</span>
+
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.15
+                          v1.1.16
                         </div>
 
 
@@ -448,7 +549,8 @@ function App() {
 
                 <button className="primary-btn" onClick={handleAddTimer}>
                   <Plus size={20} />
-                  <span className="hide-mobile">Add Timer</span>
+                  <span className="hide-mobile">{t('app.addTimer')}</span>
+
                 </button>
               </div>
             </header>
@@ -468,12 +570,13 @@ function App() {
               }}
             >
               {[
-                { id: 'recent', label: 'Recent', color: '#22d3ee' },
-                { id: 'custom', label: 'My\u00A0Timers', color: 'var(--primary)' },
-                { id: 'breathwork', label: 'Breathwork', color: '#4ade80' },
-                { id: 'yoga', label: 'Yoga', color: '#fbbf24' },
-                { id: 'workout', label: 'Workout', color: '#f87171' }
+                { id: 'recent', label: t('tabs.recent'), color: '#22d3ee' },
+                { id: 'custom', label: t('tabs.myTimers'), color: 'var(--primary)' },
+                { id: 'breathwork', label: t('tabs.breathwork'), color: '#4ade80' },
+                { id: 'yoga', label: t('tabs.yoga'), color: '#fbbf24' },
+                { id: 'workout', label: t('tabs.workout'), color: '#f87171' }
               ].map((tab) => {
+
                 const isActive = activeTab === tab.id;
                 // Calculate text color for active state:
                 // Primary (Purple) is dark -> Needs White text.
@@ -522,8 +625,9 @@ function App() {
                 <section className="timer-section mb-6">
                   {recentTimerIds.length === 0 ? (
                     <div className="py-8 text-center text-text-dim bg-white/5 rounded-xl border border-dashed border-white/10">
-                      <p>Start a timer to see it here</p>
+                      <p>{t('messages.emptyRecent')}</p>
                     </div>
+
                   ) : (
                     <div className="timer-grid-list" dir="ltr">
                       {recentTimerIds.map(id => {
@@ -554,25 +658,28 @@ function App() {
                   {/* Show header only in 'All' view to distinguish, or always? Keep it clean. */}
                   {activeTab === 'all' && (
                     <div className="flex items-center gap-3 mb-4 px-1">
-                      <h2 className="text-xs font-bold text-text-dim uppercase tracking-widest">My Timers</h2>
+                      <h2 className="text-xs font-bold text-text-dim uppercase tracking-widest">{t('tabs.myTimers')}</h2>
                       <span className="text-xs font-medium text-text-dim bg-white/5 px-2 py-0.5 rounded-full border border-white/5">
                         {timers.filter(t => !t.isPreset).length}
+
                       </span>
                     </div>
                   )}
 
                   {timers.filter(t => !t.isPreset).length === 0 ? (
                     <div className="py-8 px-4 border border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center text-center text-text-dim bg-white/5">
-                      <p className="mb-2 text-sm">No custom timers yet</p>
-                      <button onClick={handleAddTimer} className="text-primary hover:text-primary-hover hover:underline text-xs font-bold uppercase tracking-wide transition-colors">Create your first timer</button>
+                      <p className="mb-2 text-sm">{t('messages.emptyCustom')}</p>
+                      <button onClick={handleAddTimer} className="text-primary hover:text-primary-hover hover:underline text-xs font-bold uppercase tracking-wide transition-colors">{t('actions.createFirst')}</button>
                     </div>
+
                   ) : (
                     <Reorder.Group
                       key={listKey}
                       values={timers.filter(t => !t.isPreset)}
                       onReorder={(newCustomOrder) => {
                         const presets = timers.filter(t => t.isPreset);
-                        setTimers([...newCustomOrder, ...presets]);
+                        // We use reorderTimers from hook
+                        reorderTimers([...newCustomOrder, ...presets]);
                       }}
                       className="timer-grid-list"
                       dir="ltr"
@@ -615,9 +722,10 @@ function App() {
                 <section className="timer-section mb-6">
                   {activeTab === 'all' && (
                     <h2 className="text-xs font-bold text-text-dim uppercase tracking-widest mb-4 px-1">
-                      Breathwork
+                      {t('tabs.breathwork')}
                     </h2>
                   )}
+
                   <div className="timer-grid-list">
                     {timers.filter(t => t.isPreset && t.tags.includes('breathwork')).map((timer) => (
                       <div key={timer.id} className="timer-reorder-item">
@@ -644,9 +752,10 @@ function App() {
                 <section className="timer-section mb-6">
                   {activeTab === 'all' && (
                     <h2 className="text-xs font-bold text-text-dim uppercase tracking-widest mb-4 px-1">
-                      Yoga
+                      {t('tabs.yoga')}
                     </h2>
                   )}
+
                   <div className="timer-grid-list">
                     {timers.filter(t => t.isPreset && t.tags.includes('yoga')).map((timer) => (
                       <div key={timer.id} className="timer-reorder-item">
@@ -673,9 +782,10 @@ function App() {
                 <section className="timer-section mb-12">
                   {activeTab === 'all' && (
                     <h2 className="text-xs font-bold text-text-dim uppercase tracking-widest mb-4 px-1">
-                      Workout & Focus
+                      {t('tabs.workout')}
                     </h2>
                   )}
+
                   <div className="timer-grid-list">
                     {timers.filter(t => t.isPreset && (t.tags.includes('workout') || t.tags.includes('focus'))).map((timer) => (
                       <div key={timer.id} className="timer-reorder-item">

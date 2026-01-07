@@ -194,5 +194,21 @@ export const useTimer = ({
         }
     };
 
-    return { timeLeft, currentStepIndex, currentRepetition, reset, setTimeLeft, nextStep, prevStep };
+    const jumpToStep = (index: number) => {
+        if (index < 0 || index >= steps.length) return;
+
+        setCurrentStepIndex(index);
+        const newDuration = steps[index].duration;
+        setTimeLeft(newDuration);
+        onStepChange?.(index, currentRepetition);
+
+        if (isActive) {
+            workerRef.current?.postMessage({
+                action: 'START',
+                payload: { durationInSeconds: newDuration }
+            });
+        }
+    };
+
+    return { timeLeft, currentStepIndex, currentRepetition, reset, setTimeLeft, nextStep, prevStep, jumpToStep };
 };

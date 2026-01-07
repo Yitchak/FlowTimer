@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Type, Eye, Download, Upload, X } from 'lucide-react';
+import { Type, Eye, Download, Upload, X, Globe } from 'lucide-react';
+
 import { motion } from 'framer-motion';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AccessibilityMenuProps {
     onClose: () => void;
@@ -11,6 +13,7 @@ interface AccessibilityMenuProps {
 const AccessibilityMenu: React.FC<AccessibilityMenuProps> = ({ onClose, onExport, onImport }) => {
     const [fontSize, setFontSize] = useState('medium');
     const [isHighContrast, setIsHighContrast] = useState(false);
+    const { t, language, setLanguage } = useLanguage();
 
     useEffect(() => {
         document.documentElement.setAttribute('data-font-size', fontSize);
@@ -25,16 +28,38 @@ const AccessibilityMenu: React.FC<AccessibilityMenuProps> = ({ onClose, onExport
             className="fixed top-24 right-8 z-[150] w-72 glass-card p-6 flex flex-col gap-6"
         >
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold">Preferences</h3>
+                <h3 className="text-lg font-bold">{t('settings.title')}</h3>
                 <button onClick={onClose} className="text-text-dim hover:text-text">
                     <X size={20} />
                 </button>
             </div>
 
+            {/* Language */}
+            <div className="space-y-3">
+                <label className="text-xs font-bold text-text-dim uppercase tracking-widest flex items-center gap-2">
+                    <Globe size={14} /> {t('settings.language')}
+                </label>
+                <div className="flex gap-2 p-1 bg-surface rounded-lg">
+                    {[
+                        { code: 'en', label: 'English' },
+                        { code: 'he', label: 'עברית' },
+                        { code: 'es', label: 'Español' }
+                    ].map(lang => (
+                        <button
+                            key={lang.code}
+                            onClick={() => setLanguage(lang.code as any)}
+                            className={`flex-1 py-2 text-xs font-bold rounded-md transition ${language === lang.code ? 'bg-primary text-white shadow-md' : 'text-text-dim hover:text-text hover:bg-surface-hover'}`}
+                        >
+                            {lang.label}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             {/* Font Size */}
             <div className="space-y-3">
                 <label className="text-xs font-bold text-text-dim uppercase tracking-widest flex items-center gap-2">
-                    <Type size={14} /> Font Size
+                    <Type size={14} /> {t('settings.fontSize')}
                 </label>
                 <div className="flex gap-2 p-1 bg-surface rounded-lg">
                     {['small', 'medium', 'large'].map(size => (
@@ -52,7 +77,7 @@ const AccessibilityMenu: React.FC<AccessibilityMenuProps> = ({ onClose, onExport
             {/* High Contrast */}
             <div className="flex items-center justify-between">
                 <label className="text-sm font-bold flex items-center gap-2">
-                    <Eye size={16} /> High Contrast
+                    <Eye size={16} /> {t('settings.highContrast')}
                 </label>
                 <button
                     onClick={() => setIsHighContrast(!isHighContrast)}
@@ -69,13 +94,13 @@ const AccessibilityMenu: React.FC<AccessibilityMenuProps> = ({ onClose, onExport
 
             {/* Data Management */}
             <div className="space-y-3">
-                <label className="text-xs font-bold text-text-dim uppercase tracking-widest">Data Management</label>
+                <label className="text-xs font-bold text-text-dim uppercase tracking-widest">{t('settings.dataManagement')}</label>
                 <div className="flex flex-col gap-2">
                     <button onClick={onExport} className="secondary-btn !py-2 !text-xs flex items-center justify-center gap-2">
-                        <Download size={14} /> Export Timers (JSON)
+                        <Download size={14} /> {t('settings.exportJson')}
                     </button>
                     <button onClick={onImport} className="secondary-btn !py-2 !text-xs flex items-center justify-center gap-2">
-                        <Upload size={14} /> Import Timers (JSON)
+                        <Upload size={14} /> {t('settings.importJson')}
                     </button>
                 </div>
             </div>

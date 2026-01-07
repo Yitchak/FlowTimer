@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { X, Plus, Trash2, Save } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Timer, TimerStep, TimerType } from '../types/timer';
+import { useLanguage } from '../contexts/LanguageContext';
+
 
 interface TimerEditorProps {
     timer?: Timer;
@@ -10,13 +12,19 @@ interface TimerEditorProps {
 }
 
 const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => {
-    const [name, setName] = useState(timer?.name || '');
+    const { t } = useLanguage();
+    const [name, setName] = useState(timer?.name ? t(timer.name) : '');
     const [type, setType] = useState<TimerType>(timer?.type || 'simple');
     const [tags] = useState<string[]>(timer?.tags || []);
     const [color, setColor] = useState<string>(timer?.color || '#42a5f5');
-    const [steps, setSteps] = useState<TimerStep[]>(timer?.steps || [{ id: '1', name: 'Timer', duration: 60 }]);
+    const [steps, setSteps] = useState<TimerStep[]>(timer?.steps ?
+        timer.steps.map(s => ({ ...s, name: t(s.name) }))
+        : [{ id: '1', name: 'Timer', duration: 60 }]
+    );
     const [repetitions, setRepetitions] = useState(timer?.repetitions || 1);
     const [isContinuous, setIsContinuous] = useState(timer?.repetitions === -1);
+
+
 
     const formatTime = (totalSeconds: number) => {
         const h = Math.floor(totalSeconds / 3600);
@@ -30,12 +38,14 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
     const calculateTotalTime = () => {
         const cycleTime = steps.reduce((acc, step) => acc + step.duration, 0);
         if (isContinuous) return `Continuous (${formatTime(cycleTime)} per cycle)`;
-        return `${formatTime(cycleTime * (repetitions || 1))} total`;
+        return `${formatTime(cycleTime * (repetitions || 1))} ${t('editor.totalDuration')}`;
     };
+
 
     const addStep = () => {
         setSteps([...steps, { id: Date.now().toString(), name: `Step ${steps.length + 1}`, duration: 60 }]);
     };
+
 
     const removeStep = (id: string) => {
         if (steps.length > 1) {
@@ -75,19 +85,22 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                     <button
                         onClick={onClose}
                         className="icon-btn-large"
-                        title="Back"
+                        title={t('actions.back')}
                     >
+
                         <X size={20} />
                     </button>
                     <div className="header-title-group">
-                        <h2>{timer ? 'Edit Timer' : 'Create Timer'}</h2>
-                        <span>Configure your flow settings</span>
+                        <h2>{timer ? t('editor.titleEdit') : t('editor.titleNew')}</h2>
+                        <span>{t('editor.subtitle')}</span>
                     </div>
+
                 </div>
                 <button onClick={handleSave} className="primary-btn">
                     <Save size={18} fill="currentColor" />
-                    <span>Save Changes</span>
+                    <span>{t('actions.save')}</span>
                 </button>
+
             </header>
 
             {/* Scrollable Content */}
@@ -97,32 +110,34 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                     {/* General Settings Card */}
                     <section className="editor-section">
                         <div className="section-header">
-                            <h3>General Settings</h3>
-                            <p>Basic configuration for this timer</p>
+                            <h3>{t('editor.general')}</h3>
+                            <p>{t('editor.infoBasic')}</p>
                         </div>
+
 
                         <div className="form-row">
                             <div className="form-col">
                                 <div className="form-group">
-                                    <label className="form-label">Timer Name</label>
+                                    <label className="form-label">{t('editor.timerName')}</label>
                                     <input
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        placeholder="e.g. Morning Focus Flow"
+                                        placeholder={t('editor.placeholderName')}
                                         className="styled-input"
                                     />
                                 </div>
+
                             </div>
 
                             <div className="form-col">
                                 <div className="form-group">
-                                    <label className="form-label">Flow Type</label>
+                                    <label className="form-label">{t('editor.flowType')}</label>
                                     <div className="type-selector">
                                         <button
                                             onClick={() => setType('simple')}
                                             className={`type-btn ${type === 'simple' ? 'active' : ''}`}
                                         >
-                                            Simple
+                                            {t('editor.simple')}
                                         </button>
                                         <button
                                             onClick={() => {
@@ -131,16 +146,18 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                             }}
                                             className={`type-btn ${type === 'complex' ? 'active' : ''}`}
                                         >
-                                            Complex
+                                            {t('editor.complex')}
                                         </button>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Color Theme</label>
+                            <label className="form-label">{t('editor.color')}</label>
                             <div className="flex flex-wrap gap-2 mt-2">
+
                                 {[
                                     '#ef5350', '#ec407a', '#ab47bc', '#7e57c2',
                                     '#5c6bc0', '#42a5f5', '#29b6f6', '#26c6da',
@@ -168,7 +185,8 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Repetitions</label>
+                            <label className="form-label">{t('editor.repetitions')}</label>
+
                             <div className="repetitions-control">
                                 <input
                                     type="number"
@@ -187,8 +205,9 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                         className="checkbox-box"
                                     />
                                     <div className="flex flex-col">
-                                        <span className="font-bold">Continuous Loop</span>
+                                        <span className="font-bold">{t('editor.continuous')}</span>
                                     </div>
+
                                 </label>
                             </div>
                         </div>
@@ -198,9 +217,10 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                     {type === 'simple' ? (
                         <section className="editor-section">
                             <div className="section-header">
-                                <h3>Duration</h3>
-                                <p>Set the total duration for this timer</p>
+                                <h3>{t('editor.duration')}</h3>
+                                <p>{t('editor.setDuration')}</p>
                             </div>
+
 
                             <div className="time-input-container">
                                 {/* Hours */}
@@ -219,8 +239,9 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                             updateStep(steps[0].id, { duration: h * 3600 + m * 60 + s });
                                         }}
                                     />
-                                    <span className="form-label">Hours</span>
+                                    <span className="form-label">{t('editor.hours')}</span>
                                 </div>
+
 
                                 <span className="time-separator">:</span>
 
@@ -241,8 +262,9 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                             updateStep(steps[0].id, { duration: h * 3600 + m * 60 + s });
                                         }}
                                     />
-                                    <span className="form-label">Mins</span>
+                                    <span className="form-label">{t('editor.mins')}</span>
                                 </div>
+
 
                                 <span className="time-separator">:</span>
 
@@ -263,17 +285,19 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                             updateStep(steps[0].id, { duration: h * 3600 + m * 60 + s });
                                         }}
                                     />
-                                    <span className="form-label">Secs</span>
+                                    <span className="form-label">{t('editor.secs')}</span>
                                 </div>
                             </div>
+
                         </section>
                     ) : (
                         <section className="editor-section">
                             <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                 <div>
-                                    <h3>Intervals & Steps</h3>
-                                    <p>Define the flow of your timer</p>
+                                    <h3>{t('editor.intervals')}</h3>
+                                    <p>{t('editor.intervalsSubtitle')}</p>
                                 </div>
+
                                 <span style={{
                                     padding: '4px 12px',
                                     background: 'rgba(255,255,255,0.05)',
@@ -282,8 +306,9 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                     fontWeight: 'bold',
                                     color: 'var(--text-dim)'
                                 }}>
-                                    {steps.length} Steps
+                                    {steps.length} {t('editor.stepsCount')}
                                 </span>
+
                             </div>
 
                             <div className="steps-list">
@@ -303,18 +328,20 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                         </div>
 
                                         <div className="step-main-content">
-                                            <label className="form-label text-xs">Step Name</label>
+                                            <label className="form-label text-xs">{t('editor.stepName')}</label>
                                             <input
                                                 value={step.name}
                                                 onChange={(e) => updateStep(step.id, { name: e.target.value })}
                                                 className="step-name-input"
-                                                placeholder="e.g. Work"
+                                                placeholder={t('editor.stepPlaceholder')}
                                             />
                                         </div>
 
+
                                         <div className="step-duration-group">
-                                            <label className="form-label text-xs">Duration (H:M:S)</label>
+                                            <label className="form-label text-xs">{t('editor.duration')} (H:M:S)</label>
                                             <div className="duration-inputs-row">
+
                                                 {/* Hours */}
                                                 <input
                                                     type="text"
@@ -368,8 +395,9 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                             onClick={() => removeStep(step.id)}
                                             className="remove-step-btn desktop-only"
                                             disabled={steps.length === 1}
-                                            title="Remove Step"
+                                            title={t('editor.removeStep')}
                                         >
+
                                             <Trash2 size={18} />
                                         </button>
                                     </div>
@@ -383,9 +411,10 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                 <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Plus size={18} />
                                 </div>
-                                <span style={{ fontWeight: 700 }}>Add Step</span>
+                                <span style={{ fontWeight: 700 }}>{t('editor.addStep')}</span>
                             </button>
                         </section>
+
                     )}
                 </div>
             </div>
@@ -393,9 +422,10 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
             {/* Footer Info */}
             <div className="editor-footer">
                 <div className="total-time-display">
-                    <span className="time-label">Total Duration</span>
+                    <span className="time-label">{t('editor.totalDuration')}</span>
                     <span className="time-value">{calculateTotalTime()}</span>
                 </div>
+
             </div>
         </motion.div>
     );
