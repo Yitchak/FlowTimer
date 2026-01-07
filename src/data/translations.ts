@@ -6,7 +6,7 @@ export const translations = {
             subtitle: "Focus",
             addTimer: "Add Timer",
             about: "About",
-            version: "v1.1.16",
+            version: "v1.1.17",
         },
         tabs: {
             recent: "Recent",
@@ -195,7 +195,7 @@ export const translations = {
             subtitle: "Focus",
             addTimer: "הוסף טיימר",
             about: "אודות",
-            version: "v1.1.16",
+            version: "v1.1.17",
         },
         tabs: {
             recent: "אחרונים",
@@ -384,7 +384,7 @@ export const translations = {
             subtitle: "Enfoque",
             addTimer: "Añadir Temp.",
             about: "Acerca de",
-            version: "v1.1.16",
+            version: "v1.1.17",
         },
         tabs: {
             recent: "Reciente",
