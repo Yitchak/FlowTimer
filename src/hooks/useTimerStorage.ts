@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import type { Timer } from '../types/timer';
 import { TimerDB } from '../lib/db';
 import { mockTimers as initialMockTimers } from '../data/mockTimers';

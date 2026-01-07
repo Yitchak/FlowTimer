@@ -30,8 +30,7 @@ function App() {
     updateTimer,
     deleteTimer,
     reorderTimers,
-    setTimers, // Exposed for special cases (Import/Restore)
-    loading: isLoadingTimers
+    setTimers // Exposed for special cases (Import/Restore)
   } = useTimerStorage(user);
 
   const { t, isRTL } = useLanguage();
