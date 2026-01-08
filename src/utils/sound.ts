@@ -36,9 +36,9 @@ export const playTimerSound = (type: 'step' | 'complete') => {
 
         const playBell = (timeOffset: number) => {
             // Fundamental (stronger)
-            playTone(880, 'triangle', 0.8, now + timeOffset, 1.0); // A5 - Loud
-            playTone(1760, 'sine', 0.8, now + timeOffset, 0.6); // A6 - Brilliance
-            playTone(440, 'square', 0.8, now + timeOffset, 0.15); // A4 - Body/Buzz
+            playTone(880, 'triangle', 0.8, now + timeOffset, 2.5); // A5 - Very Loud
+            playTone(1760, 'sine', 0.8, now + timeOffset, 1.5); // A6 - High Brilliance
+            playTone(440, 'square', 0.8, now + timeOffset, 0.5); // A4 - Strong Body
         };
 
         // Repeat 2 times
