@@ -28,8 +28,8 @@ export const playTimerSound = (type: 'step' | 'complete') => {
 
     if (type === 'step') {
         // High pitched "Ping" for step change
-        playTone(880, 'sine', 1.0, now, 0.5);
-        playTone(1760, 'sine', 0.8, now, 0.2);
+        playTone(880, 'sine', 1.0, now, 1.5); // Boosted volume
+        playTone(1760, 'sine', 0.8, now, 0.8); // Boosted high freq
     } else {
         // LOUD Alarm / Bell for completion
         // Pattern: Ding... Ding... Ding...
