@@ -607,7 +607,9 @@ function App() {
                       borderRadius: '999px',
                       letterSpacing: '0.01em',
                       // Ensure text alignment helps the visual
-                      textAlign: 'center'
+                      textAlign: 'center',
+                      whiteSpace: 'nowrap', // Force no wrap
+                      flexShrink: 0 // Prevent shrinking
                     }}
                   >
                     {tab.label}

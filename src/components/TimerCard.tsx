@@ -163,18 +163,24 @@ const TimerCard: React.FC<TimerCardProps> = ({
                 background: timer.color
                     ? `linear-gradient(135deg, ${timer.color}15 0%, rgba(255,255,255,0.05) 100%)`
                     : undefined,
-                borderColor: timer.color ? `${timer.color}30` : undefined
+                borderColor: isActive
+                    ? (timer.color || 'var(--primary)')
+                    : (timer.color ? `${timer.color}30` : undefined),
+                boxShadow: isActive
+                    ? `0 0 0 2px ${timer.color || 'var(--primary)'}, 0 8px 30px -10px ${timer.color || 'var(--primary)'}50`
+                    : undefined,
+                zIndex: isActive ? 10 : 1
             }}
         >
             {/* Top Section: Info (Left) + Image (Right) */}
             {/* Info Area - Grid Layout (Force) */}
             <div className="timer-info relative mb-4 flex-grow">
-                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '16px', alignItems: 'start' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', gap: '8px', alignItems: 'start' }}>
 
                     {/* Left Side: Text Content */}
                     <div style={{ minWidth: 0, paddingRight: '0.5rem' }}>
                         <div className="flex items-center gap-2 flex-wrap mb-1">
-                            <h3 className="timer-title text-lg md:text-xl font-bold leading-tight line-clamp-2" style={{ color: titleColor }}>
+                            <h3 className="timer-title text-2xl md:text-3xl font-bold leading-tight line-clamp-2" style={{ color: titleColor }}>
                                 {t(timer.name)}
                             </h3>
 
@@ -228,63 +234,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
                         {/* Stats Removed */}
                         {/* Step Tags Visualization - Horizontal Scroll with Mask */}
-                        {timer.steps.length > 0 && (
-                            <div className="relative mt-2">
-                                <div
-                                    ref={stepsContainerRef}
-                                    className="steps-scroll-container flex overflow-x-auto gap-2 pb-1 pr-8 scroll-smooth"
-                                    style={{
-                                        msOverflowStyle: 'none',
-                                        scrollbarWidth: 'none',
-                                        WebkitOverflowScrolling: 'touch'
-                                    }}
-                                >
-                                    <style>{`
-                                        .steps-scroll-container::-webkit-scrollbar { display: none; }
-                                    `}</style>
-                                    {timer.steps.map((step, idx) => {
-                                        const highlight = idx === currentStepIndex;
-                                        const bgCol = step.color || timer.color || '#6366f1';
-                                        const isHex = (typeof bgCol === 'string' && bgCol.startsWith('#'));
-                                        const txtCol = (highlight && isHex) ? getTextColor(bgCol) : '#ffffff';
 
-                                        return (
-                                            <button
-                                                key={idx}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    jumpToStep(idx);
-                                                }}
-                                                className={`step-pill flex-shrink-0 ${highlight ? 'active' : ''} cursor-pointer hover:scale-105 transition-transform`}
-                                                style={{
-                                                    backgroundColor: highlight
-                                                        ? (timer.color || 'var(--primary)')
-                                                        : 'rgba(255,255,255,0.05)',
-                                                    color: highlight
-                                                        ? txtCol
-                                                        : 'var(--text-dim)',
-                                                    borderColor: highlight
-                                                        ? 'transparent'
-                                                        : 'rgba(255,255,255,0.15)',
-                                                    opacity: highlight ? 1 : 0.7,
-                                                    borderWidth: '1px',
-                                                    borderStyle: 'solid',
-                                                    borderRadius: '9999px',
-                                                    padding: '2px 10px',
-                                                    fontSize: '10px',
-                                                    fontWeight: highlight ? 'bold' : 'normal'
-                                                }}
-                                                title={`${t(step.name)} (${step.duration}s) - Click to jump`}
-                                            >
-                                                {t(step.name)}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-                                {/* Fade Mask Indicator */}
-                                <div className="absolute right-0 top-0 bottom-1 w-8 pointer-events-none bg-gradient-to-l from-black/10 to-transparent rounded-r-full" />
-                            </div>
-                        )}
                     </div>
 
                     {/* Right Side: Big Circular Image */}
@@ -373,7 +323,70 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         </div>
                     </div>
                 </div>
+
+                {/* Steps Section - Moved below grid for Full Width */}
+                {timer.steps.length > 0 && (
+                    <div className="relative mt-4">
+                        <div
+                            ref={stepsContainerRef}
+                            className="steps-scroll-container flex overflow-x-auto gap-2 pb-2 scroll-smooth no-scrollbar"
+                            style={{
+                                msOverflowStyle: 'none',
+                                scrollbarWidth: 'none',
+                                WebkitOverflowScrolling: 'touch'
+                            }}
+                        >
+                            <style>{`
+                                .steps-scroll-container::-webkit-scrollbar { display: none; }
+                            `}</style>
+                            {timer.steps.map((step, idx) => {
+                                const highlight = idx === currentStepIndex;
+                                const bgCol = step.color || timer.color || '#6366f1';
+                                const isHex = (typeof bgCol === 'string' && bgCol.startsWith('#'));
+                                const txtCol = (highlight && isHex) ? getTextColor(bgCol) : '#ffffff';
+
+                                return (
+                                    <button
+                                        key={idx}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            jumpToStep(idx);
+                                        }}
+                                        className={`step-pill flex-shrink-0 ${highlight ? 'active' : ''} cursor-pointer hover:scale-105 transition-transform`}
+                                        style={{
+                                            backgroundColor: highlight
+                                                ? (timer.color || 'var(--primary)')
+                                                : 'rgba(255,255,255,0.05)',
+                                            color: highlight
+                                                ? txtCol
+                                                : 'var(--text-dim)',
+                                            borderColor: highlight
+                                                ? 'transparent'
+                                                : 'rgba(255,255,255,0.15)',
+                                            opacity: highlight ? 1 : 0.7,
+                                            borderWidth: '1px',
+                                            borderStyle: 'solid',
+                                            borderRadius: '9999px',
+                                            padding: '4px 12px',
+                                            fontSize: '11px',
+                                            fontWeight: highlight ? 'bold' : 'normal',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                        title={`${t(step.name)} (${step.duration}s) - Click to jump`}
+                                    >
+                                        {t(step.name)}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {/* Fade Mask Indicator */}
+                        <div className="absolute right-0 top-0 bottom-1 w-8 pointer-events-none bg-gradient-to-l from-black/10 to-transparent rounded-r-full" />
+                    </div>
+                )}
             </div>
+
+            {/* Spacer for mobile */}
+            <div className="h-4 md:h-2" />
 
             {/* Big Timer Display */}
             <div className="timer-display">
