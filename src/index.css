@@ -46,7 +46,7 @@
     color: var(--text);
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
-    overscroll-behavior: none;
+    /* overscroll-behavior: none; - Removed to allow pull-to-refresh */
   }
 
   /* Critical: Ensure root fills the space */
