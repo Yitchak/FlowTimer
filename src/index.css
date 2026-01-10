@@ -488,12 +488,15 @@ input {
 
 @media (max-width: 640px) {
   .app-header {
-    /* Balanced fix: Explicit calc with safe area */
+    /* layout logic change: anchor to bottom */
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-top: calc(env(safe-area-inset-top) + 20px);
-    padding-bottom: 12px;
-    min-height: auto;
+    padding-top: env(safe-area-inset-top, 20px);
+    padding-bottom: 16px;
+    min-height: 100px;
+    /* Generous height */
+    align-items: flex-end;
+    /* Push content to bottom, away from status bar */
   }
 
   /* Shrink logo on mobile to prevent overflow */
