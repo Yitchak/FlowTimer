@@ -227,18 +227,23 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         </div>
 
                         <div
-                            className="timer-tags mb-3 flex flex-nowrap overflow-x-auto gap-2 no-scrollbar"
+                            className="timer-tags mb-3 flex flex-nowrap overflow-x-auto gap-3 no-scrollbar"
                             style={{
                                 msOverflowStyle: 'none',
                                 scrollbarWidth: 'none',
-                                WebkitOverflowScrolling: 'touch'
+                                WebkitOverflowScrolling: 'touch',
+                                display: 'flex',
+                                flexWrap: 'nowrap',
+                                gap: '12px', /* Force horizontal gap */
+                                marginBottom: '20px', /* Force vertical gap */
+                                paddingBottom: '4px'
                             }}
                         >
                             <style>{`
                                 .timer-tags::-webkit-scrollbar { display: none; }
                             `}</style>
                             {timer.tags.map(tag => (
-                                <span key={tag} className="tag flex-shrink-0 whitespace-nowrap">
+                                <span key={tag} className="tag flex-shrink-0 whitespace-nowrap" style={{ marginRight: '8px' }}>
                                     {tag}
                                 </span>
                             ))}
@@ -316,7 +321,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                                 e.stopPropagation();
                                                 setShowMenu(false);
                                                 if (timer.isPreset) {
-                                                    toast.info(t('messages.presetDeleteError'));
+                                                    toast.error("Cannot delete built-in presets");
                                                 } else {
                                                     onDelete(timer.id);
                                                 }
@@ -338,14 +343,18 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
                 {/* Steps Section - Moved below grid for Full Width */}
                 {timer.steps.length > 0 && (
-                    <div className="relative mt-4 mb-1">
+                    <div className="relative mt-4 mb-2" style={{ marginTop: '20px' }}>
                         <div
                             ref={stepsContainerRef}
                             className="steps-scroll-container flex flex-nowrap overflow-x-auto gap-3 pb-2 scroll-smooth no-scrollbar"
                             style={{
                                 msOverflowStyle: 'none',
                                 scrollbarWidth: 'none',
-                                WebkitOverflowScrolling: 'touch'
+                                WebkitOverflowScrolling: 'touch',
+                                display: 'flex',
+                                flexWrap: 'nowrap',
+                                gap: '12px', /* Force horizontal gap */
+                                paddingBottom: '8px'
                             }}
                         >
                             <style>{`
