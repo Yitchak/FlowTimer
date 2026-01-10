@@ -405,12 +405,12 @@ function App() {
           >
             {/* App Header */}
             <header className="app-header" style={{
-              paddingTop: 'max(env(safe-area-inset-top), 40px)',
-              paddingBottom: '10px',
+              paddingTop: 'max(env(safe-area-inset-top), 60px)',
+              paddingBottom: '12px',
               minHeight: 'auto',
               height: 'auto',
               display: 'flex',
-              alignItems: 'flex-end'
+              alignItems: 'center'
             }}>
               <div className="header-left">
                 <h1 className="logo-text">Timr<span className="text-primary">Flow</span></h1>
@@ -543,7 +543,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.27
+                          v1.1.28
                         </div>
 
 
