@@ -468,10 +468,9 @@ input {
   min-height: 80px;
   height: auto;
   flex-shrink: 0;
-  /* Prevent shrinking */
   padding: 0 2rem;
-  /* Safe Area Support */
-  padding-top: max(0px, env(safe-area-inset-top));
+  /* Base safe area */
+  padding-top: env(safe-area-inset-top, 0px);
   padding-left: max(2rem, env(safe-area-inset-left));
   padding-right: max(2rem, env(safe-area-inset-right));
 
@@ -482,8 +481,25 @@ input {
   border-bottom: 1px solid var(--glass-border);
   background: var(--glass);
   backdrop-filter: var(--glass-blur);
-  z-index: 200;
+  z-index: 50;
+  /* Ensure high z-index */
   position: relative;
+}
+
+@media (max-width: 640px) {
+  .app-header {
+    /* Mobile specific tweaks */
+    padding-left: 1rem;
+    padding-right: 1rem;
+    /* Force at least 10px top padding + safe area */
+    padding-top: max(10px, env(safe-area-inset-top));
+    min-height: 70px;
+  }
+
+  /* Shrink logo on mobile to prevent overflow */
+  .logo-text {
+    font-size: 1.25rem;
+  }
 }
 
 /* Ensure header dropdowns are above everything */
