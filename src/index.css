@@ -60,6 +60,9 @@ input {
 .app-container {
   width: 100%;
   height: 100vh;
+  /* Fallback */
+  height: 100dvh;
+  /* Modern mobile fix */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -462,9 +465,18 @@ input {
 
 /* App Header Re-enforcement */
 .app-header {
-  height: 80px;
+  min-height: 80px;
+  height: auto;
+  flex-shrink: 0;
+  /* Prevent shrinking */
   padding: 0 2rem;
+  /* Safe Area Support */
+  padding-top: max(0px, env(safe-area-inset-top));
+  padding-left: max(2rem, env(safe-area-inset-left));
+  padding-right: max(2rem, env(safe-area-inset-right));
+
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--glass-border);
@@ -472,7 +484,6 @@ input {
   backdrop-filter: var(--glass-blur);
   z-index: 200;
   position: relative;
-  /* Ensure it establishes a stacking context */
 }
 
 /* Ensure header dropdowns are above everything */
