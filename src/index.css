@@ -491,9 +491,12 @@ input {
     /* Mobile specific tweaks */
     padding-left: 1rem;
     padding-right: 1rem;
-    /* Force at least 10px top padding + safe area */
-    padding-top: max(10px, env(safe-area-inset-top));
-    min-height: 70px;
+    /* Force at least 32px top padding + safe area to clear status bars if env fails */
+    padding-top: max(32px, env(safe-area-inset-top));
+    min-height: auto;
+    /* Allow height to adapt to padding + content */
+    padding-bottom: 12px;
+    /* Add bottom padding to balance */
   }
 
   /* Shrink logo on mobile to prevent overflow */

@@ -536,7 +536,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.20
+                          v1.1.21
                         </div>
 
 
