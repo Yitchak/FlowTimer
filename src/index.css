@@ -488,15 +488,15 @@ input {
 
 @media (max-width: 640px) {
   .app-header {
-    /* layout logic change: anchor to bottom */
+    /* Safe Revert: Fixed padding strategy */
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-top: env(safe-area-inset-top, 20px);
-    padding-bottom: 16px;
-    min-height: 100px;
-    /* Generous height */
-    align-items: flex-end;
-    /* Push content to bottom, away from status bar */
+    padding-top: 44px;
+    /* Explicit safe area for notches */
+    padding-bottom: 12px;
+    min-height: 80px;
+    align-items: center;
+    /* Center vertically */
   }
 
   /* Shrink logo on mobile to prevent overflow */
