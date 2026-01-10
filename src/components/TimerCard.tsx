@@ -338,10 +338,10 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
                 {/* Steps Section - Moved below grid for Full Width */}
                 {timer.steps.length > 0 && (
-                    <div className="relative mt-5">
+                    <div className="relative mt-4 mb-1">
                         <div
                             ref={stepsContainerRef}
-                            className="steps-scroll-container flex overflow-x-auto gap-2 pb-2 scroll-smooth no-scrollbar"
+                            className="steps-scroll-container flex flex-nowrap overflow-x-auto gap-3 pb-2 scroll-smooth no-scrollbar"
                             style={{
                                 msOverflowStyle: 'none',
                                 scrollbarWidth: 'none',
