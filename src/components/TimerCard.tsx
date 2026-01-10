@@ -227,23 +227,23 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         </div>
 
                         <div
-                            className="timer-tags mb-3 flex flex-nowrap overflow-x-auto gap-3 no-scrollbar"
+                            className="timer-tags mb-3 flex flex-nowrap overflow-x-auto gap-2 no-scrollbar"
                             style={{
                                 msOverflowStyle: 'none',
                                 scrollbarWidth: 'none',
                                 WebkitOverflowScrolling: 'touch',
                                 display: 'flex',
                                 flexWrap: 'nowrap',
-                                gap: '12px', /* Force horizontal gap */
-                                marginBottom: '20px', /* Force vertical gap */
-                                paddingBottom: '4px'
+                                gap: '8px', /* Standard gap */
+                                marginBottom: '8px', /* Standard spacing */
+                                paddingBottom: '2px'
                             }}
                         >
                             <style>{`
                                 .timer-tags::-webkit-scrollbar { display: none; }
                             `}</style>
                             {timer.tags.map(tag => (
-                                <span key={tag} className="tag flex-shrink-0 whitespace-nowrap" style={{ marginRight: '8px' }}>
+                                <span key={tag} className="tag flex-shrink-0 whitespace-nowrap" style={{ marginRight: '0' }}>
                                     {tag}
                                 </span>
                             ))}
@@ -343,18 +343,18 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
                 {/* Steps Section - Moved below grid for Full Width */}
                 {timer.steps.length > 0 && (
-                    <div className="relative mt-4 mb-2" style={{ marginTop: '20px' }}>
+                    <div className="relative mt-2 mb-1" style={{ marginTop: '12px' }}>
                         <div
                             ref={stepsContainerRef}
-                            className="steps-scroll-container flex flex-nowrap overflow-x-auto gap-3 pb-2 scroll-smooth no-scrollbar"
+                            className="steps-scroll-container flex flex-nowrap overflow-x-auto gap-2 pb-2 scroll-smooth no-scrollbar"
                             style={{
                                 msOverflowStyle: 'none',
                                 scrollbarWidth: 'none',
                                 WebkitOverflowScrolling: 'touch',
                                 display: 'flex',
                                 flexWrap: 'nowrap',
-                                gap: '12px', /* Force horizontal gap */
-                                paddingBottom: '8px'
+                                gap: '8px', /* Standard gap */
+                                paddingBottom: '4px'
                             }}
                         >
                             <style>{`
