@@ -107,7 +107,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
         }
     });
 
-    // Auto-scroll active step into view
+    // Auto-scroll removed as per user request
+    /*
     useEffect(() => {
         if (stepsContainerRef.current) {
             const activeStep = stepsContainerRef.current.querySelector('.step-pill.active');
@@ -120,6 +121,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
             }
         }
     }, [currentStepIndex]);
+    */
 
     const totalDuration = useMemo(() => {
         const cycleTime = timer.steps.reduce((acc, step) => acc + step.duration, 0);

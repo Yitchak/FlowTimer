@@ -30,13 +30,23 @@
     --primary-alpha: rgba(121, 80, 242, 0.1);
   }
 
+  /* Lock Body to prevent global scroll/bounce */
+  html,
   body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* Critical */
+    position: fixed;
+    /* Lock viewport */
     background-color: var(--bg-primary);
     color: var(--text);
     font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
     -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+    /* Prevent rubber banding */
   }
 }
 
@@ -59,14 +69,13 @@ input {
 /* App Container */
 .app-container {
   width: 100%;
-  height: 100vh;
-  /* Fallback */
-  height: 100dvh;
-  /* Modern mobile fix */
+  height: 100%;
+  /* Fill fixed body */
   display: flex;
   flex-direction: column;
   overflow: hidden;
   position: relative;
+  /* Ensure safe area padding affects container if needed, but usually handled by header/content */
 }
 
 /* Buttons */
@@ -488,15 +497,14 @@ input {
 
 @media (max-width: 640px) {
   .app-header {
-    /* Safe Revert: Fixed padding strategy */
+    /* Standard Safe Area Fix */
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-top: 44px;
-    /* Explicit safe area for notches */
+    padding-top: max(48px, env(safe-area-inset-top));
+    /* 48px min + safe area */
     padding-bottom: 12px;
-    min-height: 80px;
+    min-height: 90px;
     align-items: center;
-    /* Center vertically */
   }
 
   /* Shrink logo on mobile to prevent overflow */
