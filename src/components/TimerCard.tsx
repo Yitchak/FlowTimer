@@ -224,9 +224,19 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             )}
                         </div>
 
-                        <div className="timer-tags mb-3 flex flex-wrap gap-2">
+                        <div
+                            className="timer-tags mb-3 flex flex-nowrap overflow-x-auto gap-2 no-scrollbar"
+                            style={{
+                                msOverflowStyle: 'none',
+                                scrollbarWidth: 'none',
+                                WebkitOverflowScrolling: 'touch'
+                            }}
+                        >
+                            <style>{`
+                                .timer-tags::-webkit-scrollbar { display: none; }
+                            `}</style>
                             {timer.tags.map(tag => (
-                                <span key={tag} className="tag">
+                                <span key={tag} className="tag flex-shrink-0 whitespace-nowrap">
                                     {tag}
                                 </span>
                             ))}
@@ -326,7 +336,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
                 {/* Steps Section - Moved below grid for Full Width */}
                 {timer.steps.length > 0 && (
-                    <div className="relative mt-4">
+                    <div className="relative mt-5">
                         <div
                             ref={stepsContainerRef}
                             className="steps-scroll-container flex overflow-x-auto gap-2 pb-2 scroll-smooth no-scrollbar"
