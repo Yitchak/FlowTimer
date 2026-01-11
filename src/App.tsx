@@ -545,7 +545,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.51
+                          v1.1.52
                         </div>
 
 
@@ -566,14 +566,12 @@ function App() {
             {/* Main Content */}
             {/* Filter Chips / Tabs (Color Coded & Larger) */}
             <div
-              className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-4 mb-0 sticky top-0 z-50 w-full shadow-sm pl-6 md:pl-16 pt-10 pb-10 md:pt-[60px] md:pb-12"
+              className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-4 mb-0 sticky top-0 z-50 w-full border-b border-black/5 dark:border-white/5 shadow-sm pl-8 md:pl-16 pt-8 pb-8 md:pt-[60px] md:pb-10 bg-[#f8f9fa] dark:bg-[#1a1b1e]"
               style={{
                 display: 'flex',
                 flexWrap: 'nowrap', // Force single line
                 overflowX: 'auto',
                 justifyContent: 'flex-start',
-                background: '#e9d5ff',
-                border: '5px solid #a855f7'
               }}
             >
               {[
