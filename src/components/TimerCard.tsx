@@ -456,7 +456,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     width: '100%'
                 }}
             >
-                <span className="time-value" style={{ fontSize: 'clamp(50px, 10vw, 76px)', fontWeight: 800, lineHeight: 1 }}>
+                <span className="time-value" style={{ fontSize: 'clamp(40px, 8vw, 60px)', fontWeight: 800, lineHeight: 1 }}>
                     {formatTime(timeLeft)}
                 </span>
 
