@@ -448,12 +448,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
             {/* Big Timer Display */}
             {/* Big Timer Display with Inline Action */}
             <div className="timer-display flex flex-row flex-nowrap items-center justify-center gap-4">
-                <div className="flex flex-col items-end">
-                    <span className="time-value">
-                        {formatTime(timeLeft)}
-                    </span>
-                    <span className="time-label">{t('timer.remaining')}</span>
-                </div>
+                <span className="time-value">
+                    {formatTime(timeLeft)}
+                </span>
 
                 {/* Primary Action Button - Moved Here */}
                 {!isActive ? (
