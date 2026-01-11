@@ -190,7 +190,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                 className="timer-title font-bold leading-[1.05] tracking-tight line-clamp-3"
                                 style={{
                                     color: titleColor,
-                                    fontSize: 'clamp(42px, 8vw, 70px)',
+                                    fontSize: 'clamp(24px, 5vw, 38px)',
                                     lineHeight: 1.1
                                 }}
                             >
