@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat } from 'lucide-react';
+import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat, XCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 
@@ -17,6 +17,7 @@ interface TimerCardProps {
     onEdit: (timer: Timer) => void;
     onDuplicate: (timer: Timer) => void;
     onDelete: (id: string) => void;
+    onRemove?: (id: string) => void;
 }
 
 const TimerCard: React.FC<TimerCardProps> = ({
@@ -26,7 +27,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
     onPause,
     onEdit,
     onDuplicate,
-    onDelete
+    onDelete,
+    onRemove
 }) => {
     const { t } = useLanguage();
     // Helper for contrast text color
@@ -313,6 +315,20 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                             <span>{t('actions.edit')}</span>
                                         </button>
 
+
+                                        {onRemove && (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setShowMenu(false);
+                                                    onRemove(timer.id);
+                                                }}
+                                                className="dropdown-item text-red-400 hover:text-red-500"
+                                            >
+                                                <XCircle size={16} />
+                                                <span>{t('actions.removeFromList')}</span>
+                                            </button>
+                                        )}
 
                                         <div className="dropdown-divider"></div>
 

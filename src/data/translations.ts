@@ -39,9 +39,9 @@ export const translations = {
             language: "Language",
             moreActions: "More Actions",
             switchTheme: "Switch Theme",
-            signedInAs: "Signed in as"
+            signedInAs: "Signed in as",
+            removeFromList: "Remove from list"
         },
-
         settings: {
             title: "Preferences",
             fontSize: "Font Size",
@@ -110,8 +110,9 @@ export const translations = {
             invalidJson: "Invalid JSON file",
             restoreSuccess: "Presets restored successfully",
             orderReset: "Order reset to original",
-            signedOut: "Signed out successfully",
-            signedIn: "Signed in successfully"
+            signedOut: "Signed Out",
+            signedIn: "Signed in successfully",
+            timerRemovedFromList: "Timer removed from list"
         },
         timer: {
             remaining: "Remaining",
@@ -229,9 +230,9 @@ export const translations = {
             language: "שפה",
             moreActions: "פעולות נוספות",
             switchTheme: "החלף ערכת נושא",
-            signedInAs: "מחובר כ"
+            signedInAs: "מחובר כ",
+            removeFromList: "הסר מהרשימה"
         },
-
         settings: {
             title: "הגדרות",
             fontSize: "גודל גופן",
@@ -301,7 +302,8 @@ export const translations = {
             restoreSuccess: "ברירת המחדל שוחזרה",
             orderReset: "הסדר אופס למקור",
             signedOut: "התנתקת בהצלחה",
-            signedIn: "התחברת בהצלחה"
+            signedIn: "התחברת בהצלחה",
+            timerRemovedFromList: "הטיימר הוסר מהרשימה"
         },
         timer: {
             remaining: "נותר",
@@ -419,9 +421,9 @@ export const translations = {
             language: "Idioma",
             moreActions: "Más Acciones",
             switchTheme: "Cambiar Tema",
-            signedInAs: "Iniciado como"
+            signedInAs: "Iniciado como",
+            removeFromList: "Quitar de la lista"
         },
-
         settings: {
             title: "Preferencias",
             fontSize: "Tamaño de fuente",
@@ -490,7 +492,8 @@ export const translations = {
             restoreSuccess: "Preajustes restaurados",
             orderReset: "Orden restablecido",
             signedOut: "Sesión cerrada",
-            signedIn: "Sesión iniciada"
+            signedIn: "Sesión iniciada",
+            timerRemovedFromList: "Temporizador eliminado de la lista"
         },
         timer: {
             remaining: "Restante",

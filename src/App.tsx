@@ -299,7 +299,7 @@ function App() {
 
   const handleRemoveFromRecents = (id: string) => {
     setRecentTimerIds(prev => prev.filter(tid => tid !== id));
-    toast.success(t('messages.timerDeleted'));
+    toast.success(t('messages.timerRemovedFromList'));
   };
 
 
@@ -545,7 +545,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.46
+                          v1.1.47
                         </div>
 
 
@@ -650,7 +650,8 @@ function App() {
                               onPause={handlePause}
                               onEdit={handleEditTimer}
                               onDuplicate={handleDuplicateTimer}
-                              onDelete={handleRemoveFromRecents}
+                              onDelete={handleDeleteTimer}
+                              onRemove={handleRemoveFromRecents}
                             />
                           </div>
                         );
