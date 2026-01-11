@@ -445,9 +445,17 @@ const TimerCard: React.FC<TimerCardProps> = ({
             {/* Spacer for mobile */}
             <div className="h-4 md:h-2" />
 
-            {/* Big Timer Display */}
             {/* Big Timer Display with Inline Action */}
-            <div className="timer-display flex flex-row flex-nowrap items-center justify-center gap-4">
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '16px',
+                    width: '100%'
+                }}
+            >
                 <span className="time-value">
                     {formatTime(timeLeft)}
                 </span>
