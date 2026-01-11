@@ -160,6 +160,28 @@ const TimerCard: React.FC<TimerCardProps> = ({
     // Calculate readable title color
     const titleColor = timer.color ? darkenColor(timer.color, 15) : 'var(--text)';
 
+    const renderLoopTag = () => {
+        if (!timer.repetitions || timer.repetitions <= 1 && timer.repetitions !== -1) return null;
+
+        return (
+            <span
+                key="loop-tag"
+                className="tag flex items-center gap-1 flex-shrink-0"
+                title={timer.repetitions === -1 ? t('timer.loops') : `${t('timer.repeats')} ${timer.repetitions} ${t('timer.times')}`}
+                style={{ marginRight: 0 }}
+            >
+                {timer.repetitions === -1 ? (
+                    <Infinity size={12} />
+                ) : (
+                    <>
+                        <Repeat size={10} />
+                        <span>{timer.repetitions}</span>
+                    </>
+                )}
+            </span>
+        );
+    };
+
     return (
         <motion.div
             className="timer-card glass-card group flex flex-col h-full"
@@ -213,22 +235,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             )}
 
                             {/* Loop Icon */}
-                            {(timer.repetitions === -1 || (timer.repetitions && timer.repetitions > 1)) && (
-                                <div
-                                    className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-white/5 border border-white/10 text-text-dim"
-                                    title={timer.repetitions === -1 ? t('timer.loops') : `${t('timer.repeats')} ${timer.repetitions} ${t('timer.times')}`}
-                                >
-                                    {timer.repetitions === -1 ? (
 
-                                        <Infinity size={12} />
-                                    ) : (
-                                        <>
-                                            <Repeat size={10} />
-                                            <span>{timer.repetitions}</span>
-                                        </>
-                                    )}
-                                </div>
-                            )}
                         </div>
 
                         <div
@@ -247,6 +254,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             <style>{`
                                 .timer-tags::-webkit-scrollbar { display: none; }
                             `}</style>
+                            {renderLoopTag()}
                             {timer.tags.map(tag => (
                                 <span key={tag} className="tag flex-shrink-0 whitespace-nowrap" style={{ marginRight: '0' }}>
                                     {tag}
