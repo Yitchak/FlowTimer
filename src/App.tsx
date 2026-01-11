@@ -545,7 +545,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.43
+                          v1.1.44
                         </div>
 
 
@@ -566,7 +566,7 @@ function App() {
             {/* Main Content */}
             {/* Filter Chips / Tabs (Color Coded & Larger) */}
             <div
-              className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-3 mb-0 sticky top-0 z-50 w-full border-b border-black/5 dark:border-white/5 shadow-sm pl-4 md:pl-16 pt-6 pb-6 md:pt-[60px] md:pb-8"
+              className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-3 mb-0 sticky top-0 z-50 w-full border-b border-black/5 dark:border-white/5 shadow-sm pl-4 md:pl-16 pt-8 pb-8 md:pt-[60px] md:pb-10"
               style={{
                 display: 'flex',
                 flexWrap: 'nowrap', // Force single line
@@ -628,7 +628,7 @@ function App() {
             </div>
 
             {/* Main Content */}
-            <main className="main-content pt-6">
+            <main className="main-content pt-0">
 
               {/* --- RECENT TAB --- */}
               {activeTab === 'recent' && (
