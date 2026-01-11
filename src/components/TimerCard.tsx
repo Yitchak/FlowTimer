@@ -19,10 +19,12 @@ interface TimerCardProps {
     onDelete: (id: string) => void;
     onRemove?: (id: string) => void;
     dragControls?: DragControls;
+    volume?: number;
 }
 
 const TimerCard: React.FC<TimerCardProps> = ({
     timer,
+    volume = 1.0,
     isActive = false,
     onStart,
     onPause,
@@ -100,14 +102,14 @@ const TimerCard: React.FC<TimerCardProps> = ({
         repetitions: timer.repetitions ?? 1,
         isActive,
         onComplete: () => {
-            playTimerSound('complete');
+            playTimerSound('complete', volume);
             if (isActive) onPause(timer.id);
         },
         onCycleComplete: () => {
-            playTimerSound('complete');
+            playTimerSound('complete', volume);
         },
         onStepChange: () => {
-            playTimerSound('step');
+            playTimerSound('step', volume);
         }
     });
 

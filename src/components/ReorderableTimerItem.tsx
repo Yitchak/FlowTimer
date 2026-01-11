@@ -12,6 +12,7 @@ interface ReorderableTimerItemProps {
     onEdit: (timer: Timer) => void;
     onDuplicate: (timer: Timer) => void;
     onDelete: (id: string) => void;
+    volume?: number;
 }
 
 export const ReorderableTimerItem: React.FC<ReorderableTimerItemProps> = ({
@@ -21,7 +22,8 @@ export const ReorderableTimerItem: React.FC<ReorderableTimerItemProps> = ({
     onPause,
     onEdit,
     onDuplicate,
-    onDelete
+    onDelete,
+    volume
 }) => {
     const controls = useDragControls();
 
@@ -49,6 +51,7 @@ export const ReorderableTimerItem: React.FC<ReorderableTimerItemProps> = ({
                 onDuplicate={onDuplicate}
                 onDelete={onDelete}
                 dragControls={controls} /* Pass controls to trigger drag */
+                volume={volume}
             />
         </Reorder.Item>
     );

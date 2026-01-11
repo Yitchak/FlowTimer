@@ -1,4 +1,4 @@
-export const playTimerSound = (type: 'step' | 'complete') => {
+export const playTimerSound = (type: 'step' | 'complete', volumeScale: number = 1.0) => {
     // Check for AudioContext support
     const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
     if (!AudioContext) return;
@@ -14,7 +14,7 @@ export const playTimerSound = (type: 'step' | 'complete') => {
 
         // Envelope for bell-like sound
         gain.gain.setValueAtTime(0, startTime);
-        gain.gain.linearRampToValueAtTime(volume, startTime + 0.01); // Attack
+        gain.gain.linearRampToValueAtTime(volume * volumeScale, startTime + 0.01); // Attack
         gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration); // Decay
 
         osc.connect(gain);

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Plus, Globe, Shield, RotateCcw, MoreVertical, Download, Upload, RefreshCw, Info } from 'lucide-react';
+import { Sun, Moon, Plus, Globe, Shield, RotateCcw, MoreVertical, Download, Upload, RefreshCw, Info, Volume2, Volume1, VolumeX } from 'lucide-react';
 import { AnimatePresence, Reorder, motion } from 'framer-motion';
 import TimerCard from './components/TimerCard';
 import TimerEditor from './components/TimerEditor';
@@ -34,7 +34,7 @@ function App() {
     setTimers // Exposed for special cases (Import/Restore)
   } = useTimerStorage(user);
 
-  const { t, isRTL } = useLanguage();
+  const { t, isRTL, language, setLanguage } = useLanguage();
 
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -42,6 +42,30 @@ function App() {
     if (saved) return saved as 'dark' | 'light';
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
+
+  const [volume, setVolume] = useState<number>(() => {
+    const saved = localStorage.getItem('timrflow_volume');
+    return saved ? parseFloat(saved) : 1.0;
+  });
+
+  const toggleVolume = () => {
+    setVolume(prev => {
+      let newVol = 1.0;
+      if (prev >= 1.0) newVol = 0.5;
+      else if (prev >= 0.5) newVol = 0.2;
+      else if (prev >= 0.2) newVol = 0;
+      else newVol = 1.0;
+
+      localStorage.setItem('timrflow_volume', newVol.toString());
+      return newVol;
+    });
+  };
+
+  const getVolumeIcon = () => {
+    if (volume === 0) return <VolumeX size={20} />;
+    if (volume < 0.5) return <Volume1 size={20} />;
+    return <Volume2 size={20} />;
+  };
 
   const [activeTimerId, setActiveTimerId] = useState<string | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -430,15 +454,11 @@ function App() {
                 </button>
 
                 <button
-                  className={`icon-btn-large ${isAccessMenuOpen ? 'bg-primary text-black' : ''}`}
-                  onClick={() => setIsAccessMenuOpen(!isAccessMenuOpen)}
-                  title={t('actions.accessibility')}
+                  className="icon-btn-large"
+                  onClick={toggleVolume}
+                  title={t('actions.volume')}
                 >
-
-                  <Shield size={20} />
-                </button>
-                <button className="icon-btn-large hide-mobile" title={t('actions.language')}>
-                  <Globe size={20} />
+                  {getVolumeIcon()}
                 </button>
 
 
@@ -496,6 +516,28 @@ function App() {
                         <div className="dropdown-divider"></div>
 
                         <button
+                          onClick={() => { setIsAccessMenuOpen(true); setShowGlobalMenu(false); }}
+                          className="dropdown-item"
+                        >
+                          <Shield size={16} />
+                          <span>{t('actions.accessibility')}</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            const nextLang = language === 'en' ? 'he' : language === 'he' ? 'es' : 'en';
+                            setLanguage(nextLang);
+                            toast.success(`Language set to ${nextLang.toUpperCase()}`);
+                            setShowGlobalMenu(false);
+                          }}
+                          className="dropdown-item"
+                        >
+                          <Globe size={16} />
+                          <span>{t('actions.language')} ({language.toUpperCase()})</span>
+                        </button>
+
+                        <div className="dropdown-divider"></div>
+
+                        <button
                           onClick={() => { handleExportTimers(); setShowGlobalMenu(false); }}
                           className="dropdown-item"
                         >
@@ -546,7 +588,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.76
+                          v1.1.77
                         </div>
 
 
@@ -706,6 +748,7 @@ function App() {
                           onEdit={handleEditTimer}
                           onDuplicate={handleDuplicateTimer}
                           onDelete={handleDeleteTimer}
+                          volume={volume}
                         />
                       ))}
                     </Reorder.Group>
