@@ -545,7 +545,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.39
+                          v1.1.40
                         </div>
 
 
@@ -572,8 +572,8 @@ function App() {
                 flexWrap: 'nowrap', // Force single line
                 overflowX: 'auto',
                 justifyContent: 'flex-start',
-                background: 'var(--glass)', // Match header
-                backdropFilter: 'var(--glass-blur)', // Match header blur
+                background: 'var(--bg-primary)', // Solid page background
+                // backdropFilter: 'var(--glass-blur)', // Removed blur
                 marginBottom: '-1px'
               }}
             >
