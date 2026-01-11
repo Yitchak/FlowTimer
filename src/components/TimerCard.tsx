@@ -1,9 +1,9 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat, XCircle } from 'lucide-react';
+import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat, XCircle, GripVertical } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 
-import { motion } from 'framer-motion';
+import { motion, DragControls } from 'framer-motion';
 import type { Timer } from '../types/timer';
 import { useTimer } from '../hooks/useTimer';
 import { toast } from 'sonner';
@@ -18,6 +18,7 @@ interface TimerCardProps {
     onDuplicate: (timer: Timer) => void;
     onDelete: (id: string) => void;
     onRemove?: (id: string) => void;
+    dragControls?: DragControls;
 }
 
 const TimerCard: React.FC<TimerCardProps> = ({
@@ -28,7 +29,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
     onEdit,
     onDuplicate,
     onDelete,
-    onRemove
+    onRemove,
+    dragControls
 }) => {
     const { t } = useLanguage();
     // Helper for contrast text color
@@ -276,6 +278,18 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                 }}
                             />
                         </div>
+
+                        {/* Drag Handle (if provided) - Absolute top left */}
+                        {dragControls && (
+                            <div style={{ position: 'absolute', top: '-6px', left: '-10px', zIndex: 20 }}>
+                                <div
+                                    onPointerDown={(e) => dragControls.start(e)}
+                                    className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10 cursor-grab active:cursor-grabbing touch-none"
+                                >
+                                    <GripVertical size={14} />
+                                </div>
+                            </div>
+                        )}
 
                         {/* Menu Button - Absolute top right of the Image area */}
                         <div style={{ position: 'absolute', top: '-6px', right: '-10px', zIndex: 20 }}>

@@ -13,6 +13,7 @@ import LoginModal from './components/LoginModal';
 import { User, LogIn, LogOut } from 'lucide-react';
 import './App.css';
 import { useLanguage } from './contexts/LanguageContext';
+import { ReorderableTimerItem } from './components/ReorderableTimerItem';
 
 
 function App() {
@@ -545,7 +546,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.54
+                          v1.1.55
                         </div>
 
 
@@ -696,29 +697,16 @@ function App() {
                       dir="ltr"
                     >
                       {timers.filter(t => !t.isPreset).map((timer) => (
-                        <Reorder.Item
+                        <ReorderableTimerItem
                           key={timer.id}
-                          value={timer}
-                          layoutId={timer.id}
-                          className="timer-reorder-item"
-                          dragListener={!activeTimerId}
-                          drag
-                          whileDrag={{ scale: 1.05, zIndex: 100 }}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.9 }}
-                          layout
-                        >
-                          <TimerCard
-                            timer={timer}
-                            isActive={activeTimerId === timer.id}
-                            onStart={handleStart}
-                            onPause={handlePause}
-                            onEdit={handleEditTimer}
-                            onDuplicate={handleDuplicateTimer}
-                            onDelete={handleDeleteTimer}
-                          />
-                        </Reorder.Item>
+                          timer={timer}
+                          isActive={activeTimerId === timer.id}
+                          onStart={handleStart}
+                          onPause={handlePause}
+                          onEdit={handleEditTimer}
+                          onDuplicate={handleDuplicateTimer}
+                          onDelete={handleDeleteTimer}
+                        />
                       ))}
                     </Reorder.Group>
                   )}
