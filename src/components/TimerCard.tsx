@@ -456,7 +456,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     width: '100%'
                 }}
             >
-                <span className="time-value" style={{ fontSize: 'clamp(60px, 15vw, 90px)', fontWeight: 800, lineHeight: 1 }}>
+                <span className="time-value" style={{ fontSize: 'clamp(50px, 10vw, 76px)', fontWeight: 800, lineHeight: 1 }}>
                     {formatTime(timeLeft)}
                 </span>
 
@@ -470,17 +470,17 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
                             border: 'none',
-                            width: '32px',
-                            height: '32px',
+                            width: '48px',
+                            height: '48px',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             padding: 0,
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                         }}
                     >
-                        <Play size={16} fill="currentColor" className="ml-0.5" /> {/* ml-0.5 to visually enter the triangle */}
+                        <Play size={24} fill="currentColor" className="ml-1" /> {/* ml-1 to visually enter the triangle */}
                     </button>
                 ) : (
                     <button
@@ -491,17 +491,17 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
                             border: 'none',
-                            width: '32px',
-                            height: '32px',
+                            width: '48px',
+                            height: '48px',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             padding: 0,
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                         }}
                     >
-                        <Pause size={16} fill="currentColor" />
+                        <Pause size={24} fill="currentColor" />
                     </button>
                 )}
             </div>
