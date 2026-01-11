@@ -323,7 +323,7 @@ function App() {
     const duplicate = {
       ...timer,
       id: `copy-${Date.now()}`,
-      name: `${timer.name} (Copy)`,
+      name: timer.name,
       isPreset: false,
       userId: 'current-user',
       order: timers.length
@@ -544,7 +544,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.36
+                          v1.1.38
                         </div>
 
 
