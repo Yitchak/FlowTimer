@@ -446,11 +446,59 @@ const TimerCard: React.FC<TimerCardProps> = ({
             <div className="h-4 md:h-2" />
 
             {/* Big Timer Display */}
-            <div className="timer-display">
-                <span className="time-value">
-                    {formatTime(timeLeft)}
-                </span>
-                <span className="time-label">{t('timer.remaining')}</span>
+            {/* Big Timer Display with Inline Action */}
+            <div className="timer-display flex items-center justify-between gap-4">
+                <div className="flex flex-col">
+                    <span className="time-value">
+                        {formatTime(timeLeft)}
+                    </span>
+                    <span className="time-label">{t('timer.remaining')}</span>
+                </div>
+
+                {/* Primary Action Button - Moved Here */}
+                {!isActive ? (
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onStart(timer.id); }}
+                        className="primary-btn flex-shrink-0"
+                        aria-label={`${t('actions.start')} ${t(timer.name)}`}
+                        style={{
+                            backgroundColor: timer.color || undefined,
+                            color: timer.color ? getTextColor(timer.color) : undefined,
+                            border: 'none',
+                            width: '56px',
+                            height: '56px',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                        }}
+                    >
+                        <Play size={28} fill="currentColor" className="ml-1" /> {/* ml-1 to visually enter the triangle */}
+                    </button>
+                ) : (
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onPause(timer.id); }}
+                        className="pause-btn flex-shrink-0"
+                        aria-label={`${t('actions.pause')} ${t(timer.name)}`}
+                        style={{
+                            backgroundColor: timer.color || undefined,
+                            color: timer.color ? getTextColor(timer.color) : undefined,
+                            border: 'none',
+                            width: '56px',
+                            height: '56px',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 0,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                        }}
+                    >
+                        <Pause size={28} fill="currentColor" />
+                    </button>
+                )}
             </div>
 
 
@@ -472,48 +520,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     aria-label="Previous Step"
                     title={t('actions.previous')}
                     style={{ color: 'var(--text-dim)' }}
-
                 >
                     <SkipBack size={20} />
                 </button>
-
-                {!isActive ? (
-                    <button
-                        onClick={() => onStart(timer.id)}
-                        className="primary-btn control-btn-main"
-                        aria-label={`${t('actions.start')} ${t(timer.name)}`}
-                        style={{
-
-                            backgroundColor: timer.color || undefined,
-                            color: timer.color ? getTextColor(timer.color) : undefined,
-                            border: 'none',
-                            flex: 1, // Make it main
-                            maxWidth: '120px'
-                        }}
-                    >
-                        <Play size={20} fill="currentColor" />
-                        <span>{t('actions.start')}</span>
-                    </button>
-
-                ) : (
-                    <button
-                        onClick={() => onPause(timer.id)}
-                        className="pause-btn control-btn-main"
-                        aria-label={`${t('actions.pause')} ${t(timer.name)}`}
-                        style={{
-
-                            backgroundColor: timer.color || undefined,
-                            color: timer.color ? getTextColor(timer.color) : undefined,
-                            border: 'none',
-                            flex: 1,
-                            maxWidth: '120px'
-                        }}
-                    >
-                        <Pause size={20} fill="currentColor" />
-                        <span>{t('actions.pause')}</span>
-                    </button>
-
-                )}
 
                 <button
                     onClick={nextStep}
