@@ -470,8 +470,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
                             border: 'none',
-                            width: '56px',
-                            height: '56px',
+                            width: '48px',
+                            height: '48px',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
@@ -480,7 +480,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                         }}
                     >
-                        <Play size={28} fill="currentColor" className="ml-1" /> {/* ml-1 to visually enter the triangle */}
+                        <Play size={24} fill="currentColor" className="ml-1" /> {/* ml-1 to visually enter the triangle */}
                     </button>
                 ) : (
                     <button
@@ -491,8 +491,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
                             border: 'none',
-                            width: '56px',
-                            height: '56px',
+                            width: '48px',
+                            height: '48px',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
@@ -501,7 +501,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                         }}
                     >
-                        <Pause size={28} fill="currentColor" />
+                        <Pause size={24} fill="currentColor" />
                     </button>
                 )}
             </div>
