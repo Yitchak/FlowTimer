@@ -447,8 +447,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
             {/* Big Timer Display */}
             {/* Big Timer Display with Inline Action */}
-            <div className="timer-display flex items-center justify-between gap-4">
-                <div className="flex flex-col">
+            <div className="timer-display flex items-center justify-center gap-8">
+                <div className="flex flex-col items-end">
                     <span className="time-value">
                         {formatTime(timeLeft)}
                     </span>
