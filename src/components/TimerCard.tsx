@@ -346,20 +346,14 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     <div className="relative mt-2 mb-1" style={{ marginTop: '12px' }}>
                         <div
                             ref={stepsContainerRef}
-                            className="steps-scroll-container flex flex-nowrap overflow-x-auto gap-2 pb-2 scroll-smooth no-scrollbar"
+                            className="steps-scroll-container flex flex-wrap gap-2 pb-2"
                             style={{
-                                msOverflowStyle: 'none',
-                                scrollbarWidth: 'none',
-                                WebkitOverflowScrolling: 'touch',
                                 display: 'flex',
-                                flexWrap: 'nowrap',
-                                gap: '8px', /* Standard gap */
+                                flexWrap: 'wrap',
+                                gap: '8px',
                                 paddingBottom: '4px'
                             }}
                         >
-                            <style>{`
-                                .steps-scroll-container::-webkit-scrollbar { display: none; }
-                            `}</style>
                             {timer.steps.map((step, idx) => {
                                 const highlight = idx === currentStepIndex;
                                 const bgCol = step.color || timer.color || '#6366f1';
@@ -388,8 +382,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                             borderWidth: '1px',
                                             borderStyle: 'solid',
                                             borderRadius: '9999px',
-                                            padding: '4px 12px',
-                                            fontSize: '11px',
+                                            padding: '6px 14px', /* Larger touch area */
+                                            fontSize: '12px', /* Slightly larger font */
                                             fontWeight: highlight ? 'bold' : 'normal',
                                             whiteSpace: 'nowrap'
                                         }}
