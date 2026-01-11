@@ -470,17 +470,17 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
                             border: 'none',
-                            width: '48px',
-                            height: '48px',
+                            width: '32px',
+                            height: '32px',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             padding: 0,
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
                         }}
                     >
-                        <Play size={24} fill="currentColor" className="ml-1" /> {/* ml-1 to visually enter the triangle */}
+                        <Play size={16} fill="currentColor" className="ml-0.5" /> {/* ml-0.5 to visually enter the triangle */}
                     </button>
                 ) : (
                     <button
@@ -491,17 +491,17 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
                             border: 'none',
-                            width: '48px',
-                            height: '48px',
+                            width: '32px',
+                            height: '32px',
                             borderRadius: '50%',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             padding: 0,
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
                         }}
                     >
-                        <Pause size={24} fill="currentColor" />
+                        <Pause size={16} fill="currentColor" />
                     </button>
                 )}
             </div>
