@@ -281,12 +281,15 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
                         {/* Drag Handle (if provided) - Absolute top left */}
                         {dragControls && (
-                            <div style={{ position: 'absolute', top: '-6px', left: '-10px', zIndex: 20 }}>
+                            <div style={{ position: 'absolute', top: '-8px', left: '-12px', zIndex: 30 }}>
                                 <div
                                     onPointerDown={(e) => dragControls.start(e)}
-                                    className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10 cursor-grab active:cursor-grabbing touch-none"
+                                    // Add touch start for better mobile support if pointer events are iffy
+                                    onTouchStart={(e) => dragControls.start(e as any)}
+                                    className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10 cursor-grab active:cursor-grabbing"
+                                    style={{ touchAction: 'none' }}
                                 >
-                                    <GripVertical size={14} />
+                                    <GripVertical size={18} />
                                 </div>
                             </div>
                         )}
