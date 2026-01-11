@@ -150,7 +150,8 @@ function App() {
       'preset-morning-flow',
       'preset-evening-stretch',
       'preset-power-yoga',
-      'preset-yin-yoga'
+      'preset-yin-yoga',
+      'custom-meditation' /* Quick Reset ID */
     ];
 
     if (newTimers.some(t => deprecatedIds.includes(t.id))) {
@@ -544,7 +545,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.38
+                          v1.1.39
                         </div>
 
 

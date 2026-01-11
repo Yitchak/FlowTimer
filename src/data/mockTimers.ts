@@ -244,22 +244,5 @@ export const presets: Timer[] = [
 
 // Initial user timers (My Timers)
 export const mockTimers: Timer[] = [
-    // Just one basic example custom timer
-    {
-        id: 'custom-meditation',
-        name: 'presets.quickReset',
-        type: 'simple',
-        tags: ['mindfulness'],
-        color: '#22d3ee', // Cyan
-        repetitions: 1,
-        steps: [
-            { id: '1', name: 'steps.breathe', duration: 60 },
-        ],
-
-        order: 100,
-        userId: 'user-1',
-        isPreset: false,
-        imageUrl: 'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=300&q=80'
-    },
     ...presets
 ];
