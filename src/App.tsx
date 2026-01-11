@@ -328,8 +328,16 @@ function App() {
       userId: 'current-user',
       order: timers.length
     };
-    setEditingTimer(duplicate);
-    setIsEditorOpen(true);
+
+    if (timer.isPreset) {
+      // Direct copy for presets + Notification
+      addTimer(duplicate);
+      toast.success(t('messages.timerDuplicated'));
+    } else {
+      // Open editor for custom timers to allow name change
+      setEditingTimer(duplicate);
+      setIsEditorOpen(true);
+    }
   };
 
   const handleExport = () => {
