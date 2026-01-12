@@ -597,7 +597,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.78
+                          v1.1.79
                         </div>
 
 
@@ -607,7 +607,7 @@ function App() {
                   </AnimatePresence>
                 </div>
 
-                <button className="primary-btn" onClick={handleAddTimer}>
+                <button className="primary-btn" onClick={handleAddTimer} title={t('app.addTimer')}>
                   <Plus size={20} />
                   <span className="hide-mobile">{t('app.addTimer')}</span>
 

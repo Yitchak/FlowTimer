@@ -322,6 +322,7 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                                 onClick={() => removeStep(step.id)}
                                                 className="remove-step-btn mobile-only"
                                                 disabled={steps.length === 1}
+                                                title={t('editor.removeStep')}
                                             >
                                                 <Trash2 size={16} />
                                             </button>
@@ -407,6 +408,7 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                             <button
                                 onClick={addStep}
                                 className="add-step-btn"
+                                title={t('editor.addStep')}
                             >
                                 <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Plus size={18} />
