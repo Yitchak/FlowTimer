@@ -14,6 +14,8 @@ import { User, LogIn, LogOut } from 'lucide-react';
 import './App.css';
 import { useLanguage } from './contexts/LanguageContext';
 import { ReorderableTimerItem } from './components/ReorderableTimerItem';
+import { Tooltip } from './components/Tooltip';
+
 
 
 function App() {
@@ -453,26 +455,28 @@ function App() {
                   {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                 </button>
 
-                <button
-                  className="icon-btn-large"
-                  onClick={toggleVolume}
-                  title={t('actions.volume')}
-                >
-                  {getVolumeIcon()}
-                </button>
+                <Tooltip content={t('actions.volume')}>
+                  <button
+                    className="icon-btn-large"
+                    onClick={toggleVolume}
+                  >
+                    {getVolumeIcon()}
+                  </button>
+                </Tooltip>
 
 
                 {/* Global Menu */}
                 <div className="relative" ref={globalMenuRef}>
-                  <button
-                    className={`icon-btn-large ${showGlobalMenu ? 'bg-white/10 text-white' : ''} ${user ? 'text-green-400' : ''}`}
-                    title={user ? `${t('actions.signedInAs')} ${user.email}` : t('actions.moreActions')}
-                    onClick={() => setShowGlobalMenu(!showGlobalMenu)}
-                  >
+                  <Tooltip content={user ? `${t('actions.signedInAs')} ${user.email}` : t('actions.moreActions')}>
+                    <button
+                      className={`icon-btn-large ${showGlobalMenu ? 'bg-white/10 text-white' : ''} ${user ? 'text-green-400' : ''}`}
+                      onClick={() => setShowGlobalMenu(!showGlobalMenu)}
+                    >
 
 
-                    {user ? <User size={20} /> : <MoreVertical size={20} />}
-                  </button>
+                      {user ? <User size={20} /> : <MoreVertical size={20} />}
+                    </button>
+                  </Tooltip>
 
                   <AnimatePresence>
                     {showGlobalMenu && (
@@ -597,7 +601,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.80
+                          v1.1.81
                         </div>
 
 
@@ -607,11 +611,13 @@ function App() {
                   </AnimatePresence>
                 </div>
 
-                <button className="primary-btn" onClick={handleAddTimer} title={t('app.addTimer')}>
-                  <Plus size={20} />
-                  <span className="hide-mobile">{t('app.addTimer')}</span>
+                <Tooltip content={t('app.addTimer')}>
+                  <button className="primary-btn" onClick={handleAddTimer}>
+                    <Plus size={20} />
+                    <span className="hide-mobile">{t('app.addTimer')}</span>
 
-                </button>
+                  </button>
+                </Tooltip>
               </div>
             </header>
 

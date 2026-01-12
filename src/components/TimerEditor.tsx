@@ -3,6 +3,7 @@ import { X, Plus, Trash2, Save } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Timer, TimerStep, TimerType } from '../types/timer';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Tooltip } from './Tooltip';
 
 
 interface TimerEditorProps {
@@ -82,24 +83,27 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
             {/* Editor Header */}
             <header className="editor-header">
                 <div className="header-left">
-                    <button
-                        onClick={onClose}
-                        className="icon-btn-large"
-                        title={t('actions.back')}
-                    >
+                    <Tooltip content={t('actions.back')}>
+                        <button
+                            onClick={onClose}
+                            className="icon-btn-large"
+                        >
 
-                        <X size={20} />
-                    </button>
+                            <X size={20} />
+                        </button>
+                    </Tooltip>
                     <div className="header-title-group">
                         <h2>{timer ? t('editor.titleEdit') : t('editor.titleNew')}</h2>
                         <span>{t('editor.subtitle')}</span>
                     </div>
 
                 </div>
-                <button onClick={handleSave} className="primary-btn">
-                    <Save size={18} fill="currentColor" />
-                    <span>{t('actions.save')}</span>
-                </button>
+                <Tooltip content={t('actions.save')}>
+                    <button onClick={handleSave} className="primary-btn">
+                        <Save size={18} fill="currentColor" />
+                        <span>{t('actions.save')}</span>
+                    </button>
+                </Tooltip>
 
             </header>
 
@@ -318,14 +322,15 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                             <div className="step-number">
                                                 {index + 1}
                                             </div>
-                                            <button
-                                                onClick={() => removeStep(step.id)}
-                                                className="remove-step-btn mobile-only"
-                                                disabled={steps.length === 1}
-                                                title={t('editor.removeStep')}
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
+                                            <Tooltip content={t('editor.removeStep')}>
+                                                <button
+                                                    onClick={() => removeStep(step.id)}
+                                                    className="remove-step-btn mobile-only"
+                                                    disabled={steps.length === 1}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </Tooltip>
                                         </div>
 
                                         <div className="step-main-content">
@@ -392,29 +397,31 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                                             </div>
                                         </div>
 
-                                        <button
-                                            onClick={() => removeStep(step.id)}
-                                            className="remove-step-btn desktop-only"
-                                            disabled={steps.length === 1}
-                                            title={t('editor.removeStep')}
-                                        >
+                                        <Tooltip content={t('editor.removeStep')}>
+                                            <button
+                                                onClick={() => removeStep(step.id)}
+                                                className="remove-step-btn desktop-only"
+                                                disabled={steps.length === 1}
+                                            >
 
-                                            <Trash2 size={18} />
-                                        </button>
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </Tooltip>
                                     </div>
                                 ))}
                             </div>
 
-                            <button
-                                onClick={addStep}
-                                className="add-step-btn"
-                                title={t('editor.addStep')}
-                            >
-                                <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Plus size={18} />
-                                </div>
-                                <span style={{ fontWeight: 700 }}>{t('editor.addStep')}</span>
-                            </button>
+                            <Tooltip content={t('editor.addStep')}>
+                                <button
+                                    onClick={addStep}
+                                    className="add-step-btn"
+                                >
+                                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <Plus size={18} />
+                                    </div>
+                                    <span style={{ fontWeight: 700 }}>{t('editor.addStep')}</span>
+                                </button>
+                            </Tooltip>
                         </section>
 
                     )}

@@ -8,6 +8,7 @@ import type { Timer } from '../types/timer';
 import { useTimer } from '../hooks/useTimer';
 import { toast } from 'sonner';
 import { playTimerSound } from '../utils/sound';
+import { Tooltip } from './Tooltip';
 
 interface TimerCardProps {
     timer: Timer;
@@ -293,29 +294,31 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         {/* Drag Handle (if provided) - Absolute top left */}
                         {dragControls && (
                             <div style={{ position: 'absolute', top: '-8px', left: '-12px', zIndex: 30 }}>
-                                <div
-                                    onPointerDown={(e) => dragControls.start(e)}
-                                    // Add touch start for better mobile support if pointer events are iffy
-                                    onTouchStart={(e) => dragControls.start(e as any)}
-                                    className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10 cursor-grab active:cursor-grabbing"
-                                    style={{ touchAction: 'none' }}
-                                    title={t('actions.dragToReorder') || "Drag to reorder"}
-                                >
-                                    <GripVertical size={18} />
-                                </div>
+                                <Tooltip content={t('actions.dragToReorder') || "Drag to reorder"}>
+                                    <div
+                                        onPointerDown={(e) => dragControls.start(e)}
+                                        // Add touch start for better mobile support if pointer events are iffy
+                                        onTouchStart={(e) => dragControls.start(e as any)}
+                                        className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10 cursor-grab active:cursor-grabbing"
+                                        style={{ touchAction: 'none' }}
+                                    >
+                                        <GripVertical size={18} />
+                                    </div>
+                                </Tooltip>
                             </div>
                         )}
 
                         {/* Menu Button - Absolute top right of the Image area */}
                         <div style={{ position: 'absolute', top: '-6px', right: '-10px', zIndex: 20 }}>
                             <div className="relative" ref={menuRef}>
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
-                                    className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10"
-                                    title={t('actions.moreOptions') || "More options"}
-                                >
-                                    <MoreVertical size={14} />
-                                </button>
+                                <Tooltip content={t('actions.moreOptions') || "More options"}>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
+                                        className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10"
+                                    >
+                                        <MoreVertical size={14} />
+                                    </button>
+                                </Tooltip>
 
                                 {showMenu && (
                                     <motion.div
@@ -469,49 +472,51 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
                 {/* Primary Action Button - Moved Here */}
                 {!isActive ? (
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onStart(timer.id); }}
-                        className="primary-btn flex-shrink-0"
-                        aria-label={`${t('actions.start')} ${t(timer.name)}`}
-                        title={t('actions.start')}
-                        style={{
-                            backgroundColor: timer.color || undefined,
-                            color: timer.color ? getTextColor(timer.color) : undefined,
-                            border: 'none',
-                            width: '48px',
-                            height: '48px',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: 0,
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
-                        }}
-                    >
-                        <Play size={24} fill="currentColor" className="ml-1" /> {/* ml-1 to visually enter the triangle */}
-                    </button>
+                    <Tooltip content={t('actions.start')}>
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onStart(timer.id); }}
+                            className="primary-btn flex-shrink-0"
+                            aria-label={`${t('actions.start')} ${t(timer.name)}`}
+                            style={{
+                                backgroundColor: timer.color || undefined,
+                                color: timer.color ? getTextColor(timer.color) : undefined,
+                                border: 'none',
+                                width: '48px',
+                                height: '48px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: 0,
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                            }}
+                        >
+                            <Play size={24} fill="currentColor" className="ml-1" /> {/* ml-1 to visually enter the triangle */}
+                        </button>
+                    </Tooltip>
                 ) : (
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onPause(timer.id); }}
-                        className="pause-btn flex-shrink-0"
-                        aria-label={`${t('actions.pause')} ${t(timer.name)}`}
-                        title={t('actions.pause')}
-                        style={{
-                            backgroundColor: timer.color || undefined,
-                            color: timer.color ? getTextColor(timer.color) : undefined,
-                            border: 'none',
-                            width: '48px',
-                            height: '48px',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            padding: 0,
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
-                        }}
-                    >
-                        <Pause size={24} fill="currentColor" />
-                    </button>
+                    <Tooltip content={t('actions.pause')}>
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onPause(timer.id); }}
+                            className="pause-btn flex-shrink-0"
+                            aria-label={`${t('actions.pause')} ${t(timer.name)}`}
+                            style={{
+                                backgroundColor: timer.color || undefined,
+                                color: timer.color ? getTextColor(timer.color) : undefined,
+                                border: 'none',
+                                width: '48px',
+                                height: '48px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: 0,
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                            }}
+                        >
+                            <Pause size={24} fill="currentColor" />
+                        </button>
+                    </Tooltip>
                 )}
             </div>
 
@@ -528,56 +533,58 @@ const TimerCard: React.FC<TimerCardProps> = ({
             {/* Controls */}
             <div className="timer-controls flex items-center justify-center gap-1 md:gap-2">
 
-                <button
-                    onClick={prevStep}
-                    className="stop-btn icon-btn-large"
-                    aria-label="Previous Step"
-                    title={t('actions.previous')}
-                    style={{ color: 'var(--text-dim)' }}
-                >
-                    <SkipBack size={20} />
-                </button>
+                <Tooltip content={t('actions.previous')}>
+                    <button
+                        onClick={prevStep}
+                        className="stop-btn icon-btn-large"
+                        aria-label="Previous Step"
+                        style={{ color: 'var(--text-dim)' }}
+                    >
+                        <SkipBack size={20} />
+                    </button>
+                </Tooltip>
 
-                <button
-                    onClick={nextStep}
-                    className="stop-btn icon-btn-large"
-                    aria-label="Next Step"
-                    title={t('actions.next')}
-                >
-
-                    <SkipForward size={20} />
-                </button>
-
-
-
-                <button
-                    onClick={() => {
-                        onPause(timer.id);
-                        reset();
-                    }}
-                    className="stop-btn icon-btn-large"
-                    aria-label={`${t('actions.stop')} ${t(timer.name)}`}
-                    title={t('actions.stop')}
-                >
-
-                    <Square size={20} fill="currentColor" />
-                </button>
+                <Tooltip content={t('actions.next')}>
+                    <button
+                        onClick={nextStep}
+                        className="stop-btn icon-btn-large"
+                        aria-label="Next Step"
+                    >
+                        <SkipForward size={20} />
+                    </button>
+                </Tooltip>
 
 
-                <button
-                    onClick={handleReset}
-                    className="reset-btn icon-btn-large"
-                    aria-label={`${t('actions.reset')} ${t(timer.name)}`}
-                    title={t('actions.reset')}
-                    style={{
-                        backgroundColor: timer.color || undefined,
-                        color: timer.color ? getTextColor(timer.color) : undefined,
-                        borderRadius: '50%',
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-                    }}
-                >
-                    <RotateCcw size={20} />
-                </button>
+
+                <Tooltip content={t('actions.stop')}>
+                    <button
+                        onClick={() => {
+                            onPause(timer.id);
+                            reset();
+                        }}
+                        className="stop-btn icon-btn-large"
+                        aria-label={`${t('actions.stop')} ${t(timer.name)}`}
+                    >
+                        <Square size={20} fill="currentColor" />
+                    </button>
+                </Tooltip>
+
+
+                <Tooltip content={t('actions.reset')}>
+                    <button
+                        onClick={handleReset}
+                        className="reset-btn icon-btn-large"
+                        aria-label={`${t('actions.reset')} ${t(timer.name)}`}
+                        style={{
+                            backgroundColor: timer.color || undefined,
+                            color: timer.color ? getTextColor(timer.color) : undefined,
+                            borderRadius: '50%',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                        }}
+                    >
+                        <RotateCcw size={20} />
+                    </button>
+                </Tooltip>
 
             </div>
         </motion.div >
