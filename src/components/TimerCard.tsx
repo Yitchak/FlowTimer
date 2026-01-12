@@ -299,6 +299,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                     onTouchStart={(e) => dragControls.start(e as any)}
                                     className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10 cursor-grab active:cursor-grabbing"
                                     style={{ touchAction: 'none' }}
+                                    title={t('actions.dragToReorder') || "Drag to reorder"}
                                 >
                                     <GripVertical size={18} />
                                 </div>
@@ -311,6 +312,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setShowMenu(!showMenu); }}
                                     className="p-1.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10"
+                                    title={t('actions.moreOptions') || "More options"}
                                 >
                                     <MoreVertical size={14} />
                                 </button>
@@ -325,6 +327,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                         <button
                                             onClick={(e) => { e.stopPropagation(); onDuplicate(timer); setShowMenu(false); }}
                                             className="dropdown-item"
+                                            title={t('actions.duplicate')}
                                         >
                                             <Copy size={16} />
                                             <span>{t('actions.duplicate')}</span>
@@ -338,6 +341,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                                 onEdit(timer);
                                             }}
                                             className="dropdown-item"
+                                            title={t('actions.edit')}
                                         >
                                             <Edit2 size={16} />
                                             <span>{t('actions.edit')}</span>
@@ -352,6 +356,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                                     onRemove(timer.id);
                                                 }}
                                                 className="dropdown-item text-red-400 hover:text-red-500"
+                                                title={t('actions.removeFromList')}
                                             >
                                                 <XCircle size={16} />
                                                 <span>{t('actions.removeFromList')}</span>
@@ -369,10 +374,10 @@ const TimerCard: React.FC<TimerCardProps> = ({
                                                 } else {
                                                     onDelete(timer.id);
                                                 }
-
                                             }}
                                             className={`dropdown-item ${timer.isPreset ? 'opacity-50 cursor-not-allowed hover:bg-transparent hover:text-text-dim' : ''}`}
                                             style={{ color: timer.isPreset ? 'inherit' : '#ef4444' }}
+                                            title={timer.isPreset ? "Cannot delete built-in presets" : t('actions.delete')}
                                         >
                                             <Trash2 size={16} />
                                             <span>{t('actions.delete')}</span>
@@ -468,6 +473,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         onClick={(e) => { e.stopPropagation(); onStart(timer.id); }}
                         className="primary-btn flex-shrink-0"
                         aria-label={`${t('actions.start')} ${t(timer.name)}`}
+                        title={t('actions.start')}
                         style={{
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
@@ -489,6 +495,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         onClick={(e) => { e.stopPropagation(); onPause(timer.id); }}
                         className="pause-btn flex-shrink-0"
                         aria-label={`${t('actions.pause')} ${t(timer.name)}`}
+                        title={t('actions.pause')}
                         style={{
                             backgroundColor: timer.color || undefined,
                             color: timer.color ? getTextColor(timer.color) : undefined,
@@ -562,13 +569,18 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     className="reset-btn icon-btn-large"
                     aria-label={`${t('actions.reset')} ${t(timer.name)}`}
                     title={t('actions.reset')}
+                    style={{
+                        backgroundColor: timer.color || undefined,
+                        color: timer.color ? getTextColor(timer.color) : undefined,
+                        borderRadius: '50%',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                    }}
                 >
-
                     <RotateCcw size={20} />
                 </button>
 
             </div>
-        </motion.div>
+        </motion.div >
     );
 };
 

@@ -497,6 +497,7 @@ function App() {
                           <button
                             onClick={handleSignOut}
                             className="dropdown-item text-red-400 hover:text-red-300"
+                            title={t('actions.signOut')}
                           >
                             <LogOut size={16} />
                             <span>{t('actions.signOut')}</span>
@@ -506,6 +507,7 @@ function App() {
                           <button
                             onClick={() => { setIsLoginOpen(true); setShowGlobalMenu(false); }}
                             className="dropdown-item text-primary"
+                            title={t('actions.signIn')}
                           >
                             <LogIn size={16} />
                             <span>{t('actions.signIn')}</span>
@@ -518,6 +520,7 @@ function App() {
                         <button
                           onClick={() => { setIsAccessMenuOpen(true); setShowGlobalMenu(false); }}
                           className="dropdown-item"
+                          title={t('actions.accessibility')}
                         >
                           <Shield size={16} />
                           <span>{t('actions.accessibility')}</span>
@@ -530,6 +533,7 @@ function App() {
                             setShowGlobalMenu(false);
                           }}
                           className="dropdown-item"
+                          title={`${t('actions.language')} (${language.toUpperCase()})`}
                         >
                           <Globe size={16} />
                           <span>{t('actions.language')} ({language.toUpperCase()})</span>
@@ -540,6 +544,7 @@ function App() {
                         <button
                           onClick={() => { handleExportTimers(); setShowGlobalMenu(false); }}
                           className="dropdown-item"
+                          title={t('actions.export')}
                         >
                           <Download size={16} />
                           <span>{t('actions.export')}</span>
@@ -548,6 +553,7 @@ function App() {
                         <button
                           onClick={() => { handleImport(); setShowGlobalMenu(false); }}
                           className="dropdown-item"
+                          title={t('actions.import')}
                         >
                           <Upload size={16} />
                           <span>{t('actions.import')}</span>
@@ -559,6 +565,7 @@ function App() {
                         <button
                           onClick={() => { handleRestorePresets(); setShowGlobalMenu(false); }}
                           className="dropdown-item"
+                          title={t('actions.restorePresets')}
                         >
                           <RefreshCw size={16} />
                           <span>{t('actions.restorePresets')}</span>
@@ -567,6 +574,7 @@ function App() {
                         <button
                           onClick={() => { handleResetOrder(); setShowGlobalMenu(false); }}
                           className="dropdown-item"
+                          title={t('actions.resetOrder')}
                         >
                           <RotateCcw size={16} />
                           <span>{t('actions.resetOrder')}</span>
@@ -581,6 +589,7 @@ function App() {
                             setShowGlobalMenu(false);
                           }}
                           className="dropdown-item"
+                          title={t('app.about')}
                         >
                           <Info size={16} />
                           <span>{t('app.about')}</span>
@@ -588,7 +597,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.77
+                          v1.1.78
                         </div>
 
 
