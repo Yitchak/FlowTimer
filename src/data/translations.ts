@@ -40,7 +40,10 @@ export const translations = {
             moreActions: "More Actions",
             switchTheme: "Switch Theme",
             signedInAs: "Signed in as",
-            removeFromList: "Remove from list"
+            removeFromList: "Remove from list",
+            dragToReorder: "Drag to reorder",
+            volume: "Volume Control",
+            moreOptions: "More options"
         },
         settings: {
             title: "Preferences",
@@ -231,7 +234,10 @@ export const translations = {
             moreActions: "פעולות נוספות",
             switchTheme: "החלף ערכת נושא",
             signedInAs: "מחובר כ",
-            removeFromList: "הסר מהרשימה"
+            removeFromList: "הסר מהרשימה",
+            dragToReorder: "גרור לשינוי סדר",
+            volume: "עוצמת שמע",
+            moreOptions: "אפשרויות נוספות"
         },
         settings: {
             title: "הגדרות",
