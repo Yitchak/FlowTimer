@@ -446,16 +446,17 @@ function App() {
               </div>
 
               <div className="header-right">
-                <button
-                  className="icon-btn-large"
-                  onClick={toggleTheme}
-                  title={t('actions.switchTheme')}
-                >
+                <Tooltip content={t('actions.switchTheme')} position="bottom">
+                  <button
+                    className="icon-btn-large"
+                    onClick={toggleTheme}
+                  >
 
-                  {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                </button>
+                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                  </button>
+                </Tooltip>
 
-                <Tooltip content={t('actions.volume')}>
+                <Tooltip content={t('actions.volume')} position="bottom">
                   <button
                     className="icon-btn-large"
                     onClick={toggleVolume}
@@ -467,7 +468,7 @@ function App() {
 
                 {/* Global Menu */}
                 <div className="relative" ref={globalMenuRef}>
-                  <Tooltip content={user ? `${t('actions.signedInAs')} ${user.email}` : t('actions.moreActions')}>
+                  <Tooltip content={user ? `${t('actions.signedInAs')} ${user.email}` : t('actions.moreActions')} position="bottom">
                     <button
                       className={`icon-btn-large ${showGlobalMenu ? 'bg-white/10 text-white' : ''} ${user ? 'text-green-400' : ''}`}
                       onClick={() => setShowGlobalMenu(!showGlobalMenu)}
@@ -601,7 +602,7 @@ function App() {
                         </button>
 
                         <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.81
+                          v1.1.82
                         </div>
 
 
@@ -611,7 +612,7 @@ function App() {
                   </AnimatePresence>
                 </div>
 
-                <Tooltip content={t('app.addTimer')}>
+                <Tooltip content={t('app.addTimer')} position="bottom">
                   <button className="primary-btn" onClick={handleAddTimer}>
                     <Plus size={20} />
                     <span className="hide-mobile">{t('app.addTimer')}</span>

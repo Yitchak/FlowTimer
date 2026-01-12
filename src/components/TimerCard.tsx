@@ -472,7 +472,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
                 {/* Primary Action Button - Moved Here */}
                 {!isActive ? (
-                    <Tooltip content={t('actions.start')}>
+                    <Tooltip content={t('actions.start')} position="bottom">
                         <button
                             onClick={(e) => { e.stopPropagation(); onStart(timer.id); }}
                             className="primary-btn flex-shrink-0"
@@ -495,7 +495,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         </button>
                     </Tooltip>
                 ) : (
-                    <Tooltip content={t('actions.pause')}>
+                    <Tooltip content={t('actions.pause')} position="bottom">
                         <button
                             onClick={(e) => { e.stopPropagation(); onPause(timer.id); }}
                             className="pause-btn flex-shrink-0"
@@ -533,7 +533,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
             {/* Controls */}
             <div className="timer-controls flex items-center justify-center gap-1 md:gap-2">
 
-                <Tooltip content={t('actions.previous')}>
+                <Tooltip content={t('actions.previous')} position="bottom">
                     <button
                         onClick={prevStep}
                         className="stop-btn icon-btn-large"
@@ -544,7 +544,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     </button>
                 </Tooltip>
 
-                <Tooltip content={t('actions.next')}>
+                <Tooltip content={t('actions.next')} position="bottom">
                     <button
                         onClick={nextStep}
                         className="stop-btn icon-btn-large"
@@ -556,7 +556,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
 
 
-                <Tooltip content={t('actions.stop')}>
+                <Tooltip content={t('actions.stop')} position="bottom">
                     <button
                         onClick={() => {
                             onPause(timer.id);
@@ -570,7 +570,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                 </Tooltip>
 
 
-                <Tooltip content={t('actions.reset')}>
+                <Tooltip content={t('actions.reset')} position="bottom">
                     <button
                         onClick={handleReset}
                         className="reset-btn icon-btn-large"

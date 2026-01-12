@@ -26,7 +26,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ content, children, position = 
 
     return (
         <div
-            className="relative flex items-center justify-center"
+            className="relative inline-flex items-center justify-center"
             onMouseEnter={() => setIsVisible(true)}
             onMouseLeave={() => setIsVisible(false)}
             onFocus={() => setIsVisible(true)}
