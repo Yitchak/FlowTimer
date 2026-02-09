@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { X, Mail, Loader2 } from 'lucide-react';
@@ -17,13 +17,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
 
     const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
 
-    useEffect(() => {
-        console.log("LoginModal Component MOUNTED");
-    }, []);
+    const [googleLoading, setGoogleLoading] = useState(false);
 
     const handleEmailLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("FORM SUBMIT EVENT FIRED");
 
         setStatus('sending');
         try {
@@ -108,10 +105,18 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         <button
-                            onClick={() => {
-                                onClose();
-                                signInWithGoogle().catch(e => toast.error("Google Sign-In failed: " + e.message));
+                            onClick={async () => {
+                                setGoogleLoading(true);
+                                try {
+                                    await signInWithGoogle();
+                                    onClose();
+                                } catch (e: any) {
+                                    toast.error("Google Sign-In failed: " + e.message);
+                                } finally {
+                                    setGoogleLoading(false);
+                                }
                             }}
+                            disabled={googleLoading}
                             style={{
                                 width: '100%',
                                 backgroundColor: 'white',
@@ -168,8 +173,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
                             </div>
                             <button
                                 type="submit"
-                                onMouseDown={() => console.log("Button Mouse Down!")}
-                                onClick={() => console.log("Button Clicked!")}
                                 disabled={status === 'sending'}
                                 style={{
                                     backgroundColor: '#4f46e5',

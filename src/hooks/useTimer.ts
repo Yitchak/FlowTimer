@@ -23,6 +23,14 @@ export const useTimer = ({
     const [timeLeft, setTimeLeft] = useState(steps[0]?.duration || 0);
     const workerRef = useRef<Worker | null>(null);
 
+    // Store callbacks in refs to avoid stale closures and unnecessary effect reruns
+    const onCompleteRef = useRef(onComplete);
+    const onCycleCompleteRef = useRef(onCycleComplete);
+    const onStepChangeRef = useRef(onStepChange);
+    onCompleteRef.current = onComplete;
+    onCycleCompleteRef.current = onCycleComplete;
+    onStepChangeRef.current = onStepChange;
+
     // Initialize Worker
     useEffect(() => {
         workerRef.current = new Worker(new URL('./timerWorker.ts', import.meta.url), { type: 'module' });
@@ -82,10 +90,10 @@ export const useTimer = ({
             if (currentStepIndex < steps.length - 1) {
                 // Next step in current rep
                 const nextIndex = currentStepIndex + 1;
+                const nextDuration = steps[nextIndex]?.duration || 0;
                 setCurrentStepIndex(nextIndex);
-                const nextDuration = steps[nextIndex].duration;
                 setTimeLeft(nextDuration);
-                onStepChange?.(nextIndex, currentRepetition);
+                onStepChangeRef.current?.(nextIndex, currentRepetition);
 
                 // Restart worker for next step
                 workerRef.current?.postMessage({
@@ -98,12 +106,12 @@ export const useTimer = ({
                 if (repetitions === -1 || currentRepetition < repetitions) {
                     // Next repetition
                     const nextRep = currentRepetition + 1;
+                    const nextDuration = steps[0]?.duration || 0;
                     setCurrentRepetition(nextRep);
                     setCurrentStepIndex(0);
-                    const nextDuration = steps[0].duration;
                     setTimeLeft(nextDuration);
-                    onCycleComplete?.();
-                    onStepChange?.(0, nextRep);
+                    onCycleCompleteRef.current?.();
+                    onStepChangeRef.current?.(0, nextRep);
 
                     // Restart worker for next rep
                     workerRef.current?.postMessage({
@@ -112,13 +120,16 @@ export const useTimer = ({
                     });
 
                 } else {
-                    // Timer finished
+                    // Timer finished - stop and reset to beginning
                     workerRef.current?.postMessage({ action: 'STOP' });
-                    onComplete?.();
+                    setCurrentStepIndex(0);
+                    setCurrentRepetition(1);
+                    setTimeLeft(steps[0]?.duration || 0);
+                    onCompleteRef.current?.();
                 }
             }
         }
-    }, [timeLeft, isActive, currentStepIndex, steps, repetitions, currentRepetition, onComplete, onCycleComplete, onStepChange]);
+    }, [timeLeft, isActive, currentStepIndex, steps, repetitions, currentRepetition]);
 
     const reset = () => {
         workerRef.current?.postMessage({ action: 'STOP' });
@@ -128,7 +139,6 @@ export const useTimer = ({
     };
 
     const nextStep = () => {
-        // Logic to move indices...
         let nextIdx = currentStepIndex;
         let nextRep = currentRepetition;
         let nextDuration = 0;
@@ -137,17 +147,16 @@ export const useTimer = ({
         if (currentStepIndex < steps.length - 1) {
             nextIdx = currentStepIndex + 1;
             nextDuration = steps[nextIdx].duration;
-            onStepChange?.(nextIdx, currentRepetition);
+            onStepChangeRef.current?.(nextIdx, currentRepetition);
         } else {
-            // Last step
             if (repetitions === -1 || currentRepetition < repetitions) {
                 nextRep = currentRepetition + 1;
                 nextIdx = 0;
                 nextDuration = steps[0].duration;
-                onCycleComplete?.();
-                onStepChange?.(0, nextRep);
+                onCycleCompleteRef.current?.();
+                onStepChangeRef.current?.(0, nextRep);
             } else {
-                onComplete?.();
+                onCompleteRef.current?.();
                 shouldContinue = false;
             }
         }
@@ -175,7 +184,6 @@ export const useTimer = ({
             prevRep = currentRepetition - 1;
             prevIdx = steps.length - 1;
         } else {
-            // Start
             reset();
             return;
         }
@@ -184,7 +192,7 @@ export const useTimer = ({
         setCurrentStepIndex(prevIdx);
         setCurrentRepetition(prevRep);
         setTimeLeft(prevDuration);
-        onStepChange?.(prevIdx, prevRep);
+        onStepChangeRef.current?.(prevIdx, prevRep);
 
         if (isActive) {
             workerRef.current?.postMessage({
@@ -200,7 +208,7 @@ export const useTimer = ({
         setCurrentStepIndex(index);
         const newDuration = steps[index].duration;
         setTimeLeft(newDuration);
-        onStepChange?.(index, currentRepetition);
+        onStepChangeRef.current?.(index, currentRepetition);
 
         if (isActive) {
             workerRef.current?.postMessage({

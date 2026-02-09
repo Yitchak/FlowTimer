@@ -164,7 +164,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
     const titleColor = timer.color ? darkenColor(timer.color, 15) : 'var(--text)';
 
     const renderLoopTag = () => {
-        if (!timer.repetitions || timer.repetitions <= 1 && timer.repetitions !== -1) return null;
+        if (!timer.repetitions || (timer.repetitions <= 1 && timer.repetitions !== -1)) return null;
 
         return (
             <span

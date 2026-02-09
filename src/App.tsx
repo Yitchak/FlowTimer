@@ -151,94 +151,102 @@ function App() {
     }
   }, [theme]);
 
-  // Data Integrity Check: Restore presets if missing (since they are undeletable)
+  // Data Integrity Check: Restore presets if missing (since they are undeletable, runs once on mount)
+  const hasRestoredPresets = useRef(false);
   useEffect(() => {
-    const missingPresets = initialMockTimers.filter(preset => !timers.find(t => t.id === preset.id));
-    if (missingPresets.length > 0) {
-      console.log('Restoring missing presets...', missingPresets);
-      setTimers(prev => [...prev, ...missingPresets]);
-      toast.success(t('messages.restoreSuccess'));
-    }
+    if (hasRestoredPresets.current) return;
+    hasRestoredPresets.current = true;
 
-  }, [timers.length]); // Check when length changes
+    setTimers(prev => {
+      const missingPresets = initialMockTimers.filter(preset => !prev.find(t => t.id === preset.id));
+      if (missingPresets.length > 0) {
+        toast.success(t('messages.restoreSuccess'));
+        return [...prev, ...missingPresets];
+      }
+      return prev;
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
-  // --- CLEANUP & MIGRATE PRESETS (AUTO) ---
+  // --- CLEANUP & MIGRATE PRESETS (AUTO, runs once on mount) ---
+  const hasMigrated = useRef(false);
   useEffect(() => {
-    let hasChanges = false;
-    let newTimers = [...timers];
+    if (hasMigrated.current) return;
+    hasMigrated.current = true;
 
-    // 1. Remove Deprecated
-    const deprecatedIds = [
-      'preset-sun-salutation',
-      'preset-morning-flow',
-      'preset-evening-stretch',
-      'preset-power-yoga',
-      'preset-yin-yoga',
-      'custom-meditation' /* Quick Reset ID */
-    ];
+    setTimers(prev => {
+      let hasChanges = false;
+      let newTimers = [...prev];
 
-    if (newTimers.some(t => deprecatedIds.includes(t.id))) {
-      console.log("Cleaning up deprecated presets...");
-      newTimers = newTimers.filter(t => !deprecatedIds.includes(t.id));
-      hasChanges = true;
-    }
+      // 1. Remove Deprecated
+      const deprecatedIds = [
+        'preset-sun-salutation',
+        'preset-morning-flow',
+        'preset-evening-stretch',
+        'preset-power-yoga',
+        'preset-yin-yoga',
+        'custom-meditation'
+      ];
 
-    // 2. Patch Tags for Yoga List (ensure they have 'yoga' tag)
-    const timersToTagYoga = ['preset-alt-breath', 'preset-1min', 'preset-3min', 'preset-11min', 'preset-sat-kriya'];
-
-    newTimers = newTimers.map(t => {
-      if (timersToTagYoga.includes(t.id) && !t.tags.includes('yoga')) {
-        console.log(`Patching 'yoga' tag to ${t.name}`);
+      if (newTimers.some(t => deprecatedIds.includes(t.id))) {
+        newTimers = newTimers.filter(t => !deprecatedIds.includes(t.id));
         hasChanges = true;
-        return { ...t, tags: [...t.tags, 'yoga'] };
       }
-      return t;
-    });
 
-    // 3. Patch Alternate Breathing Steps (ensure full cycle)
-    const altBreath = newTimers.find(t => t.id === 'preset-alt-breath');
-    if (altBreath && altBreath.steps.length === 3) {
-      console.log("Patching Alt Breath steps...");
-      hasChanges = true;
-      // Update to 6 steps
+      // 2. Patch Tags for Yoga List (ensure they have 'yoga' tag)
+      const timersToTagYoga = ['preset-alt-breath', 'preset-1min', 'preset-3min', 'preset-11min', 'preset-sat-kriya'];
+
       newTimers = newTimers.map(t => {
-        if (t.id === 'preset-alt-breath') {
-          return {
-            ...t,
-            steps: [
-              { id: 'b1', name: 'steps.inhale', duration: 4 },
-              { id: 'b2', name: 'steps.hold', duration: 16 },
-              { id: 'b3', name: 'steps.exhale', duration: 8 },
-              { id: 'b4', name: 'steps.inhale', duration: 4 },
-              { id: 'b5', name: 'steps.hold', duration: 16 },
-              { id: 'b6', name: 'steps.exhale', duration: 8 }
-            ]
-          };
+        if (timersToTagYoga.includes(t.id) && !t.tags.includes('yoga')) {
+          hasChanges = true;
+          return { ...t, tags: [...t.tags, 'yoga'] };
         }
         return t;
       });
-    }
 
-
-    // 4. Inject Missing 6 Plus 1
-    if (!newTimers.some(t => t.id === 'preset-6-plus-1')) {
-      const newPreset = initialMockTimers.find(t => t.id === 'preset-6-plus-1');
-      if (newPreset) {
-        console.log("Injecting 6 Plus 1 preset...");
-        newTimers.push(newPreset);
+      // 3. Patch Alternate Breathing Steps (ensure full cycle)
+      const altBreath = newTimers.find(t => t.id === 'preset-alt-breath');
+      if (altBreath && altBreath.steps.length === 3) {
         hasChanges = true;
+        newTimers = newTimers.map(t => {
+          if (t.id === 'preset-alt-breath') {
+            return {
+              ...t,
+              steps: [
+                { id: 'b1', name: 'steps.inhale', duration: 4 },
+                { id: 'b2', name: 'steps.hold', duration: 16 },
+                { id: 'b3', name: 'steps.exhale', duration: 8 },
+                { id: 'b4', name: 'steps.inhale', duration: 4 },
+                { id: 'b5', name: 'steps.hold', duration: 16 },
+                { id: 'b6', name: 'steps.exhale', duration: 8 }
+              ]
+            };
+          }
+          return t;
+        });
       }
-    }
 
-    if (hasChanges) {
-      setTimers(newTimers);
-      toast.success(t('messages.restoreSuccess')); // Notify update
-    }
-  }, [timers, setTimers, t]);
+      // 4. Inject Missing 6 Plus 1
+      if (!newTimers.some(t => t.id === 'preset-6-plus-1')) {
+        const newPreset = initialMockTimers.find(t => t.id === 'preset-6-plus-1');
+        if (newPreset) {
+          newTimers.push(newPreset);
+          hasChanges = true;
+        }
+      }
+
+      if (hasChanges) {
+        toast.success(t('messages.restoreSuccess'));
+        return newTimers;
+      }
+      return prev;
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
 
   const handleResetOrder = () => {
@@ -385,6 +393,17 @@ function App() {
     fileInputRef.current?.click();
   };
 
+  const isValidTimer = (obj: any): obj is Timer => {
+    return (
+      obj &&
+      typeof obj.id === 'string' &&
+      typeof obj.name === 'string' &&
+      Array.isArray(obj.steps) &&
+      obj.steps.every((s: any) => s && typeof s.id === 'string' && typeof s.duration === 'number') &&
+      Array.isArray(obj.tags)
+    );
+  };
+
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -392,23 +411,34 @@ function App() {
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const imported = JSON.parse(event.target?.result as string);
+        const result = event.target?.result;
+        if (typeof result !== 'string') return;
+        const imported = JSON.parse(result);
         if (Array.isArray(imported)) {
+          const validTimers = imported.filter(isValidTimer);
+          if (validTimers.length === 0) {
+            toast.error(t('messages.invalidJson'));
+            return;
+          }
           const newTimers = [...timers];
-          imported.forEach((t: Timer) => {
-            if (!newTimers.find(ex => ex.id === t.id)) {
-              newTimers.push(t);
+          validTimers.forEach((timer) => {
+            if (!newTimers.find(ex => ex.id === timer.id)) {
+              newTimers.push(timer);
             }
           });
           setTimers(newTimers);
           toast.success(t('messages.importSuccess'));
+        } else {
+          toast.error(t('messages.invalidJson'));
         }
       } catch (err) {
         toast.error(t('messages.invalidJson'));
       }
-
     };
     reader.readAsText(file);
+
+    // Reset file input so the same file can be imported again
+    e.target.value = '';
   };
 
   return (
@@ -590,7 +620,7 @@ function App() {
 
                         <button
                           onClick={() => {
-                            toast.info(`FlowTimer v1.1.16\nReady for your next session!`);
+                            toast.info(`FlowTimer v1.1.83\nReady for your next session!`);
                             setShowGlobalMenu(false);
                           }}
                           className="dropdown-item"

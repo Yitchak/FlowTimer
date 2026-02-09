@@ -53,54 +53,75 @@ export const useTimerStorage = (user: User | null) => {
     }, [timers]);
 
     const addTimer = async (newTimer: Timer) => {
-        // Optimistic Update
         setTimers(prev => [...prev, newTimer]);
 
         if (user) {
             try {
-                // Background sync
                 await TimerDB.create({ ...newTimer, userId: user.id });
             } catch (error) {
                 console.error("Cloud save failed:", error);
                 toast.error("Failed to save to cloud");
+                // Rollback
+                setTimers(prev => prev.filter(t => t.id !== newTimer.id));
             }
         }
     };
 
     const updateTimer = async (updatedTimer: Timer) => {
-        setTimers(prev => prev.map(t => t.id === updatedTimer.id ? updatedTimer : t));
+        let previousTimer: Timer | undefined;
+        setTimers(prev => {
+            previousTimer = prev.find(t => t.id === updatedTimer.id);
+            return prev.map(t => t.id === updatedTimer.id ? updatedTimer : t);
+        });
 
         if (user) {
             try {
                 await TimerDB.update(updatedTimer);
             } catch (error) {
                 console.error("Cloud update failed:", error);
+                toast.error("Failed to update in cloud");
+                if (previousTimer) {
+                    setTimers(prev => prev.map(t => t.id === updatedTimer.id ? previousTimer! : t));
+                }
             }
         }
     };
 
     const deleteTimer = async (timerId: string) => {
-        setTimers(prev => prev.filter(t => t.id !== timerId));
+        let deletedTimer: Timer | undefined;
+        setTimers(prev => {
+            deletedTimer = prev.find(t => t.id === timerId);
+            return prev.filter(t => t.id !== timerId);
+        });
 
         if (user) {
             try {
                 await TimerDB.delete(timerId);
             } catch (error) {
                 console.error("Cloud delete failed:", error);
+                toast.error("Failed to delete from cloud");
+                if (deletedTimer) {
+                    setTimers(prev => [...prev, deletedTimer!]);
+                }
             }
         }
     };
 
     const reorderTimers = async (newOrder: Timer[]) => {
-        // Update order field in objects
         const ordered = newOrder.map((t, index) => ({ ...t, order: index }));
-        setTimers(ordered);
+        let previousTimers: Timer[] = [];
+        setTimers(prev => {
+            previousTimers = prev;
+            return ordered;
+        });
 
         if (user) {
             try {
-                await TimerDB.saveAll(ordered, user.id); // Bulk upsert to update orders
+                await TimerDB.saveAll(ordered, user.id);
             } catch (error) {
                 console.error("Cloud reorder failed:", error);
+                toast.error("Failed to sync order to cloud");
+                setTimers(previousTimers);
             }
         }
     };
