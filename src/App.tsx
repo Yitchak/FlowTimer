@@ -15,6 +15,7 @@ import './App.css';
 import { useLanguage } from './contexts/LanguageContext';
 import { ReorderableTimerItem } from './components/ReorderableTimerItem';
 import { Tooltip } from './components/Tooltip';
+import LogoClock from './components/LogoClock';
 
 
 
@@ -182,6 +183,25 @@ function App() {
       let hasChanges = false;
       let newTimers = [...prev];
 
+      // 0. Inject Missing Presets
+      // Inject 6 Plus 1
+      if (!newTimers.some(t => t.id === 'preset-6-plus-1')) {
+        const newPreset = initialMockTimers.find(t => t.id === 'preset-6-plus-1');
+        if (newPreset) {
+          newTimers.push(newPreset);
+          hasChanges = true;
+        }
+      }
+
+      // Inject 1 Minute Breath Hold
+      if (!newTimers.some(t => t.id === 'preset-1min-breath-hold')) {
+        const newPreset = initialMockTimers.find(t => t.id === 'preset-1min-breath-hold');
+        if (newPreset) {
+          newTimers.push(newPreset);
+          hasChanges = true;
+        }
+      }
+
       // 1. Remove Deprecated
       const deprecatedIds = [
         'preset-sun-salutation',
@@ -198,7 +218,7 @@ function App() {
       }
 
       // 2. Patch Tags for Yoga List (ensure they have 'yoga' tag)
-      const timersToTagYoga = ['preset-alt-breath', 'preset-1min', 'preset-3min', 'preset-11min', 'preset-sat-kriya'];
+      const timersToTagYoga = ['preset-alt-breath', 'preset-1min', 'preset-3min', 'preset-11min', 'preset-sat-kriya', 'preset-1min-breath-hold'];
 
       newTimers = newTimers.map(t => {
         if (timersToTagYoga.includes(t.id) && !t.tags.includes('yoga')) {
@@ -230,7 +250,7 @@ function App() {
         });
       }
 
-      // 4. Inject Missing 6 Plus 1
+      // 4. Inject Missing 6 Plus 1 (fallback)
       if (!newTimers.some(t => t.id === 'preset-6-plus-1')) {
         const newPreset = initialMockTimers.find(t => t.id === 'preset-6-plus-1');
         if (newPreset) {
@@ -472,7 +492,7 @@ function App() {
             {/* App Header */}
             <header className="app-header">
               <div className="header-left">
-                <h1 className="logo-text">Timr<span className="text-primary">Flow</span></h1>
+                <LogoClock />
               </div>
 
               <div className="header-right">

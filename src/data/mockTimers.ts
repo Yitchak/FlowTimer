@@ -239,6 +239,25 @@ export const presets: Timer[] = [
         userId: 'system',
         isPreset: true,
         imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=300&q=80'
+    },
+    {
+        id: 'preset-1min-breath-hold',
+        name: 'presets.1minBreathHold',
+        type: 'complex',
+        tags: ['breathwork', 'focus', 'yoga'],
+        color: '#10b981', // Emerald
+        repetitions: -1,
+        steps: [
+            { id: '1mbh1', name: 'steps.preparation', duration: 15 },
+            { id: '1mbh2', name: 'steps.1min', duration: 60 },
+            { id: '1mbh3', name: 'steps.breathInOut', duration: 5 },
+            { id: '1mbh4', name: 'steps.hold', duration: 20 }
+        ],
+
+        order: 14,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=300&q=80'
     }
 ];
 
