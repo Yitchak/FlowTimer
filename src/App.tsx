@@ -51,24 +51,34 @@ function App() {
     return saved ? parseFloat(saved) : 1.0;
   });
 
-  const toggleVolume = () => {
-    setVolume(prev => {
-      let newVol = 1.0;
-      if (prev >= 1.0) newVol = 0.5;
-      else if (prev >= 0.5) newVol = 0.2;
-      else if (prev >= 0.2) newVol = 0;
-      else newVol = 1.0;
+  const [showVolumeMenu, setShowVolumeMenu] = useState(false);
+  const volumeMenuRef = useRef<HTMLDivElement>(null);
 
-      localStorage.setItem('timrflow_volume', newVol.toString());
-      return newVol;
-    });
+  const setVolumeLevel = (level: number) => {
+    setVolume(level);
+    localStorage.setItem('timrflow_volume', level.toString());
+    setShowVolumeMenu(false);
   };
 
   const getVolumeIcon = () => {
     if (volume === 0) return <VolumeX size={20} />;
-    if (volume < 0.5) return <Volume1 size={20} />;
+    if (volume <= 0.2) return <Volume1 size={20} />;
     return <Volume2 size={20} />;
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (volumeMenuRef.current && !volumeMenuRef.current.contains(event.target as Node)) {
+        setShowVolumeMenu(false);
+      }
+    };
+    if (showVolumeMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showVolumeMenu]);
 
   const [activeTimerId, setActiveTimerId] = useState<string | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -183,25 +193,6 @@ function App() {
       let hasChanges = false;
       let newTimers = [...prev];
 
-      // 0. Inject Missing Presets
-      // Inject 6 Plus 1
-      if (!newTimers.some(t => t.id === 'preset-6-plus-1')) {
-        const newPreset = initialMockTimers.find(t => t.id === 'preset-6-plus-1');
-        if (newPreset) {
-          newTimers.push(newPreset);
-          hasChanges = true;
-        }
-      }
-
-      // Inject 1 Minute Breath Hold
-      if (!newTimers.some(t => t.id === 'preset-1min-breath-hold')) {
-        const newPreset = initialMockTimers.find(t => t.id === 'preset-1min-breath-hold');
-        if (newPreset) {
-          newTimers.push(newPreset);
-          hasChanges = true;
-        }
-      }
-
       // 1. Remove Deprecated
       const deprecatedIds = [
         'preset-sun-salutation',
@@ -218,7 +209,7 @@ function App() {
       }
 
       // 2. Patch Tags for Yoga List (ensure they have 'yoga' tag)
-      const timersToTagYoga = ['preset-alt-breath', 'preset-1min', 'preset-3min', 'preset-11min', 'preset-sat-kriya', 'preset-1min-breath-hold'];
+      const timersToTagYoga = ['preset-alt-breath', 'preset-1min', 'preset-3min', 'preset-11min', 'preset-sat-kriya'];
 
       newTimers = newTimers.map(t => {
         if (timersToTagYoga.includes(t.id) && !t.tags.includes('yoga')) {
@@ -250,7 +241,7 @@ function App() {
         });
       }
 
-      // 4. Inject Missing 6 Plus 1 (fallback)
+      // 4. Inject Missing 6 Plus 1
       if (!newTimers.some(t => t.id === 'preset-6-plus-1')) {
         const newPreset = initialMockTimers.find(t => t.id === 'preset-6-plus-1');
         if (newPreset) {
@@ -506,14 +497,59 @@ function App() {
                   </button>
                 </Tooltip>
 
-                <Tooltip content={t('actions.volume')} position="bottom">
-                  <button
-                    className="icon-btn-large"
-                    onClick={toggleVolume}
-                  >
-                    {getVolumeIcon()}
-                  </button>
-                </Tooltip>
+                <div className="relative" ref={volumeMenuRef}>
+                  <Tooltip content={t('actions.volume')} position="bottom">
+                    <button
+                      className={`icon-btn-large ${showVolumeMenu ? 'bg-white/10 text-white' : ''}`}
+                      onClick={() => setShowVolumeMenu(!showVolumeMenu)}
+                    >
+                      {getVolumeIcon()}
+                    </button>
+                  </Tooltip>
+
+                  <AnimatePresence>
+                    {showVolumeMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.1 }}
+                        className="dropdown-menu"
+                        style={{ width: '160px' }}
+                      >
+                        <button
+                          onClick={() => setVolumeLevel(1.0)}
+                          className={`dropdown-item ${volume === 1.0 ? 'text-primary' : ''}`}
+                        >
+                          <Volume2 size={16} />
+                          <span>{t('volume.full') || '100%'}</span>
+                        </button>
+                        <button
+                          onClick={() => setVolumeLevel(0.5)}
+                          className={`dropdown-item ${volume === 0.5 ? 'text-primary' : ''}`}
+                        >
+                          <Volume2 size={16} />
+                          <span>{t('volume.medium') || '50%'}</span>
+                        </button>
+                        <button
+                          onClick={() => setVolumeLevel(0.2)}
+                          className={`dropdown-item ${volume === 0.2 ? 'text-primary' : ''}`}
+                        >
+                          <Volume1 size={16} />
+                          <span>{t('volume.low') || '20%'}</span>
+                        </button>
+                        <div className="dropdown-divider"></div>
+                        <button
+                          onClick={() => setVolumeLevel(0)}
+                          className={`dropdown-item ${volume === 0 ? 'text-red-400' : ''}`}
+                        >
+                          <VolumeX size={16} />
+                          <span>{t('volume.mute') || 'Mute'}</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
 
 
                 {/* Global Menu */}

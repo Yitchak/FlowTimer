@@ -6,7 +6,7 @@ export const translations = {
             subtitle: "Focus",
             addTimer: "Add Timer",
             about: "About",
-            version: "v1.1.83",
+            version: "v1.1.17",
         },
         tabs: {
             recent: "Recent",
@@ -44,6 +44,12 @@ export const translations = {
             dragToReorder: "Drag to reorder",
             volume: "Volume Control",
             moreOptions: "More options"
+        },
+        volume: {
+            full: "100% - Full",
+            medium: "50% - Medium",
+            low: "20% - Low",
+            mute: "Mute"
         },
         settings: {
             title: "Preferences",
@@ -143,7 +149,6 @@ export const translations = {
             "3min": "3 Minutes Flow",
             "11min": "11 Minutes Flow",
             "6plus1": "6 Plus 1",
-            "1minBreathHold": "1 Minute with Breath Hold",
             quickReset: "Quick Reset"
         },
         steps: {
@@ -201,7 +206,7 @@ export const translations = {
             subtitle: "Focus",
             addTimer: "הוסף טיימר",
             about: "אודות",
-            version: "v1.1.83",
+            version: "v1.1.17",
         },
         tabs: {
             recent: "אחרונים",
@@ -239,6 +244,12 @@ export const translations = {
             dragToReorder: "גרור לשינוי סדר",
             volume: "עוצמת שמע",
             moreOptions: "אפשרויות נוספות"
+        },
+        volume: {
+            full: "100% - מלא",
+            medium: "50% - בינוני",
+            low: "20% - נמוך",
+            mute: "השתקה"
         },
         settings: {
             title: "הגדרות",
@@ -338,7 +349,6 @@ export const translations = {
             "3min": "זרימה של 3 דקות",
             "11min": "זרימה של 11 דקות",
             "6plus1": "6 פלוס 1",
-            "1minBreathHold": "1 דקה עם עצירת נשימה",
             quickReset: "איפוס מהיר"
         },
         steps: {
@@ -396,7 +406,7 @@ export const translations = {
             subtitle: "Enfoque",
             addTimer: "Añadir Temp.",
             about: "Acerca de",
-            version: "v1.1.83",
+            version: "v1.1.17",
         },
         tabs: {
             recent: "Reciente",
@@ -528,7 +538,6 @@ export const translations = {
             "1min": "1 Minute Flow",
             "3min": "3 Minutes Flow",
             "11min": "11 Minutes Flow",
-            "1minBreathHold": "1 Minuto con Retención",
             quickReset: "Quick Reset"
         },
         steps: {
