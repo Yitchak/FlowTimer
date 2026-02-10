@@ -5,6 +5,9 @@ export interface TimerStep {
   name: string;
   duration: number; // in seconds
   color?: string;
+  imageUrl?: string;       // Per-step image
+  instructions?: string;   // Text instructions for this step
+  ttsText?: string;        // Text for text-to-speech (defaults to instructions if not set)
 }
 
 export interface Timer {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Plus, Trash2, Save } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { X, Plus, Trash2, Save, Image, BookOpen, Volume2, ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { Timer, TimerStep, TimerType } from '../types/timer';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Tooltip } from './Tooltip';
@@ -24,6 +24,7 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
     );
     const [repetitions, setRepetitions] = useState(timer?.repetitions || 1);
     const [isContinuous, setIsContinuous] = useState(timer?.repetitions === -1);
+    const [expandedStep, setExpandedStep] = useState<string | null>(null);
 
 
 
@@ -316,99 +317,191 @@ const TimerEditor: React.FC<TimerEditorProps> = ({ timer, onSave, onClose }) => 
                             </div>
 
                             <div className="steps-list">
-                                {steps.map((step, index) => (
-                                    <div key={step.id} className="step-row">
-                                        <div className="step-header-mobile">
-                                            <div className="step-number">
-                                                {index + 1}
+                                {steps.map((step, index) => {
+                                    const isExpanded = expandedStep === step.id;
+                                    const hasGuidance = !!(step.imageUrl || step.instructions || step.ttsText);
+                                    return (
+                                    <div key={step.id} className="step-row" style={{ flexDirection: 'column' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                                            <div className="step-header-mobile">
+                                                <div className="step-number">
+                                                    {index + 1}
+                                                </div>
+                                                <Tooltip content={t('editor.removeStep')}>
+                                                    <button
+                                                        onClick={() => removeStep(step.id)}
+                                                        className="remove-step-btn mobile-only"
+                                                        disabled={steps.length === 1}
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </Tooltip>
                                             </div>
+
+                                            <div className="step-main-content">
+                                                <label className="form-label text-xs">{t('editor.stepName')}</label>
+                                                <input
+                                                    value={step.name}
+                                                    onChange={(e) => updateStep(step.id, { name: e.target.value })}
+                                                    className="step-name-input"
+                                                    placeholder={t('editor.stepPlaceholder')}
+                                                />
+                                            </div>
+
+                                            <div className="step-duration-group">
+                                                <label className="form-label text-xs">{t('editor.duration')} (H:M:S)</label>
+                                                <div className="duration-inputs-row">
+                                                    <input
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        placeholder="0h"
+                                                        value={Math.floor(step.duration / 3600).toString()}
+                                                        onChange={(e) => {
+                                                            const val = parseInt(e.target.value) || 0;
+                                                            const currentM = Math.floor((step.duration % 3600) / 60);
+                                                            const currentS = step.duration % 60;
+                                                            updateStep(step.id, { duration: val * 3600 + currentM * 60 + currentS });
+                                                        }}
+                                                        className="duration-input-compact"
+                                                    />
+                                                    <span className="time-sep">:</span>
+                                                    <input
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        placeholder="0m"
+                                                        value={Math.floor((step.duration % 3600) / 60).toString()}
+                                                        onChange={(e) => {
+                                                            let val = parseInt(e.target.value) || 0;
+                                                            if (val > 59) val = 59;
+                                                            const currentH = Math.floor(step.duration / 3600);
+                                                            const currentS = step.duration % 60;
+                                                            updateStep(step.id, { duration: currentH * 3600 + val * 60 + currentS });
+                                                        }}
+                                                        className="duration-input-compact"
+                                                    />
+                                                    <span className="time-sep">:</span>
+                                                    <input
+                                                        type="text"
+                                                        inputMode="numeric"
+                                                        placeholder="0s"
+                                                        value={(step.duration % 60).toString()}
+                                                        onChange={(e) => {
+                                                            let val = parseInt(e.target.value) || 0;
+                                                            if (val > 59) val = 59;
+                                                            const currentH = Math.floor(step.duration / 3600);
+                                                            const currentM = Math.floor((step.duration % 3600) / 60);
+                                                            updateStep(step.id, { duration: currentH * 3600 + currentM * 60 + val });
+                                                        }}
+                                                        className="duration-input-compact"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Guidance expand toggle */}
+                                            <Tooltip content={t('editor.guidance')}>
+                                                <button
+                                                    onClick={() => setExpandedStep(isExpanded ? null : step.id)}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '2px',
+                                                        padding: '6px',
+                                                        borderRadius: '8px',
+                                                        background: hasGuidance ? 'rgba(var(--primary-rgb), 0.15)' : 'rgba(255,255,255,0.05)',
+                                                        color: hasGuidance ? 'var(--primary)' : 'var(--text-dim)',
+                                                        border: 'none',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s'
+                                                    }}
+                                                >
+                                                    <BookOpen size={14} />
+                                                    {isExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                                                </button>
+                                            </Tooltip>
+
                                             <Tooltip content={t('editor.removeStep')}>
                                                 <button
                                                     onClick={() => removeStep(step.id)}
-                                                    className="remove-step-btn mobile-only"
+                                                    className="remove-step-btn desktop-only"
                                                     disabled={steps.length === 1}
                                                 >
-                                                    <Trash2 size={16} />
+                                                    <Trash2 size={18} />
                                                 </button>
                                             </Tooltip>
                                         </div>
 
-                                        <div className="step-main-content">
-                                            <label className="form-label text-xs">{t('editor.stepName')}</label>
-                                            <input
-                                                value={step.name}
-                                                onChange={(e) => updateStep(step.id, { name: e.target.value })}
-                                                className="step-name-input"
-                                                placeholder={t('editor.stepPlaceholder')}
-                                            />
-                                        </div>
-
-
-                                        <div className="step-duration-group">
-                                            <label className="form-label text-xs">{t('editor.duration')} (H:M:S)</label>
-                                            <div className="duration-inputs-row">
-
-                                                {/* Hours */}
-                                                <input
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    placeholder="0h"
-                                                    value={Math.floor(step.duration / 3600).toString()}
-                                                    onChange={(e) => {
-                                                        const val = parseInt(e.target.value) || 0;
-                                                        const currentM = Math.floor((step.duration % 3600) / 60);
-                                                        const currentS = step.duration % 60;
-                                                        updateStep(step.id, { duration: val * 3600 + currentM * 60 + currentS });
+                                        {/* Expandable Guidance Section */}
+                                        <AnimatePresence>
+                                            {isExpanded && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, height: 0 }}
+                                                    animate={{ opacity: 1, height: 'auto' }}
+                                                    exit={{ opacity: 0, height: 0 }}
+                                                    transition={{ duration: 0.2 }}
+                                                    style={{
+                                                        overflow: 'hidden',
+                                                        width: '100%',
+                                                        marginTop: '8px',
+                                                        padding: '12px',
+                                                        borderRadius: '10px',
+                                                        background: 'rgba(255,255,255,0.03)',
+                                                        border: '1px solid rgba(255,255,255,0.08)',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        gap: '10px'
                                                     }}
-                                                    className="duration-input-compact"
-                                                />
-                                                <span className="time-sep">:</span>
-                                                {/* Minutes */}
-                                                <input
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    placeholder="0m"
-                                                    value={Math.floor((step.duration % 3600) / 60).toString()}
-                                                    onChange={(e) => {
-                                                        let val = parseInt(e.target.value) || 0;
-                                                        if (val > 59) val = 59;
-                                                        const currentH = Math.floor(step.duration / 3600);
-                                                        const currentS = step.duration % 60;
-                                                        updateStep(step.id, { duration: currentH * 3600 + val * 60 + currentS });
-                                                    }}
-                                                    className="duration-input-compact"
-                                                />
-                                                <span className="time-sep">:</span>
-                                                {/* Seconds */}
-                                                <input
-                                                    type="text"
-                                                    inputMode="numeric"
-                                                    placeholder="0s"
-                                                    value={(step.duration % 60).toString()}
-                                                    onChange={(e) => {
-                                                        let val = parseInt(e.target.value) || 0;
-                                                        if (val > 59) val = 59;
-                                                        const currentH = Math.floor(step.duration / 3600);
-                                                        const currentM = Math.floor((step.duration % 3600) / 60);
-                                                        updateStep(step.id, { duration: currentH * 3600 + currentM * 60 + val });
-                                                    }}
-                                                    className="duration-input-compact"
-                                                />
-                                            </div>
-                                        </div>
+                                                >
+                                                    {/* Image URL */}
+                                                    <div className="form-group" style={{ marginBottom: 0 }}>
+                                                        <label className="form-label text-xs" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <Image size={12} />
+                                                            {t('editor.stepImage')}
+                                                        </label>
+                                                        <input
+                                                            value={step.imageUrl || ''}
+                                                            onChange={(e) => updateStep(step.id, { imageUrl: e.target.value || undefined })}
+                                                            className="styled-input"
+                                                            placeholder="https://..."
+                                                            style={{ fontSize: '12px' }}
+                                                        />
+                                                    </div>
 
-                                        <Tooltip content={t('editor.removeStep')}>
-                                            <button
-                                                onClick={() => removeStep(step.id)}
-                                                className="remove-step-btn desktop-only"
-                                                disabled={steps.length === 1}
-                                            >
+                                                    {/* Instructions */}
+                                                    <div className="form-group" style={{ marginBottom: 0 }}>
+                                                        <label className="form-label text-xs" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <BookOpen size={12} />
+                                                            {t('editor.stepInstructions')}
+                                                        </label>
+                                                        <textarea
+                                                            value={step.instructions || ''}
+                                                            onChange={(e) => updateStep(step.id, { instructions: e.target.value || undefined })}
+                                                            className="styled-input"
+                                                            placeholder={t('editor.instructionsPlaceholder')}
+                                                            rows={3}
+                                                            style={{ fontSize: '12px', resize: 'vertical', minHeight: '60px' }}
+                                                        />
+                                                    </div>
 
-                                                <Trash2 size={18} />
-                                            </button>
-                                        </Tooltip>
+                                                    {/* TTS Text (optional, defaults to instructions) */}
+                                                    <div className="form-group" style={{ marginBottom: 0 }}>
+                                                        <label className="form-label text-xs" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            <Volume2 size={12} />
+                                                            {t('editor.ttsText')}
+                                                        </label>
+                                                        <input
+                                                            value={step.ttsText || ''}
+                                                            onChange={(e) => updateStep(step.id, { ttsText: e.target.value || undefined })}
+                                                            className="styled-input"
+                                                            placeholder={t('editor.ttsPlaceholder')}
+                                                            style={{ fontSize: '12px' }}
+                                                        />
+                                                    </div>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
-                                ))}
+                                    );
+                                })}
                             </div>
 
                             <Tooltip content={t('editor.addStep')}>

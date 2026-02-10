@@ -135,12 +135,42 @@ export const presets: Timer[] = [
         color: '#ff7043', // Deep Orange
         repetitions: 1,
         steps: [
-            { id: 'p1', name: 'steps.preparation', duration: 15 },
-            { id: 'p2', name: 'steps.satKriya', duration: 180 },
-            { id: 'p3', name: 'steps.breathInOut', duration: 5 },
-            { id: 'p4', name: 'steps.hold', duration: 20 },
-            { id: 'p5', name: 'steps.preparation', duration: 15 },
-            { id: 'p6', name: 'steps.relaxation', duration: 60 }
+            {
+                id: 'p1', name: 'steps.preparation', duration: 15,
+                imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=300&q=80',
+                instructions: 'guidance.satKriya.prep',
+                ttsText: 'guidance.satKriya.prepTTS'
+            },
+            {
+                id: 'p2', name: 'steps.satKriya', duration: 180,
+                imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80',
+                instructions: 'guidance.satKriya.main',
+                ttsText: 'guidance.satKriya.mainTTS'
+            },
+            {
+                id: 'p3', name: 'steps.breathInOut', duration: 5,
+                imageUrl: 'https://images.unsplash.com/photo-1528319725582-ddc096101511?auto=format&fit=crop&w=300&q=80',
+                instructions: 'guidance.satKriya.breath',
+                ttsText: 'guidance.satKriya.breathTTS'
+            },
+            {
+                id: 'p4', name: 'steps.hold', duration: 20,
+                imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80',
+                instructions: 'guidance.satKriya.hold',
+                ttsText: 'guidance.satKriya.holdTTS'
+            },
+            {
+                id: 'p5', name: 'steps.preparation', duration: 15,
+                imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=300&q=80',
+                instructions: 'guidance.satKriya.prep',
+                ttsText: 'guidance.satKriya.prepTTS'
+            },
+            {
+                id: 'p6', name: 'steps.relaxation', duration: 60,
+                imageUrl: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=300&q=80',
+                instructions: 'guidance.satKriya.relax',
+                ttsText: 'guidance.satKriya.relaxTTS'
+            }
         ],
 
         order: 8,
@@ -239,25 +269,6 @@ export const presets: Timer[] = [
         userId: 'system',
         isPreset: true,
         imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=300&q=80'
-    },
-    {
-        id: 'preset-1min-breath-hold',
-        name: 'presets.1minBreathHold',
-        type: 'complex',
-        tags: ['breathwork', 'focus', 'yoga'],
-        color: '#10b981', // Emerald
-        repetitions: -1,
-        steps: [
-            { id: '1mbh1', name: 'steps.preparation', duration: 15 },
-            { id: '1mbh2', name: 'steps.1min', duration: 60 },
-            { id: '1mbh3', name: 'steps.breathInOut', duration: 5 },
-            { id: '1mbh4', name: 'steps.hold', duration: 20 }
-        ],
-
-        order: 14,
-        userId: 'system',
-        isPreset: true,
-        imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=300&q=80'
     }
 ];
 

@@ -1,13 +1,14 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat, XCircle, GripVertical } from 'lucide-react';
+import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat, XCircle, GripVertical, BookOpen, Volume2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 
-import { motion, DragControls } from 'framer-motion';
+import { motion, AnimatePresence, DragControls } from 'framer-motion';
 import type { Timer } from '../types/timer';
 import { useTimer } from '../hooks/useTimer';
 import { toast } from 'sonner';
 import { playTimerSound } from '../utils/sound';
+import { speak, stop as stopTTS, isSpeaking, isSupported as ttsSupported } from '../utils/tts';
 import { Tooltip } from './Tooltip';
 
 interface TimerCardProps {
@@ -70,6 +71,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
     };
 
     const [showMenu, setShowMenu] = useState(false);
+    const [showInstructions, setShowInstructions] = useState(false);
+    const [ttsActive, setTtsActive] = useState(false);
+    const [autoTts, setAutoTts] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const stepsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -90,6 +94,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
 
 
+    const { language } = useLanguage();
+
     const {
         timeLeft,
         currentStepIndex,
@@ -104,15 +110,62 @@ const TimerCard: React.FC<TimerCardProps> = ({
         isActive,
         onComplete: () => {
             playTimerSound('complete', volume);
+            stopTTS();
+            setTtsActive(false);
             if (isActive) onPause(timer.id);
         },
         onCycleComplete: () => {
             playTimerSound('complete', volume);
         },
-        onStepChange: () => {
+        onStepChange: (index: number) => {
             playTimerSound('step', volume);
+            // Auto TTS on step change
+            if (autoTts && timer.steps[index]) {
+                const step = timer.steps[index];
+                const rawText = step.ttsText || step.instructions;
+                if (rawText) {
+                    const text = t(rawText) !== rawText ? t(rawText) : rawText;
+                    speak(text, language, volume);
+                    setTtsActive(true);
+                }
+            }
         }
     });
+
+    // Stop TTS when timer stops or component unmounts
+    useEffect(() => {
+        if (!isActive) {
+            stopTTS();
+            setTtsActive(false);
+        }
+    }, [isActive]);
+
+    useEffect(() => {
+        return () => { stopTTS(); };
+    }, []);
+
+    // Helper to resolve text (translation key or plain text)
+    const resolveText = (text: string | undefined): string | undefined => {
+        if (!text) return undefined;
+        const translated = t(text);
+        return translated !== text ? translated : text;
+    };
+
+    const handleTTS = () => {
+        if (isSpeaking()) {
+            stopTTS();
+            setTtsActive(false);
+        } else {
+            const step = timer.steps[currentStepIndex];
+            const text = resolveText(step?.ttsText) || resolveText(step?.instructions);
+            if (text) {
+                speak(text, language, volume);
+                setTtsActive(true);
+            } else {
+                toast.info(t('guidance.noInstructions'));
+            }
+        }
+    };
 
     // Auto-scroll removed as per user request
     /*
@@ -270,7 +323,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
 
                     </div>
 
-                    {/* Right Side: Big Circular Image */}
+                    {/* Right Side: Big Circular Image + Guidance Buttons */}
                     <div style={{ position: 'relative' }}>
                         <div style={{
                             width: '80px',
@@ -282,8 +335,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
                         }}>
                             <img
-                                src={timer.imageUrl || 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=250&q=80'}
-                                alt={timer.name}
+                                src={currentStep?.imageUrl || timer.imageUrl || 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=250&q=80'}
+                                alt={currentStep ? t(currentStep.name) : timer.name}
                                 style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }}
                                 onError={(e) => {
                                     (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=250&q=80';
@@ -291,19 +344,54 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             />
                         </div>
 
+                        {/* Guidance Buttons - below image */}
+                        {(currentStep?.instructions || currentStep?.ttsText) && (
+                            <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', marginTop: '6px' }}>
+                                {currentStep?.instructions && (
+                                    <Tooltip content={t('guidance.instructions')}>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setShowInstructions(!showInstructions); }}
+                                            className="p-1 rounded-full hover:bg-white/10 transition-all"
+                                            style={{
+                                                color: showInstructions ? (timer.color || 'var(--primary)') : 'var(--text-dim)',
+                                                fontSize: '11px'
+                                            }}
+                                        >
+                                            <BookOpen size={14} />
+                                        </button>
+                                    </Tooltip>
+                                )}
+                                {ttsSupported() && (currentStep?.ttsText || currentStep?.instructions) && (
+                                    <Tooltip content={ttsActive ? t('guidance.stopTTS') : t('guidance.playTTS')}>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleTTS(); }}
+                                            className="p-1 rounded-full hover:bg-white/10 transition-all"
+                                            style={{
+                                                color: ttsActive ? (timer.color || 'var(--primary)') : 'var(--text-dim)',
+                                                fontSize: '11px'
+                                            }}
+                                        >
+                                            <Volume2 size={14} />
+                                        </button>
+                                    </Tooltip>
+                                )}
+                            </div>
+                        )}
+
                         {/* Drag Handle (if provided) - Absolute top left */}
                         {dragControls && (
                             <div style={{ position: 'absolute', top: '-8px', left: '-12px', zIndex: 30 }}>
-                                <div
-                                    title={t('actions.dragToReorder') || "Drag to reorder"}
-                                    onPointerDown={(e) => dragControls.start(e)}
-                                    // Add touch start for better mobile support if pointer events are iffy
-                                    onTouchStart={(e) => dragControls.start(e as any)}
-                                    className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10 cursor-grab active:cursor-grabbing"
-                                    style={{ touchAction: 'none' }}
-                                >
-                                    <GripVertical size={18} />
-                                </div>
+                                <Tooltip content={t('actions.dragToReorder') || "Drag to reorder"}>
+                                    <div
+                                        onPointerDown={(e) => dragControls.start(e)}
+                                        // Add touch start for better mobile support if pointer events are iffy
+                                        onTouchStart={(e) => dragControls.start(e as any)}
+                                        className="p-2.5 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md transition-all shadow-md border border-white/10 cursor-grab active:cursor-grabbing"
+                                        style={{ touchAction: 'none' }}
+                                    >
+                                        <GripVertical size={18} />
+                                    </div>
+                                </Tooltip>
                             </div>
                         )}
 
@@ -449,6 +537,35 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         <div className="absolute right-0 top-0 bottom-1 w-8 pointer-events-none bg-gradient-to-l from-black/10 to-transparent rounded-r-full" />
                     </div>
                 )}
+                {/* Instructions Panel */}
+                <AnimatePresence>
+                    {showInstructions && currentStep?.instructions && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.2 }}
+                            style={{
+                                overflow: 'hidden',
+                                marginTop: '8px',
+                                padding: '10px 14px',
+                                borderRadius: '12px',
+                                background: 'rgba(255,255,255,0.05)',
+                                border: `1px solid ${timer.color ? `${timer.color}30` : 'rgba(255,255,255,0.1)'}`,
+                                fontSize: '13px',
+                                lineHeight: 1.6,
+                                color: 'var(--text)',
+                                whiteSpace: 'pre-wrap'
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px', opacity: 0.6, fontSize: '11px', fontWeight: 600 }}>
+                                <BookOpen size={12} />
+                                {t('guidance.instructions')}
+                            </div>
+                            {resolveText(currentStep.instructions)}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
 
             {/* Spacer for mobile */}
@@ -586,6 +703,32 @@ const TimerCard: React.FC<TimerCardProps> = ({
                 </Tooltip>
 
             </div>
+
+            {/* Auto TTS Toggle - only if any step has instructions */}
+            {ttsSupported() && timer.steps.some(s => s.instructions || s.ttsText) && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '4px' }}>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); setAutoTts(!autoTts); }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '4px 12px',
+                            borderRadius: '20px',
+                            fontSize: '11px',
+                            fontWeight: 500,
+                            background: autoTts ? `${timer.color || 'var(--primary)'}20` : 'rgba(255,255,255,0.05)',
+                            color: autoTts ? (timer.color || 'var(--primary)') : 'var(--text-dim)',
+                            border: `1px solid ${autoTts ? `${timer.color || 'var(--primary)'}40` : 'rgba(255,255,255,0.1)'}`,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        <Volume2 size={12} />
+                        {t('guidance.autoTTS')}
+                    </button>
+                </div>
+            )}
         </motion.div >
     );
 };

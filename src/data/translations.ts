@@ -89,7 +89,32 @@ export const translations = {
             hours: "Hours",
             mins: "Mins",
             secs: "Secs",
-            setDuration: "Set the total duration for this timer"
+            setDuration: "Set the total duration for this timer",
+            guidance: "Guidance",
+            stepImage: "Step Image URL",
+            stepInstructions: "Instructions",
+            instructionsPlaceholder: "Describe what to do in this step...",
+            ttsText: "Voice Guidance (optional)",
+            ttsPlaceholder: "Custom text for voice (defaults to instructions)"
+        },
+        guidance: {
+            instructions: "Instructions",
+            playTTS: "Play Voice Guidance",
+            stopTTS: "Stop Voice",
+            autoTTS: "Auto Voice",
+            noInstructions: "No instructions for this step",
+            satKriya: {
+                prep: "Sit on your heels in Rock Pose. Interlace your fingers with index fingers pointing up. Arms are hugged close to the ears.",
+                prepTTS: "Sit on your heels. Interlace your fingers with index fingers pointing up. Arms close to the ears.",
+                main: "Begin chanting SAT NAM. On SAT, pull the navel point in. On NAM, release. Keep a steady rhythm.",
+                mainTTS: "Chant Sat Nam. Pull the navel in on Sat, release on Nam. Keep a steady rhythm.",
+                breath: "Inhale deeply and exhale completely.",
+                breathTTS: "Inhale deeply. And exhale.",
+                hold: "Inhale, apply Mul Bhand. Squeeze the energy from the base of the spine to the top of the skull.",
+                holdTTS: "Inhale and hold. Apply root lock. Squeeze the energy upward.",
+                relax: "Lie down on your back. Relax completely. Let the energy integrate.",
+                relaxTTS: "Lie down and relax completely."
+            }
         },
         login: {
             title: "Sign In",
@@ -289,7 +314,32 @@ export const translations = {
             hours: "שעות",
             mins: "דקות",
             secs: "שניות",
-            setDuration: "הגדר את המשך הכולל לטיימר"
+            setDuration: "הגדר את המשך הכולל לטיימר",
+            guidance: "הדרכה",
+            stepImage: "תמונת שלב (URL)",
+            stepInstructions: "הוראות",
+            instructionsPlaceholder: "תאר מה לעשות בשלב זה...",
+            ttsText: "הדרכה קולית (אופציונלי)",
+            ttsPlaceholder: "טקסט מותאם לקול (ברירת מחדל: ההוראות)"
+        },
+        guidance: {
+            instructions: "הוראות",
+            playTTS: "הפעל הדרכה קולית",
+            stopTTS: "עצור קול",
+            autoTTS: "קול אוטומטי",
+            noInstructions: "אין הוראות לשלב זה",
+            satKriya: {
+                prep: "שבו על העקבים בתנוחת סלע. שלבו את האצבעות כשאצבעות המורה מכוונות למעלה. הידיים צמודות לאוזניים.",
+                prepTTS: "שבו על העקבים. שלבו אצבעות, אצבעות מורה למעלה. ידיים צמודות לאוזניים.",
+                main: "התחילו לשיר סט נאם. על סט, משכו את הטבור פנימה. על נאם, שחררו. שמרו על קצב קבוע.",
+                mainTTS: "שירו סט נאם. משכו את הטבור על סט, שחררו על נאם. שמרו על קצב.",
+                breath: "שאפו עמוק ונשפו לגמרי.",
+                breathTTS: "שאפו עמוק. ונשפו.",
+                hold: "שאפו, הפעילו מול בנד. סחטו את האנרגיה מבסיס עמוד השדרה לראש.",
+                holdTTS: "שאפו והחזיקו. הפעילו נעילת שורש. סחטו את האנרגיה למעלה.",
+                relax: "שכבו על הגב. הירגעו לחלוטין. תנו לאנרגיה להשתלב.",
+                relaxTTS: "שכבו והירגעו לחלוטין."
+            }
         },
         login: {
             title: "התחבר",
