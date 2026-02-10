@@ -497,7 +497,7 @@ function App() {
                   </button>
                 </Tooltip>
 
-                <div className="relative" ref={volumeMenuRef}>
+                <div ref={volumeMenuRef} style={{ position: 'relative' }}>
                   <Tooltip content={t('actions.volume')} position="bottom">
                     <button
                       className={`icon-btn-large ${showVolumeMenu ? 'bg-white/10 text-white' : ''}`}
@@ -515,7 +515,7 @@ function App() {
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.1 }}
                         className="dropdown-menu"
-                        style={{ width: '160px' }}
+                        style={{ width: '160px', left: '50%', right: 'auto', transform: 'translateX(-50%)' }}
                       >
                         <button
                           onClick={() => setVolumeLevel(1.0)}
@@ -528,14 +528,14 @@ function App() {
                           onClick={() => setVolumeLevel(0.5)}
                           className={`dropdown-item ${volume === 0.5 ? 'text-primary' : ''}`}
                         >
-                          <Volume2 size={16} />
+                          <Volume1 size={16} />
                           <span>{t('volume.medium') || '50%'}</span>
                         </button>
                         <button
                           onClick={() => setVolumeLevel(0.2)}
                           className={`dropdown-item ${volume === 0.2 ? 'text-primary' : ''}`}
                         >
-                          <Volume1 size={16} />
+                          <VolumeX size={16} style={{ opacity: 0.6 }} />
                           <span>{t('volume.low') || '20%'}</span>
                         </button>
                         <div className="dropdown-divider"></div>

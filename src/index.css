@@ -44,7 +44,7 @@
     overflow: hidden;
     background-color: var(--bg-primary);
     color: var(--text);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Arimo', sans-serif;
     -webkit-font-smoothing: antialiased;
     /* overscroll-behavior: none; - Removed to allow pull-to-refresh */
   }
