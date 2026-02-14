@@ -131,40 +131,32 @@ export const useTimer = ({
         }
     }, [timeLeft, isActive, currentStepIndex, steps, repetitions, currentRepetition]);
 
-    const reset = () => {
+    const reset = (shouldRestart = false) => {
         workerRef.current?.postMessage({ action: 'STOP' });
         setCurrentStepIndex(0);
         setCurrentRepetition(1);
-        setTimeLeft(steps[0]?.duration || 0);
+        const initialDuration = steps[0]?.duration || 0;
+        setTimeLeft(initialDuration);
+
+        // If shouldRestart is true and timer should be active, restart worker
+        if (shouldRestart && isActive) {
+            workerRef.current?.postMessage({
+                action: 'START',
+                payload: { durationInSeconds: initialDuration }
+            });
+        }
     };
 
     const nextStep = () => {
-        let nextIdx = currentStepIndex;
-        let nextRep = currentRepetition;
-        let nextDuration = 0;
-        let shouldContinue = true;
-
+        // Only move forward within current repetition
         if (currentStepIndex < steps.length - 1) {
-            nextIdx = currentStepIndex + 1;
-            nextDuration = steps[nextIdx].duration;
-            onStepChangeRef.current?.(nextIdx, currentRepetition);
-        } else {
-            if (repetitions === -1 || currentRepetition < repetitions) {
-                nextRep = currentRepetition + 1;
-                nextIdx = 0;
-                nextDuration = steps[0].duration;
-                onCycleCompleteRef.current?.();
-                onStepChangeRef.current?.(0, nextRep);
-            } else {
-                onCompleteRef.current?.();
-                shouldContinue = false;
-            }
-        }
+            const nextIdx = currentStepIndex + 1;
+            const nextDuration = steps[nextIdx].duration;
 
-        if (shouldContinue) {
             setCurrentStepIndex(nextIdx);
-            setCurrentRepetition(nextRep);
             setTimeLeft(nextDuration);
+            onStepChangeRef.current?.(nextIdx, currentRepetition);
+
             if (isActive) {
                 workerRef.current?.postMessage({
                     action: 'START',
@@ -172,34 +164,27 @@ export const useTimer = ({
                 });
             }
         }
+        // If already at last step, do nothing (stay at last step)
     };
 
     const prevStep = () => {
-        let prevIdx = currentStepIndex;
-        let prevRep = currentRepetition;
-
+        // Only move backward within current repetition
         if (currentStepIndex > 0) {
-            prevIdx = currentStepIndex - 1;
-        } else if (currentRepetition > 1) {
-            prevRep = currentRepetition - 1;
-            prevIdx = steps.length - 1;
-        } else {
-            reset();
-            return;
-        }
+            const prevIdx = currentStepIndex - 1;
+            const prevDuration = steps[prevIdx].duration;
 
-        const prevDuration = steps[prevIdx].duration;
-        setCurrentStepIndex(prevIdx);
-        setCurrentRepetition(prevRep);
-        setTimeLeft(prevDuration);
-        onStepChangeRef.current?.(prevIdx, prevRep);
+            setCurrentStepIndex(prevIdx);
+            setTimeLeft(prevDuration);
+            onStepChangeRef.current?.(prevIdx, currentRepetition);
 
-        if (isActive) {
-            workerRef.current?.postMessage({
-                action: 'START',
-                payload: { durationInSeconds: prevDuration }
-            });
+            if (isActive) {
+                workerRef.current?.postMessage({
+                    action: 'START',
+                    payload: { durationInSeconds: prevDuration }
+                });
+            }
         }
+        // If already at first step, do nothing (stay at first step)
     };
 
     const jumpToStep = (index: number) => {

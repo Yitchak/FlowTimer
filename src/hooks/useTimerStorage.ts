@@ -1,17 +1,47 @@
 import { useState, useEffect } from 'react';
 import type { Timer } from '../types/timer';
 import { TimerDB } from '../lib/db';
-import { mockTimers as initialMockTimers } from '../data/mockTimers';
+import { mockTimers as initialMockTimers, PRESETS_VERSION } from '../data/mockTimers';
 import type { User } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 
 const STORAGE_KEY = 'flowtimer_data';
+const VERSION_KEY = 'flowtimer_presets_version';
 
 export const useTimerStorage = (user: User | null) => {
     const [timers, setTimers] = useState<Timer[]>(() => {
+        // Check if presets need updating
+        const savedVersion = localStorage.getItem(VERSION_KEY);
+        const currentVersion = PRESETS_VERSION.toString();
+
         // Initial Load from LocalStorage
         const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : initialMockTimers;
+        const savedTimers: Timer[] = saved ? JSON.parse(saved) : initialMockTimers;
+
+        // If version changed, update presets but keep custom timers
+        if (savedVersion !== currentVersion && saved) {
+            console.log(`Updating presets from version ${savedVersion} to ${currentVersion}`);
+
+            // Separate custom timers from presets
+            const customTimers = savedTimers.filter(t => !t.isPreset);
+            const newPresets = initialMockTimers.filter(t => t.isPreset);
+
+            // Combine: new presets + existing custom timers
+            const updated = [...newPresets, ...customTimers];
+
+            // Save updated version
+            localStorage.setItem(VERSION_KEY, currentVersion);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
+            return updated;
+        }
+
+        // First time or no version change
+        if (!savedVersion) {
+            localStorage.setItem(VERSION_KEY, currentVersion);
+        }
+
+        return savedTimers;
     });
     const [loading, setLoading] = useState(false);
 

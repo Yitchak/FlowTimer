@@ -1,5 +1,8 @@
 import type { Timer } from '../types/timer';
 
+// Increment this version when presets change to trigger auto-update
+export const PRESETS_VERSION = 2;
+
 export const presets: Timer[] = [
     // --- BREATHWORK ---
     {
@@ -166,7 +169,7 @@ export const presets: Timer[] = [
                 ttsText: 'guidance.satKriya.prepTTS'
             },
             {
-                id: 'p6', name: 'steps.relaxation', duration: 60,
+                id: 'p6', name: 'steps.relaxation', duration: 180,
                 imageUrl: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=300&q=80',
                 instructions: 'guidance.satKriya.relax',
                 ttsText: 'guidance.satKriya.relaxTTS'

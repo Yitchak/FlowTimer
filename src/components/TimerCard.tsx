@@ -112,7 +112,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
             playTimerSound('complete', volume);
             stopTTS();
             setTtsActive(false);
-            if (isActive) onPause(timer.id);
+            // Always pause when complete, regardless of current isActive state
+            onPause(timer.id);
         },
         onCycleComplete: () => {
             playTimerSound('complete', volume);
@@ -209,8 +210,10 @@ const TimerCard: React.FC<TimerCardProps> = ({
     };
 
     const handleReset = () => {
-        reset();
-        onStart(timer.id);
+        reset(true); // Pass true to restart the worker
+        if (!isActive) {
+            onStart(timer.id);
+        }
     };
 
     // Calculate readable title color
