@@ -700,18 +700,6 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             <Maximize2 size={22} />
                         </button>
                     </Tooltip>
-                    <span
-                        style={{
-                            fontSize: '10px',
-                            fontWeight: 600,
-                            color: 'var(--text-dim)',
-                            textAlign: 'center',
-                            lineHeight: 1.2,
-                            maxWidth: '60px'
-                        }}
-                    >
-                        {t('actions.fullscreen')}
-                    </span>
                 </div>
             </div>
 
