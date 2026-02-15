@@ -3,6 +3,7 @@ import { Sun, Moon, Plus, Globe, Shield, RotateCcw, MoreVertical, Download, Uplo
 import { AnimatePresence, Reorder, motion } from 'framer-motion';
 import TimerCard from './components/TimerCard';
 import TimerEditor from './components/TimerEditor';
+import FullscreenTimer from './components/FullscreenTimer';
 import AccessibilityMenu from './components/AccessibilityMenu';
 import { mockTimers as initialMockTimers } from './data/mockTimers';
 import type { Timer } from './types/timer';
@@ -81,6 +82,7 @@ function App() {
   }, [showVolumeMenu]);
 
   const [activeTimerId, setActiveTimerId] = useState<string | null>(null);
+  const [fullscreenTimerId, setFullscreenTimerId] = useState<string | null>(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingTimer, setEditingTimer] = useState<Timer | undefined>(undefined);
   const [isAccessMenuOpen, setIsAccessMenuOpen] = useState(false);
@@ -176,7 +178,7 @@ function App() {
       }
       return prev;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleTheme = () => {
@@ -256,7 +258,7 @@ function App() {
       }
       return prev;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
@@ -480,300 +482,304 @@ function App() {
             exit={{ opacity: 0 }}
             className="flex-1 flex flex-col h-full overflow-hidden"
           >
-            {/* App Header */}
-            <header className="app-header">
-              <div className="header-left">
-                <LogoClock />
-              </div>
-
-              <div className="header-right">
-                <Tooltip content={t('actions.switchTheme')} position="bottom">
-                  <button
-                    className="icon-btn-large"
-                    onClick={toggleTheme}
-                  >
-
-                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                  </button>
-                </Tooltip>
-
-                <div ref={volumeMenuRef} style={{ position: 'relative' }}>
-                  <Tooltip content={t('actions.volume')} position="bottom">
-                    <button
-                      className={`icon-btn-large ${showVolumeMenu ? 'bg-white/10 text-white' : ''}`}
-                      onClick={() => setShowVolumeMenu(!showVolumeMenu)}
-                    >
-                      {getVolumeIcon()}
-                    </button>
-                  </Tooltip>
-
-                  <AnimatePresence>
-                    {showVolumeMenu && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.1 }}
-                        className="dropdown-menu"
-                        style={{ width: '160px', left: '50%', right: 'auto', transform: 'translateX(-50%)' }}
-                      >
-                        <button
-                          onClick={() => setVolumeLevel(1.0)}
-                          className={`dropdown-item ${volume === 1.0 ? 'text-primary' : ''}`}
-                        >
-                          <Volume2 size={16} />
-                          <span>{t('volume.full') || '100%'}</span>
-                        </button>
-                        <button
-                          onClick={() => setVolumeLevel(0.5)}
-                          className={`dropdown-item ${volume === 0.5 ? 'text-primary' : ''}`}
-                        >
-                          <Volume1 size={16} />
-                          <span>{t('volume.medium') || '50%'}</span>
-                        </button>
-                        <button
-                          onClick={() => setVolumeLevel(0.2)}
-                          className={`dropdown-item ${volume === 0.2 ? 'text-primary' : ''}`}
-                        >
-                          <VolumeX size={16} style={{ opacity: 0.6 }} />
-                          <span>{t('volume.low') || '20%'}</span>
-                        </button>
-                        <div className="dropdown-divider"></div>
-                        <button
-                          onClick={() => setVolumeLevel(0)}
-                          className={`dropdown-item ${volume === 0 ? 'text-red-400' : ''}`}
-                        >
-                          <VolumeX size={16} />
-                          <span>{t('volume.mute') || 'Mute'}</span>
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+            {/* App Header - Hidden in Fullscreen */}
+            {!fullscreenTimerId && (
+              <header className="app-header">
+                <div className="header-left">
+                  <LogoClock />
                 </div>
 
-
-                {/* Global Menu */}
-                <div className="relative" ref={globalMenuRef}>
-                  <Tooltip content={user ? `${t('actions.signedInAs')} ${user.email}` : t('actions.moreActions')} position="bottom">
+                <div className="header-right">
+                  <Tooltip content={t('actions.switchTheme')} position="bottom">
                     <button
-                      className={`icon-btn-large ${showGlobalMenu ? 'bg-white/10 text-white' : ''} ${user ? 'text-green-400' : ''}`}
-                      onClick={() => setShowGlobalMenu(!showGlobalMenu)}
+                      className="icon-btn-large"
+                      onClick={toggleTheme}
                     >
 
-
-                      {user ? <User size={20} /> : <MoreVertical size={20} />}
+                      {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
                     </button>
                   </Tooltip>
 
-                  <AnimatePresence>
-                    {showGlobalMenu && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.1 }}
-
-                        className="dropdown-menu"
+                  <div ref={volumeMenuRef} style={{ position: 'relative' }}>
+                    <Tooltip content={t('actions.volume')} position="bottom">
+                      <button
+                        className={`icon-btn-large ${showVolumeMenu ? 'bg-white/10 text-white' : ''}`}
+                        onClick={() => setShowVolumeMenu(!showVolumeMenu)}
                       >
-                        {user ? (
-                          <div className="px-3 py-2 text-[10px] text-text-dim border-b border-white/5 mb-1 truncate">
-                            <div className="flex items-center gap-2">
-                              <User size={12} />
-                              <span className="truncate">{user.email}</span>
+                        {getVolumeIcon()}
+                      </button>
+                    </Tooltip>
+
+                    <AnimatePresence>
+                      {showVolumeMenu && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.1 }}
+                          className="dropdown-menu"
+                          style={{ width: '160px', left: '50%', right: 'auto', transform: 'translateX(-50%)' }}
+                        >
+                          <button
+                            onClick={() => setVolumeLevel(1.0)}
+                            className={`dropdown-item ${volume === 1.0 ? 'text-primary' : ''}`}
+                          >
+                            <Volume2 size={16} />
+                            <span>{t('volume.full') || '100%'}</span>
+                          </button>
+                          <button
+                            onClick={() => setVolumeLevel(0.5)}
+                            className={`dropdown-item ${volume === 0.5 ? 'text-primary' : ''}`}
+                          >
+                            <Volume1 size={16} />
+                            <span>{t('volume.medium') || '50%'}</span>
+                          </button>
+                          <button
+                            onClick={() => setVolumeLevel(0.2)}
+                            className={`dropdown-item ${volume === 0.2 ? 'text-primary' : ''}`}
+                          >
+                            <VolumeX size={16} style={{ opacity: 0.6 }} />
+                            <span>{t('volume.low') || '20%'}</span>
+                          </button>
+                          <div className="dropdown-divider"></div>
+                          <button
+                            onClick={() => setVolumeLevel(0)}
+                            className={`dropdown-item ${volume === 0 ? 'text-red-400' : ''}`}
+                          >
+                            <VolumeX size={16} />
+                            <span>{t('volume.mute') || 'Mute'}</span>
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+
+                  {/* Global Menu */}
+                  <div className="relative" ref={globalMenuRef}>
+                    <Tooltip content={user ? `${t('actions.signedInAs')} ${user.email}` : t('actions.moreActions')} position="bottom">
+                      <button
+                        className={`icon-btn-large ${showGlobalMenu ? 'bg-white/10 text-white' : ''} ${user ? 'text-green-400' : ''}`}
+                        onClick={() => setShowGlobalMenu(!showGlobalMenu)}
+                      >
+
+
+                        {user ? <User size={20} /> : <MoreVertical size={20} />}
+                      </button>
+                    </Tooltip>
+
+                    <AnimatePresence>
+                      {showGlobalMenu && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.1 }}
+
+                          className="dropdown-menu"
+                        >
+                          {user ? (
+                            <div className="px-3 py-2 text-[10px] text-text-dim border-b border-white/5 mb-1 truncate">
+                              <div className="flex items-center gap-2">
+                                <User size={12} />
+                                <span className="truncate">{user.email}</span>
+                              </div>
                             </div>
+                          ) : null}
+
+                          {user ? (
+                            <button
+                              onClick={handleSignOut}
+                              className="dropdown-item text-red-400 hover:text-red-300"
+                              title={t('actions.signOut')}
+                            >
+                              <LogOut size={16} />
+                              <span>{t('actions.signOut')}</span>
+
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => { setIsLoginOpen(true); setShowGlobalMenu(false); }}
+                              className="dropdown-item text-primary"
+                              title={t('actions.signIn')}
+                            >
+                              <LogIn size={16} />
+                              <span>{t('actions.signIn')}</span>
+
+                            </button>
+                          )}
+
+                          <div className="dropdown-divider"></div>
+
+                          <button
+                            onClick={() => { setIsAccessMenuOpen(true); setShowGlobalMenu(false); }}
+                            className="dropdown-item"
+                            title={t('actions.accessibility')}
+                          >
+                            <Shield size={16} />
+                            <span>{t('actions.accessibility')}</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              const nextLang = language === 'en' ? 'he' : language === 'he' ? 'es' : 'en';
+                              setLanguage(nextLang);
+                              toast.success(`Language set to ${nextLang.toUpperCase()}`);
+                              setShowGlobalMenu(false);
+                            }}
+                            className="dropdown-item"
+                            title={`${t('actions.language')} (${language.toUpperCase()})`}
+                          >
+                            <Globe size={16} />
+                            <span>{t('actions.language')} ({language.toUpperCase()})</span>
+                          </button>
+
+                          <div className="dropdown-divider"></div>
+
+                          <button
+                            onClick={() => { handleExportTimers(); setShowGlobalMenu(false); }}
+                            className="dropdown-item"
+                            title={t('actions.export')}
+                          >
+                            <Download size={16} />
+                            <span>{t('actions.export')}</span>
+
+                          </button>
+                          <button
+                            onClick={() => { handleImport(); setShowGlobalMenu(false); }}
+                            className="dropdown-item"
+                            title={t('actions.import')}
+                          >
+                            <Upload size={16} />
+                            <span>{t('actions.import')}</span>
+
+                          </button>
+
+                          <div className="dropdown-divider"></div>
+
+                          <button
+                            onClick={() => { handleRestorePresets(); setShowGlobalMenu(false); }}
+                            className="dropdown-item"
+                            title={t('actions.restorePresets')}
+                          >
+                            <RefreshCw size={16} />
+                            <span>{t('actions.restorePresets')}</span>
+
+                          </button>
+                          <button
+                            onClick={() => { handleResetOrder(); setShowGlobalMenu(false); }}
+                            className="dropdown-item"
+                            title={t('actions.resetOrder')}
+                          >
+                            <RotateCcw size={16} />
+                            <span>{t('actions.resetOrder')}</span>
+
+                          </button>
+
+                          <div className="dropdown-divider"></div>
+
+                          <button
+                            onClick={() => {
+                              toast.info(`FlowTimer v1.1.83\nReady for your next session!`);
+                              setShowGlobalMenu(false);
+                            }}
+                            className="dropdown-item"
+                            title={t('app.about')}
+                          >
+                            <Info size={16} />
+                            <span>{t('app.about')}</span>
+
+                          </button>
+
+                          <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
+                            v1.1.83
                           </div>
-                        ) : null}
-
-                        {user ? (
-                          <button
-                            onClick={handleSignOut}
-                            className="dropdown-item text-red-400 hover:text-red-300"
-                            title={t('actions.signOut')}
-                          >
-                            <LogOut size={16} />
-                            <span>{t('actions.signOut')}</span>
-
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => { setIsLoginOpen(true); setShowGlobalMenu(false); }}
-                            className="dropdown-item text-primary"
-                            title={t('actions.signIn')}
-                          >
-                            <LogIn size={16} />
-                            <span>{t('actions.signIn')}</span>
-
-                          </button>
-                        )}
-
-                        <div className="dropdown-divider"></div>
-
-                        <button
-                          onClick={() => { setIsAccessMenuOpen(true); setShowGlobalMenu(false); }}
-                          className="dropdown-item"
-                          title={t('actions.accessibility')}
-                        >
-                          <Shield size={16} />
-                          <span>{t('actions.accessibility')}</span>
-                        </button>
-                        <button
-                          onClick={() => {
-                            const nextLang = language === 'en' ? 'he' : language === 'he' ? 'es' : 'en';
-                            setLanguage(nextLang);
-                            toast.success(`Language set to ${nextLang.toUpperCase()}`);
-                            setShowGlobalMenu(false);
-                          }}
-                          className="dropdown-item"
-                          title={`${t('actions.language')} (${language.toUpperCase()})`}
-                        >
-                          <Globe size={16} />
-                          <span>{t('actions.language')} ({language.toUpperCase()})</span>
-                        </button>
-
-                        <div className="dropdown-divider"></div>
-
-                        <button
-                          onClick={() => { handleExportTimers(); setShowGlobalMenu(false); }}
-                          className="dropdown-item"
-                          title={t('actions.export')}
-                        >
-                          <Download size={16} />
-                          <span>{t('actions.export')}</span>
-
-                        </button>
-                        <button
-                          onClick={() => { handleImport(); setShowGlobalMenu(false); }}
-                          className="dropdown-item"
-                          title={t('actions.import')}
-                        >
-                          <Upload size={16} />
-                          <span>{t('actions.import')}</span>
-
-                        </button>
-
-                        <div className="dropdown-divider"></div>
-
-                        <button
-                          onClick={() => { handleRestorePresets(); setShowGlobalMenu(false); }}
-                          className="dropdown-item"
-                          title={t('actions.restorePresets')}
-                        >
-                          <RefreshCw size={16} />
-                          <span>{t('actions.restorePresets')}</span>
-
-                        </button>
-                        <button
-                          onClick={() => { handleResetOrder(); setShowGlobalMenu(false); }}
-                          className="dropdown-item"
-                          title={t('actions.resetOrder')}
-                        >
-                          <RotateCcw size={16} />
-                          <span>{t('actions.resetOrder')}</span>
-
-                        </button>
-
-                        <div className="dropdown-divider"></div>
-
-                        <button
-                          onClick={() => {
-                            toast.info(`FlowTimer v1.1.83\nReady for your next session!`);
-                            setShowGlobalMenu(false);
-                          }}
-                          className="dropdown-item"
-                          title={t('app.about')}
-                        >
-                          <Info size={16} />
-                          <span>{t('app.about')}</span>
-
-                        </button>
-
-                        <div className="text-[10px] text-center text-text-dim py-2 opacity-50 border-t border-white/5 mt-1">
-                          v1.1.83
-                        </div>
 
 
 
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  <Tooltip content={t('app.addTimer')} position="bottom">
+                    <button className="primary-btn" onClick={handleAddTimer}>
+                      <Plus size={20} />
+                      <span className="hide-mobile">{t('app.addTimer')}</span>
+
+                    </button>
+                  </Tooltip>
                 </div>
-
-                <Tooltip content={t('app.addTimer')} position="bottom">
-                  <button className="primary-btn" onClick={handleAddTimer}>
-                    <Plus size={20} />
-                    <span className="hide-mobile">{t('app.addTimer')}</span>
-
-                  </button>
-                </Tooltip>
-              </div>
-            </header>
+              </header>
+            )}
 
             {/* Main Content */}
-            {/* Filter Chips / Tabs (Color Coded & Larger) */}
-            <div
-              className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-4 mb-0 sticky top-0 z-50 w-full border-b border-black/5 dark:border-white/5 shadow-sm bg-[#f8f9fa] dark:bg-[#1a1b1e]"
-              style={{
-                display: 'flex',
-                flexWrap: 'nowrap', // Force single line
-                overflowX: 'auto',
-                justifyContent: 'flex-start',
-                paddingTop: '40px',
-                paddingBottom: '40px',
-                paddingLeft: '32px' // equivalent to pl-8
-              }}
-            >
-              {[
-                { id: 'recent', label: t('tabs.recent'), color: '#22d3ee' },
-                { id: 'custom', label: t('tabs.myTimers'), color: 'var(--primary)' },
-                { id: 'breathwork', label: t('tabs.breathwork'), color: '#4ade80' },
-                { id: 'yoga', label: t('tabs.yoga'), color: '#fbbf24' },
-                { id: 'workout', label: t('tabs.workout'), color: '#f87171' }
-              ].map((tab) => {
+            {/* Filter Chips / Tabs (Color Coded & Larger) - Hidden in Fullscreen */}
+            {!fullscreenTimerId && (
+              <div
+                className="pr-8 overflow-x-auto no-scrollbar flex flex-nowrap items-center gap-4 mb-0 sticky top-0 z-50 w-full border-b border-black/5 dark:border-white/5 shadow-sm bg-[#f8f9fa] dark:bg-[#1a1b1e]"
+                style={{
+                  display: 'flex',
+                  flexWrap: 'nowrap', // Force single line
+                  overflowX: 'auto',
+                  justifyContent: 'flex-start',
+                  paddingTop: '40px',
+                  paddingBottom: '40px',
+                  paddingLeft: '32px' // equivalent to pl-8
+                }}
+              >
+                {[
+                  { id: 'recent', label: t('tabs.recent'), color: '#22d3ee' },
+                  { id: 'custom', label: t('tabs.myTimers'), color: 'var(--primary)' },
+                  { id: 'breathwork', label: t('tabs.breathwork'), color: '#4ade80' },
+                  { id: 'yoga', label: t('tabs.yoga'), color: '#fbbf24' },
+                  { id: 'workout', label: t('tabs.workout'), color: '#f87171' }
+                ].map((tab) => {
 
-                const isActive = activeTab === tab.id;
-                // Calculate text color for active state:
-                // Primary (Purple) is dark -> Needs White text.
-                // Others (Green, Yellow, Red) are light -> Need Black text.
-                const isDarkBg = tab.id === 'custom';
-                const activeTextColor = isDarkBg ? '#ffffff' : '#000000';
+                  const isActive = activeTab === tab.id;
+                  // Calculate text color for active state:
+                  // Primary (Purple) is dark -> Needs White text.
+                  // Others (Green, Yellow, Red) are light -> Need Black text.
+                  const isDarkBg = tab.id === 'custom';
+                  const activeTextColor = isDarkBg ? '#ffffff' : '#000000';
 
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id as any)}
+                      className={`
                         relative whitespace-nowrap transition-all duration-300 border-2 flex-shrink-0
                         ${isActive
-                        ? 'shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] scale-105 border-transparent'
-                        : 'bg-transparent border-transparent text-white hover:text-gray-200'
-                      }
+                          ? 'shadow-[0_0_20px_rgba(var(--primary-rgb),0.4)] scale-105 border-transparent'
+                          : 'bg-transparent border-transparent text-white hover:text-gray-200'
+                        }
                       `}
-                    style={{
-                      backgroundColor: isActive ? tab.color : 'transparent',
-                      // No explicit border color for inactive to ensure it looks like text only
-                      borderColor: 'transparent',
-                      color: isActive ? activeTextColor : 'var(--text)',
-                      boxShadow: isActive ? `0 4px 20px ${tab.color}60` : 'none',
-                      // Styling matches
-                      fontSize: '20px',
-                      padding: '12px 32px',
-                      fontWeight: 800,
-                      borderRadius: '999px',
-                      letterSpacing: '0.01em',
-                      // Ensure text alignment helps the visual
-                      textAlign: 'center',
-                      whiteSpace: 'nowrap', // Force no wrap
-                      flexShrink: 0 // Prevent shrinking
-                    }}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
+                      style={{
+                        backgroundColor: isActive ? tab.color : 'transparent',
+                        // No explicit border color for inactive to ensure it looks like text only
+                        borderColor: 'transparent',
+                        color: isActive ? activeTextColor : 'var(--text)',
+                        boxShadow: isActive ? `0 4px 20px ${tab.color}60` : 'none',
+                        // Styling matches
+                        fontSize: '20px',
+                        padding: '12px 32px',
+                        fontWeight: 800,
+                        borderRadius: '999px',
+                        letterSpacing: '0.01em',
+                        // Ensure text alignment helps the visual
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap', // Force no wrap
+                        flexShrink: 0 // Prevent shrinking
+                      }}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
-            {/* Main Content */}
-            <main className="main-content pt-0 mt-6 md:mt-8">
+            {/* Main Content - Hidden via display:none in Fullscreen */}
+            <main className="main-content pt-0 mt-6 md:mt-8" style={fullscreenTimerId ? { display: 'none' } : {}}>
 
               {/* --- RECENT TAB --- */}
               {activeTab === 'recent' && (
@@ -799,6 +805,9 @@ function App() {
                               onDuplicate={handleDuplicateTimer}
                               onDelete={handleDeleteTimer}
                               onRemove={handleRemoveFromRecents}
+                              volume={volume}
+                              showFullscreen={fullscreenTimerId === timer.id}
+                              onFullscreenChange={setFullscreenTimerId}
                             />
                           </div>
                         );
@@ -851,6 +860,8 @@ function App() {
                           onDuplicate={handleDuplicateTimer}
                           onDelete={handleDeleteTimer}
                           volume={volume}
+                          showFullscreen={fullscreenTimerId === timer.id}
+                          onFullscreenChange={setFullscreenTimerId}
                         />
                       ))}
                     </Reorder.Group>
@@ -881,6 +892,9 @@ function App() {
                           onEdit={handleEditTimer}
                           onDuplicate={handleDuplicateTimer}
                           onDelete={handleDeleteTimer}
+                          volume={volume}
+                          showFullscreen={fullscreenTimerId === timer.id}
+                          onFullscreenChange={setFullscreenTimerId}
                         />
                       </div>
                     ))}
@@ -911,6 +925,9 @@ function App() {
                           onEdit={handleEditTimer}
                           onDuplicate={handleDuplicateTimer}
                           onDelete={handleDeleteTimer}
+                          volume={volume}
+                          showFullscreen={fullscreenTimerId === timer.id}
+                          onFullscreenChange={setFullscreenTimerId}
                         />
                       </div>
                     ))}
@@ -941,6 +958,9 @@ function App() {
                           onEdit={handleEditTimer}
                           onDuplicate={handleDuplicateTimer}
                           onDelete={handleDeleteTimer}
+                          volume={volume}
+                          showFullscreen={fullscreenTimerId === timer.id}
+                          onFullscreenChange={setFullscreenTimerId}
                         />
                       </div>
                     ))}
@@ -949,6 +969,7 @@ function App() {
               )}
 
             </main>
+
           </motion.div>
         )}
       </AnimatePresence>

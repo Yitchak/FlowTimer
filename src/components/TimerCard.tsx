@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useRef, useEffect } from 'react';
-import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat, XCircle, GripVertical, BookOpen, Volume2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Play, Pause, RotateCcw, Edit2, Trash2, Copy, Square, MoreVertical, SkipBack, SkipForward, Infinity, Repeat, XCircle, GripVertical, BookOpen, Volume2, Maximize2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 
@@ -10,6 +11,7 @@ import { toast } from 'sonner';
 import { playTimerSound } from '../utils/sound';
 import { speak, stop as stopTTS, isSpeaking, isSupported as ttsSupported } from '../utils/tts';
 import { Tooltip } from './Tooltip';
+import FullscreenTimer from './FullscreenTimer';
 
 interface TimerCardProps {
     timer: Timer;
@@ -22,6 +24,8 @@ interface TimerCardProps {
     onRemove?: (id: string) => void;
     dragControls?: DragControls;
     volume?: number;
+    showFullscreen?: boolean;
+    onFullscreenChange?: (timerId: string | null) => void;
 }
 
 const TimerCard: React.FC<TimerCardProps> = ({
@@ -34,7 +38,9 @@ const TimerCard: React.FC<TimerCardProps> = ({
     onDuplicate,
     onDelete,
     onRemove,
-    dragControls
+    dragControls,
+    showFullscreen = false,
+    onFullscreenChange
 }) => {
     const { t } = useLanguage();
     // Helper for contrast text color
@@ -74,6 +80,8 @@ const TimerCard: React.FC<TimerCardProps> = ({
     const [showInstructions, setShowInstructions] = useState(false);
     const [ttsActive, setTtsActive] = useState(false);
     const [autoTts, setAutoTts] = useState(false);
+    // showFullscreen is now controlled by parent via props
+    const fullscreenRequestedRef = useRef(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const stepsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -91,6 +99,23 @@ const TimerCard: React.FC<TimerCardProps> = ({
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [showMenu]);
+
+    // Listen for fullscreenchange events to synchronize state
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            if (document.fullscreenElement && fullscreenRequestedRef.current) {
+                // Successfully entered fullscreen - notify parent
+                onFullscreenChange?.(timer.id);
+                fullscreenRequestedRef.current = false;
+            } else if (!document.fullscreenElement && showFullscreen) {
+                // Exited fullscreen - notify parent
+                onFullscreenChange?.(null);
+            }
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    }, [showFullscreen, timer.id, onFullscreenChange]);
 
 
 
@@ -589,7 +614,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     {formatTime(timeLeft)}
                 </span>
 
-                {/* Primary Action Button - Moved Here */}
+                {/* Primary Action Button - Play/Pause */}
                 {!isActive ? (
                     <Tooltip content={t('actions.start')} position="bottom">
                         <button
@@ -637,8 +662,58 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         </button>
                     </Tooltip>
                 )}
-            </div>
 
+                {/* Fullscreen Button - With Visible Label */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                    <Tooltip content={t('actions.fullscreen')} position="bottom">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+
+                                // Request fullscreen on documentElement (maintains user gesture)
+                                if (!document.fullscreenElement) {
+                                    fullscreenRequestedRef.current = true;
+                                    document.documentElement.requestFullscreen().catch(err => {
+                                        console.error('Failed to enter fullscreen:', err);
+                                        fullscreenRequestedRef.current = false;
+                                    });
+                                }
+                                // Component will show automatically when fullscreenchange event fires
+                            }}
+                            className="icon-btn-large flex-shrink-0"
+                            aria-label={t('actions.fullscreen')}
+                            style={{
+                                backgroundColor: `${timer.color || 'var(--primary)'}20`,
+                                color: timer.color || 'var(--primary)',
+                                border: `1px solid ${timer.color || 'var(--primary)'}40`,
+                                width: '48px',
+                                height: '48px',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: 0,
+                                transition: 'all 0.2s',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                            }}
+                        >
+                            <Maximize2 size={22} />
+                        </button>
+                    </Tooltip>
+                    <span
+                        style={{
+                            fontSize: '10px',
+                            fontWeight: 600,
+                            color: 'var(--text-dim)',
+                            textAlign: 'center',
+                            lineHeight: 1.2,
+                            maxWidth: '60px'
+                        }}
+                    >
+                        {t('actions.fullscreen')}
+                    </span>
+                </div>
+            </div>
 
             {/* Progress Bar */}
             <div className="progress-container">
@@ -731,6 +806,25 @@ const TimerCard: React.FC<TimerCardProps> = ({
                         {t('guidance.autoTTS')}
                     </button>
                 </div>
+            )}
+
+            {/* Fullscreen Timer - Rendered via Portal to document.body */}
+            {showFullscreen && createPortal(
+                <FullscreenTimer
+                    timer={timer}
+                    isActive={isActive}
+                    timeLeft={timeLeft}
+                    currentStepIndex={currentStepIndex}
+                    currentRepetition={currentRepetition}
+                    onClose={() => onFullscreenChange?.(null)}
+                    onStart={onStart}
+                    onPause={onPause}
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                    reset={reset}
+                    volume={volume}
+                />,
+                document.body
             )}
         </motion.div >
     );
