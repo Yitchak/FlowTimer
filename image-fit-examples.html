@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דוגמאות object-fit לתמונות תרגיל</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .example {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .example h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            color: #ffd700;
+        }
+
+        .example p {
+            margin-bottom: 15px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 300px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-container::after {
+            content: attr(data-label);
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 215, 0, 0.9);
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .good {
+            border-color: #4ade80 !important;
+        }
+
+        .bad {
+            border-color: #f87171 !important;
+        }
+
+        .verdict {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .verdict.good {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+        }
+
+        .verdict.bad {
+            background: rgba(248, 113, 113, 0.2);
+            color: #f87171;
+        }
+
+        .recommended {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffd700;
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .code-example {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        .info-box {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        .info-box h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        /* Specific object-fit examples */
+        .cover img { object-fit: cover; }
+        .contain img { object-fit: contain; }
+        .fill img { object-fit: fill; }
+        .scale-down img { object-fit: scale-down; }
+
+        /* Background blur example */
+        .blur-bg {
+            position: relative;
+        }
+
+        .blur-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800');
+            background-size: cover;
+            filter: blur(20px);
+            opacity: 0.3;
+        }
+
+        .blur-bg img {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏋️ איך להציג תמונות תרגיל בלי עיוות?</h1>
+
+        <div class="info-box">
+            <h3>📖 מה קורה כאן?</h3>
+            <p>כל דוגמה משתמשת ב-<strong>אותה תמונה</strong> (תמונת יוגה אנכית).</p>
+            <p>הקונטיינר הוא <strong>300px גובה</strong> ורוחב מלא.</p>
+            <p>שים לב איך כל <code>object-fit</code> מתנהג אחרת!</p>
+        </div>
+
+        <div class="example-grid">
+            <!-- Example 1: cover (BAD) -->
+            <div class="example bad">
+                <h2>❌ object-fit: cover</h2>
+                <p><strong>הבעיה:</strong> התמונה נחתכת! חלק מהגוף לא נראה.</p>
+                <div class="image-container cover" data-label="cover">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800" alt="Yoga pose">
+                </div>
+                <div class="code-example">objectFit: 'cover'</div>
+                <div class="verdict bad">
+                    ⚠️ לא מתאים לתמונות הוראה!<br>
+                    חלק מהתרגיל נחתך
+                </div>
+            </div>
+
+            <!-- Example 2: contain (GOOD) -->
+            <div class="example good" style="position: relative;">
+                <div class="recommended">⭐ מומלץ!</div>
+                <h2>✅ object-fit: contain</h2>
+                <p><strong>הפתרון:</strong> כל התמונה נראית, אין עיוות!</p>
+                <div class="image-container contain" data-label="contain">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800" alt="Yoga pose">
+                </div>
+                <div class="code-example">objectFit: 'contain'</div>
+                <div class="verdict good">
+                    ✓ כל התרגיל נראה<br>
+                    ✓ אין עיוות<br>
+                    ✓ פשוט וטוב!
+                </div>
+            </div>
+
+            <!-- Example 3: fill (BAD) -->
+            <div class="example bad">
+                <h2>❌ object-fit: fill</h2>
+                <p><strong>הבעיה:</strong> התמונה מעוותת! לא שומר על פרופורציות.</p>
+                <div class="image-container fill" data-label="fill (מעוות!)">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800" alt="Yoga pose">
+                </div>
+                <div class="code-example">objectFit: 'fill'</div>
+                <div class="verdict bad">
+                    ⚠️ גרוע ביותר!<br>
+                    התרגיל נראה מוזר ומעוות
+                </div>
+            </div>
+
+            <!-- Example 4: contain + blur background (BEST) -->
+            <div class="example good" style="position: relative;">
+                <div class="recommended">🌟 הכי יפה!</div>
+                <h2>✨ contain + רקע מטושטש</h2>
+                <p><strong>הפתרון המושלם:</strong> ללא עיוות + נראה מקצועי!</p>
+                <div class="image-container contain blur-bg" data-label="contain + blur">
+                    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800" alt="Yoga pose">
+                </div>
+                <div class="code-example">
+objectFit: 'contain' +<br>
+background: blur של התמונה<br>
+opacity: 0.3
+                </div>
+                <div class="verdict good">
+                    ✓ כל התרגיל נראה<br>
+                    ✓ אין עיוות<br>
+                    ✓ אין letterbox שחור<br>
+                    ✓ נראה מקצועי מאוד!
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>💡 מה ההמלצה שלי?</h3>
+            <p><strong>אופציה 1 (פשוטה):</strong> השתמש ב-<code>object-fit: contain</code></p>
+            <p><strong>אופציה 2 (יפה יותר):</strong> השתמש ב-<code>contain</code> + רקע מטושטש</p>
+            <p>שתי האופציות <strong>לעולם לא מעוותות</strong> את התמונה!</p>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.3); padding: 30px; border-radius: 16px; margin-top: 40px;">
+            <h2 style="margin-bottom: 20px; color: #ffd700;">📱 בדוק בגדלי מסך שונים</h2>
+            <p style="margin-bottom: 15px;">פתח את הדף הזה במסכים שונים (F12 → Toggle Device Toolbar) ותראה שה-contain תמיד עובד מצוין!</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                    <strong>📱 Mobile</strong><br>
+                    375px × 667px
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                    <strong>📱 Tablet</strong><br>
+                    768px × 1024px
+                </div>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                    <strong>💻 Desktop</strong><br>
+                    1920px × 1080px
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
