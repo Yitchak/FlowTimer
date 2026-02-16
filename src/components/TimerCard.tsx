@@ -811,6 +811,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                     prevStep={prevStep}
                     reset={reset}
                     volume={volume}
+                    jumpToStep={jumpToStep}
                 />,
                 document.body
             )}
