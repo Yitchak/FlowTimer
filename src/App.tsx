@@ -3,7 +3,6 @@ import { Sun, Moon, Plus, Globe, Shield, RotateCcw, MoreVertical, Download, Uplo
 import { AnimatePresence, Reorder, motion } from 'framer-motion';
 import TimerCard from './components/TimerCard';
 import TimerEditor from './components/TimerEditor';
-import FullscreenTimer from './components/FullscreenTimer';
 import AccessibilityMenu from './components/AccessibilityMenu';
 import { mockTimers as initialMockTimers } from './data/mockTimers';
 import type { Timer } from './types/timer';

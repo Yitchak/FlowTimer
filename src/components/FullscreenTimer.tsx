@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import { X, Play, Pause, SkipForward, SkipBack, RotateCcw } from 'lucide-react';
 import type { Timer } from '../types/timer';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -179,9 +179,10 @@ const FullscreenTimer: React.FC<FullscreenTimerProps> = ({
     };
 
     const getStepColor = (step: typeof currentStep): string => {
-        if (step.type === 'inhale') return '#3b82f6';
-        if (step.type === 'exhale') return '#8b5cf6';
-        if (step.type === 'hold') return '#10b981';
+        const name = step.name.toLowerCase();
+        if (name.includes('inhale') || name.includes('breathe')) return '#3b82f6';
+        if (name.includes('exhale')) return '#8b5cf6';
+        if (name.includes('hold')) return '#10b981';
         return step.color || timer.color || '#06b6d4';
     };
 

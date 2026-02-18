@@ -1,0 +1,930 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #1a1b1e;
+    --surface: #25262b;
+    --surface-hover: #2c2e33;
+    --glass: rgba(37, 38, 43, 0.7);
+    --glass-blur: blur(10px);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --primary: #7950f2;
+    --primary-alpha: rgba(121, 80, 242, 0.2);
+    --text: #ffffff;
+    --text-dim: #909296;
+    --radius-md: 12px;
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.3);
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html.light-mode {
+    --bg-primary: #f8f9fa;
+    --surface: #ffffff;
+    --surface-hover: #f1f3f5;
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.05);
+    --text: #212529;
+    --text-dim: #868e96;
+    --primary-alpha: rgba(121, 80, 242, 0.1);
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Base resets in case Tailwind fails */
+* {
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+input {
+  font-family: inherit;
+}
+
+/* App Container */
+.app-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Buttons */
+.primary-btn {
+  background: var(--primary);
+  color: white;
+  padding: 0 1.5rem;
+  height: 48px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  box-shadow: 0 4px 14px var(--primary-alpha);
+  white-space: nowrap;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--primary-alpha);
+}
+
+.secondary-btn {
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  color: var(--text);
+  padding: 0 1.5rem;
+  height: 48px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+}
+
+.secondary-btn:hover {
+  background: var(--surface-hover);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.icon-btn-large {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  color: var(--text-dim);
+  background: var(--surface);
+}
+
+.icon-btn-large:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* Editor Specific Styles - NOT RELYING ON TAILWIND */
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--bg-primary);
+  overflow: hidden;
+}
+
+.editor-header {
+  height: 80px;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.header-title-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-title-group h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.header-title-group span {
+  font-size: 0.875rem;
+  color: var(--text-dim);
+}
+
+.editor-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.editor-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.editor-section {
+  background: var(--surface);
+  /* Revert to solid/high contrast */
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  /* Darker shadow */
+}
+
+.section-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+}
+
+.section-header p {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin: 0;
+  opacity: 0.8;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin-left: 4px;
+  /* Slight indent */
+}
+
+.styled-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  font-size: 1rem;
+  color: var(--text);
+  outline: none;
+  transition: var(--transition);
+}
+
+.styled-input:focus {
+  border-color: var(--primary);
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 2px var(--primary-alpha);
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.form-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Custom Controls */
+.type-selector {
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.35rem;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  gap: 0.5rem;
+  /* Ensure gap between buttons */
+}
+
+.type-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  transition: var(--transition);
+}
+
+.type-btn.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.repetitions-control {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  padding: 0.75rem 1.25rem;
+}
+
+.rep-input {
+  background: transparent;
+  border: none;
+  width: 60px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  text-align: center;
+}
+
+.vertical-divider {
+  width: 1px;
+  height: 30px;
+  background: var(--glass-border);
+}
+
+.continuous-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  flex: 1;
+}
+
+.checkbox-box {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+}
+
+/* Steps List */
+.steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.step-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  transition: var(--transition);
+}
+
+.step-row:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+
+.step-name-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 1rem;
+  outline: none;
+}
+
+.step-duration {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.duration-input {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.25rem;
+  width: 50px;
+  text-align: right;
+  outline: none;
+}
+
+.duration-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.remove-step-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  transition: var(--transition);
+  opacity: 0.5;
+}
+
+.step-row:hover .remove-step-btn {
+  opacity: 1;
+}
+
+.remove-step-btn:hover {
+  background: rgba(255, 100, 100, 0.1);
+  color: #ff6b6b;
+}
+
+.add-step-btn {
+  width: 100%;
+  padding: 1.5rem;
+  border: 2px dashed var(--glass-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--text-dim);
+  transition: var(--transition);
+  margin-top: 1rem;
+}
+
+.add-step-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-alpha);
+}
+
+/* Footer Styling */
+.editor-footer {
+  height: 80px;
+  border-top: 1px solid var(--glass-border);
+  background: var(--surface);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.total-time-display {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.time-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text);
+}
+
+/* App Header Re-enforcement */
+.app-header {
+  min-height: 80px;
+  height: auto;
+  padding: 0 2rem;
+  /* Add Safe Area Padding for mobile notches */
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: max(2rem, env(safe-area-inset-left));
+  padding-right: max(2rem, env(safe-area-inset-right));
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--glass-border);
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  z-index: 200;
+  position: relative;
+}
+
+/* Ensure header dropdowns are above everything */
+.app-header .relative {
+  z-index: 201;
+}
+
+/* Timer Card & Grid - Modified for Equal Height */
+.timer-grid-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 1rem;
+  padding: 0.5rem;
+  width: 100%;
+  direction: ltr !important;
+}
+
+@media (max-width: 640px) {
+  .timer-grid-list {
+    grid-template-columns: 1fr !important;
+    padding: 0.25rem !important;
+    gap: 0.75rem;
+  }
+}
+
+/* Main Content Area */
+.main-content {
+  /* Use flex-1 to fill remaining space properly */
+  flex: 1;
+  height: auto;
+  /* Override fixed height */
+  min-height: 0;
+  /* Important for nested flex scrolling */
+  width: 100%;
+  padding: 2rem;
+  padding-bottom: 200px;
+  overflow-y: auto;
+  /* Use auto instead of scroll */
+
+  /* Usage specified scrollbars */
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-dim) transparent;
+}
+
+/* Custom Scrollbar Styling */
+.main-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background-color: var(--surface-hover);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-dim);
+}
+
+/* Dropdown Menu Styles */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  z-index: 100;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: var(--transition);
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--glass-border);
+  margin: 0.5rem 0;
+  width: 100%;
+}
+
+/* Mobile Responsiveness Improvements */
+@media (max-width: 640px) {
+  .timer-card {
+    padding: 1rem !important;
+  }
+
+  .icon-btn-large {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+  }
+
+  /* Make main control buttons smaller on mobile */
+  .control-btn-main,
+  .pause-btn,
+  .timer-controls .primary-btn {
+    height: 40px !important;
+    padding: 0 12px !important;
+    font-size: 0.9rem !important;
+    max-width: 100px !important;
+  }
+
+  .main-content {
+    padding: 0 !important;
+    /* Remove main container padding on mobile */
+    padding-bottom: 120px !important;
+    /* Keep some bottom padding for scroll */
+  }
+
+  /* --- Mobile Editor Styles --- */
+  .editor-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    height: auto !important;
+    /* Allow height to expand */
+    padding: 1rem !important;
+  }
+
+  .header-left {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .editor-header .primary-btn {
+    width: 100%;
+    justify-content: center;
+    height: auto !important;
+    padding: 16px 24px !important;
+    margin-top: 0.5rem;
+  }
+
+  .form-row {
+    flex-direction: column !important;
+    gap: 1rem;
+  }
+
+  /* Mobile Step Row */
+  .step-row {
+    display: grid !important;
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .step-header-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .mobile-only {
+    display: block !important;
+  }
+
+  .desktop-only {
+    display: none !important;
+  }
+
+  .step-duration-group,
+  .step-main-content {
+    width: 100%;
+  }
+
+  .duration-inputs-row {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .duration-input-compact {
+    flex: 1;
+    width: auto !important;
+    min-width: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: var(--text);
+    padding: 8px;
+    text-align: center;
+    font-size: 1rem;
+  }
+}
+
+/* --- Editor Base Styles (Desktop Only) --- */
+@media (min-width: 641px) {
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: flex;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .form-col {
+    flex: 1;
+  }
+
+  .step-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--step-row-bg);
+    /* Use shared var */
+    border: 1px solid var(--border-dim);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    transition: var(--transition);
+  }
+
+  .step-header-mobile {
+    display: contents;
+    /* On desktop, let number sit in flow */
+  }
+
+  .current-step-number {
+    /* If needed */
+  }
+
+  .step-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .step-duration-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 180px;
+  }
+
+  .duration-inputs-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .duration-input-compact {
+    width: 48px;
+    text-align: center;
+    padding: 6px 4px;
+    border-radius: 6px;
+    background: var(--input-bg);
+    /* Use shared var */
+    border: 1px solid var(--border-dim);
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+  }
+
+  .duration-input-compact:focus {
+    border-color: var(--primary);
+    background: var(--input-bg);
+  }
+
+  .time-sep {
+    opacity: 0.5;
+    font-weight: bold;
+  }
+}
+
+@media (max-width: 640px) {
+  .time-input-container {
+    padding: 1rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .time-value-input {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 1.5rem !important;
+  }
+
+  .time-separator {
+    font-size: 1.5rem !important;
+    margin-top: -20px !important;
+  }
+
+  /* Compact controls on mobile */
+  .type-selector {
+    gap: 0.25rem !important;
+  }
+
+  .type-btn {
+    white-space: nowrap;
+    padding: 0.5rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .step-row {
+    background: var(--step-row-bg) !important;
+    border: 1px solid var(--border-dim);
+    padding: 1rem;
+    /* Fix overflow */
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .duration-inputs-row {
+    /* Force 3 columns side-by-side */
+    display: grid !important;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    width: 100%;
+    flex-wrap: nowrap !important;
+  }
+
+  /* Hide Colons in Grid Mode */
+  .time-sep {
+    display: none !important;
+  }
+
+  .duration-input-compact {
+    background: var(--input-bg) !important;
+    border: 1px solid var(--border-dim) !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* --- RESTORED GLOBALS & VARIABLES --- */
+@layer base {
+  :root {
+    --input-bg: rgba(255, 255, 255, 0.08);
+    --step-row-bg: rgba(255, 255, 255, 0.03);
+    --border-dim: rgba(255, 255, 255, 0.1);
+  }
+
+  html.light-mode {
+    --input-bg: rgba(0, 0, 0, 0.04);
+    --step-row-bg: rgba(0, 0, 0, 0.02);
+    --border-dim: rgba(0, 0, 0, 0.1);
+  }
+}
+
+.styled-input {
+  /* Dynamic background for Light/Dark modes */
+  background: var(--input-bg) !important;
+  border-color: var(--border-dim) !important;
+  color: var(--text);
+}
+
+.type-selector {
+  background: var(--input-bg) !important;
+}
+
+/* --- MOBILE EDITOR WIDTH FIX --- */
+@media (max-width: 640px) {
+  .editor-content {
+    padding: 0.5rem !important;
+    /* Maximize width */
+  }
+
+  .editor-wrapper {
+    gap: 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .editor-section {
+    padding: 1rem !important;
+    border-radius: 16px !important;
+  }
+}
+
+/* --- TAGS & PILLS --- */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px !important;
+  /* Force rounded */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Explicit outline */
+  color: var(--text-dim) !important;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.step-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px !important;
+  /* Force rounded */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Default outline */
+  font-size: 0.65rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step-pill.active {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  border-color: transparent;
+  /* Or custom */
+  z-index: 5;
+  transform: scale(1.05);
+}

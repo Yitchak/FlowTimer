@@ -13,6 +13,8 @@ interface ReorderableTimerItemProps {
     onDuplicate: (timer: Timer) => void;
     onDelete: (id: string) => void;
     volume?: number;
+    showFullscreen?: boolean;
+    onFullscreenChange?: (id: string | null) => void;
 }
 
 export const ReorderableTimerItem: React.FC<ReorderableTimerItemProps> = ({
@@ -23,7 +25,9 @@ export const ReorderableTimerItem: React.FC<ReorderableTimerItemProps> = ({
     onEdit,
     onDuplicate,
     onDelete,
-    volume
+    volume,
+    showFullscreen,
+    onFullscreenChange
 }) => {
     const controls = useDragControls();
 
@@ -52,6 +56,8 @@ export const ReorderableTimerItem: React.FC<ReorderableTimerItemProps> = ({
                 onDelete={onDelete}
                 dragControls={controls} /* Pass controls to trigger drag */
                 volume={volume}
+                showFullscreen={showFullscreen}
+                onFullscreenChange={onFullscreenChange}
             />
         </Reorder.Item>
     );
