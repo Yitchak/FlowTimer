@@ -5,7 +5,8 @@ export interface TimerStep {
   name: string;
   duration: number; // in seconds
   color?: string;
-  imageUrl?: string;       // Per-step image
+  imageUrl?: string;       // Per-step image (single, backward compat)
+  images?: string[];       // Multiple images per step (e.g. forward bend + backward bend)
   instructions?: string;   // Text instructions for this step
   ttsText?: string;        // Text for text-to-speech (defaults to instructions if not set)
 }

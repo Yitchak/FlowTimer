@@ -91,9 +91,15 @@ export const Tooltip: React.FC<TooltipProps> = ({ content, children, position = 
                             className="fixed-tooltip-wrapper" /* Helper class if needed */
                         >
                             <div
-                                className="px-2 py-1 bg-gray-900/90 dark:bg-white/90 text-white dark:text-black text-[10px] font-medium rounded shadow-lg backdrop-blur-sm whitespace-nowrap border border-white/10 dark:border-black/5"
                                 style={{
-                                    // Adjust translation based on position to truly center/offset
+                                    padding: '4px 8px',
+                                    backgroundColor: 'rgba(30, 30, 30, 0.92)',
+                                    color: '#fff',
+                                    fontSize: '11px',
+                                    fontWeight: 500,
+                                    borderRadius: '6px',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                                    whiteSpace: 'nowrap',
                                     transform: position === 'top' ? 'translate(-50%, -100%)' :
                                         position === 'bottom' ? 'translate(-50%, 0)' :
                                             position === 'left' ? 'translate(-100%, -50%)' :

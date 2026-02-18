@@ -140,33 +140,33 @@ export const presets: Timer[] = [
         steps: [
             {
                 id: 'p1', name: 'steps.preparation', duration: 15,
-                imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=300&q=80',
+                imageUrl: 'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=800&q=80',
                 instructions: 'guidance.satKriya.prep',
                 ttsText: 'guidance.satKriya.prepTTS'
             },
             {
                 id: 'p2', name: 'steps.satKriya', duration: 180,
-                imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80',
+                imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=800&q=80',
                 instructions: 'guidance.satKriya.main',
                 ttsText: 'guidance.satKriya.mainTTS'
             },
             {
                 id: 'p3', name: 'steps.breathInOut', duration: 5,
-                imageUrl: 'https://images.unsplash.com/photo-1528319725582-ddc096101511?auto=format&fit=crop&w=300&q=80',
+                imageUrl: 'https://images.unsplash.com/photo-1447452001602-7090c7ab2db3?auto=format&fit=crop&w=800&q=80',
                 instructions: 'guidance.satKriya.breath',
                 ttsText: 'guidance.satKriya.breathTTS'
             },
             {
                 id: 'p4', name: 'steps.hold', duration: 20,
-                imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80',
+                imageUrl: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?auto=format&fit=crop&w=800&q=80',
                 instructions: 'guidance.satKriya.hold',
                 ttsText: 'guidance.satKriya.holdTTS'
             },
             {
-                id: 'p5', name: 'steps.preparation', duration: 15,
-                imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=300&q=80',
-                instructions: 'guidance.satKriya.prep',
-                ttsText: 'guidance.satKriya.prepTTS'
+                id: 'p5', name: 'steps.breathRelease', duration: 15,
+                imageUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
+                instructions: 'guidance.satKriya.release',
+                ttsText: 'guidance.satKriya.releaseTTS'
             },
             {
                 id: 'p6', name: 'steps.relaxation', duration: 180,
@@ -179,7 +179,7 @@ export const presets: Timer[] = [
         order: 8,
         userId: 'system',
         isPreset: true,
-        imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80'
+        imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=800&q=80'
     },
     {
         id: 'preset-alt-breath',
@@ -218,6 +218,25 @@ export const presets: Timer[] = [
         userId: 'system',
         isPreset: true,
         imageUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=300&q=80' // Clock/time
+    },
+    {
+        id: 'preset-1min-plus',
+        name: 'presets.1minPlus',
+        type: 'complex',
+        tags: ['quick', 'flow', 'yoga', 'breathwork'],
+        color: '#66bb6a', // Green
+        repetitions: -1,
+        steps: [
+            { id: '1mp1', name: 'steps.preparation', duration: 15 },
+            { id: '1mp2', name: 'steps.1min', duration: 60 },
+            { id: '1mp3', name: 'steps.breathe', duration: 300 },
+            { id: '1mp4', name: 'steps.hold', duration: 1200 }
+        ],
+
+        order: 10,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=300&q=80'
     },
     {
         id: 'preset-3min',
@@ -272,6 +291,43 @@ export const presets: Timer[] = [
         userId: 'system',
         isPreset: true,
         imageUrl: 'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=300&q=80'
+    },
+    // --- DEMO: Multi-Image Steps ---
+    {
+        id: 'preset-yoga-flow',
+        name: 'presets.yogaFlow',
+        type: 'complex',
+        tags: ['yoga', 'stretch', 'flow'],
+        color: '#8b5cf6',
+        repetitions: 2,
+        steps: [
+            {
+                id: 'yf1', name: 'steps.forwardBackBend', duration: 30,
+                images: [
+                    'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
+                    'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80'
+                ],
+                instructions: 'Bend forward slowly, then arch backward. Hold each position.',
+            },
+            {
+                id: 'yf2', name: 'steps.sunSalutation', duration: 45,
+                images: [
+                    'https://images.unsplash.com/photo-1545389336-cf090694435e?auto=format&fit=crop&w=800&q=80',
+                    'https://images.unsplash.com/photo-1588286840104-8957b019727f?auto=format&fit=crop&w=800&q=80',
+                    'https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?auto=format&fit=crop&w=800&q=80'
+                ],
+                instructions: 'Flow through the full sun salutation sequence.',
+            },
+            {
+                id: 'yf3', name: 'steps.relaxation', duration: 60,
+                imageUrl: 'https://images.unsplash.com/photo-1593811167562-9cef47bfc4a7?auto=format&fit=crop&w=800&q=80',
+                instructions: 'Lie down in Shavasana. Breathe naturally.',
+            }
+        ],
+        order: 14,
+        userId: 'system',
+        isPreset: true,
+        imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=300&q=80'
     }
 ];
 

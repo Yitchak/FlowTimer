@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Sun, Moon, Plus, Globe, Shield, RotateCcw, MoreVertical, Download, Upload, RefreshCw, Info, Volume2, Volume1, VolumeX } from 'lucide-react';
+import { Sun, Moon, Plus, Globe, Shield, RotateCcw, MoreVertical, Download, Upload, RefreshCw, Info, Volume2, Volume1, Volume, VolumeX } from 'lucide-react';
 import { AnimatePresence, Reorder, motion } from 'framer-motion';
 import TimerCard from './components/TimerCard';
 import TimerEditor from './components/TimerEditor';
@@ -63,7 +63,8 @@ function App() {
 
   const getVolumeIcon = () => {
     if (volume === 0) return <VolumeX size={20} />;
-    if (volume <= 0.2) return <Volume1 size={20} />;
+    if (volume <= 0.2) return <Volume size={20} />;
+    if (volume <= 0.5) return <Volume1 size={20} />;
     return <Volume2 size={20} />;
   };
 
@@ -538,7 +539,7 @@ function App() {
                             onClick={() => setVolumeLevel(0.2)}
                             className={`dropdown-item ${volume === 0.2 ? 'text-primary' : ''}`}
                           >
-                            <VolumeX size={16} style={{ opacity: 0.6 }} />
+                            <Volume size={16} />
                             <span>{t('volume.low') || '20%'}</span>
                           </button>
                           <div className="dropdown-divider"></div>

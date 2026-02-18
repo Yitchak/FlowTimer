@@ -363,7 +363,7 @@ const TimerCard: React.FC<TimerCardProps> = ({
                             boxShadow: '0 4px 20px rgba(0,0,0,0.2)'
                         }}>
                             <img
-                                src={currentStep?.imageUrl || timer.imageUrl || 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=250&q=80'}
+                                src={(currentStep?.images?.[0] || currentStep?.imageUrl || timer.imageUrl || 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=250&q=80')}
                                 alt={currentStep ? t(currentStep.name) : timer.name}
                                 style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.9 }}
                                 onError={(e) => {

@@ -43,7 +43,9 @@ export const translations = {
             removeFromList: "Remove from list",
             dragToReorder: "Drag to reorder",
             volume: "Volume Control",
-            moreOptions: "More options"
+            moreOptions: "More options",
+            fullscreen: "Fullscreen Mode",
+            exitFullscreen: "Exit Fullscreen"
         },
         volume: {
             full: "100% - Full",
@@ -112,6 +114,8 @@ export const translations = {
                 breathTTS: "Inhale deeply. And exhale.",
                 hold: "Inhale, apply Mul Bhand. Squeeze the energy from the base of the spine to the top of the skull.",
                 holdTTS: "Inhale and hold. Apply root lock. Squeeze the energy upward.",
+                release: "Exhale deeply and release all tension. Let your arms come down gently.",
+                releaseTTS: "Exhale deeply. Release. Let your arms come down.",
                 relax: "Lie down on your back. Relax completely. Let the energy integrate.",
                 relaxTTS: "Lie down and relax completely."
             }
@@ -174,7 +178,9 @@ export const translations = {
             "3min": "3 Minutes Flow",
             "11min": "11 Minutes Flow",
             "6plus1": "6 Plus 1",
-            quickReset: "Quick Reset"
+            quickReset: "Quick Reset",
+            yogaFlow: "Yoga Flow",
+            "1minPlus": "1 Minute Flow+"
         },
         steps: {
             inhale: "Inhale",
@@ -216,12 +222,15 @@ export const translations = {
             preparation: "Preparation",
             satKriya: "Sat kriya",
             breathInOut: "Breath in and out",
+            breathRelease: "Breath Release",
             relaxation: "Relaxation",
             "1min": "1 minute",
             "3min": "3 minutes",
             "11min": "11 minutes",
             "sixMinutes": "6 Minutes",
-            breathe: "Breathe"
+            breathe: "Breathe",
+            forwardBackBend: "Forward & Back Bend",
+            sunSalutation: "Sun Salutation"
         }
     },
 
@@ -268,7 +277,9 @@ export const translations = {
             removeFromList: "הסר מהרשימה",
             dragToReorder: "גרור לשינוי סדר",
             volume: "עוצמת שמע",
-            moreOptions: "אפשרויות נוספות"
+            moreOptions: "אפשרויות נוספות",
+            fullscreen: "מצב מסך מלא",
+            exitFullscreen: "יציאה ממסך מלא"
         },
         volume: {
             full: "100% - מלא",
@@ -337,6 +348,8 @@ export const translations = {
                 breathTTS: "שאפו עמוק. ונשפו.",
                 hold: "שאפו, הפעילו מול בנד. סחטו את האנרגיה מבסיס עמוד השדרה לראש.",
                 holdTTS: "שאפו והחזיקו. הפעילו נעילת שורש. סחטו את האנרגיה למעלה.",
+                release: "נשפו עמוק ושחררו את כל המתח. תנו לידיים לרדת בעדינות.",
+                releaseTTS: "נשפו עמוק. שחררו. תנו לידיים לרדת.",
                 relax: "שכבו על הגב. הירגעו לחלוטין. תנו לאנרגיה להשתלב.",
                 relaxTTS: "שכבו והירגעו לחלוטין."
             }
@@ -399,7 +412,9 @@ export const translations = {
             "3min": "זרימה של 3 דקות",
             "11min": "זרימה של 11 דקות",
             "6plus1": "6 פלוס 1",
-            quickReset: "איפוס מהיר"
+            quickReset: "איפוס מהיר",
+            yogaFlow: "זרימת יוגה",
+            "1minPlus": "זרימה של דקה+"
         },
         steps: {
             inhale: "שאיפה",
@@ -441,12 +456,15 @@ export const translations = {
             preparation: "הכנה",
             satKriya: "סאט קריה",
             breathInOut: "נשימה פנימה והחוצה",
+            breathRelease: "שחרור הנשימה",
             relaxation: "הרפיה",
             "1min": "דקה אחת",
             "3min": "3 דקות",
             "11min": "11 דקות",
             "sixMinutes": "6 דקות",
-            breathe: "לנשום"
+            breathe: "לנשום",
+            forwardBackBend: "כפיפה לפנים ולאחור",
+            sunSalutation: "ברכת השמש"
         }
     },
 
@@ -490,7 +508,9 @@ export const translations = {
             moreActions: "Más Acciones",
             switchTheme: "Cambiar Tema",
             signedInAs: "Iniciado como",
-            removeFromList: "Quitar de la lista"
+            removeFromList: "Quitar de la lista",
+            fullscreen: "Modo Pantalla Completa",
+            exitFullscreen: "Salir de Pantalla Completa"
         },
         settings: {
             title: "Preferencias",
@@ -588,7 +608,9 @@ export const translations = {
             "1min": "1 Minute Flow",
             "3min": "3 Minutes Flow",
             "11min": "11 Minutes Flow",
-            quickReset: "Quick Reset"
+            quickReset: "Quick Reset",
+            yogaFlow: "Yoga Flow",
+            "1minPlus": "1 Minute Flow+"
         },
         steps: {
             inhale: "Inhale",
@@ -630,11 +652,14 @@ export const translations = {
             preparation: "Preparation",
             satKriya: "Sat kriya",
             breathInOut: "Breath in and out",
+            breathRelease: "Liberación de la respiración",
             relaxation: "Relaxation",
             "1min": "1 minute",
             "3min": "3 minutes",
             "11min": "11 minutes",
-            breathe: "Breathe"
+            breathe: "Breathe",
+            forwardBackBend: "Forward & Back Bend",
+            sunSalutation: "Sun Salutation"
         }
     }
 
